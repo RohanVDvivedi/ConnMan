@@ -1,2 +1,2 @@
 # ConMan
-Multithreaded transport layer connection handler in C
+Multithreaded above transport layer connection handler in C

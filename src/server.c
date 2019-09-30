@@ -81,8 +81,7 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 		conn_fd = err;
 
 		// serve the connection that has been accepted
-		job* job_p = get_job(connection_handler_wrapper, get_new_connection_handler_wrapper_input_params(conn_fd, connection_handler));
-		submit(executor_p, job_p);
+		submit(executor_p, connection_handler_wrapper, get_new_connection_handler_wrapper_input_params(conn_fd, connection_handler));
 	}
 
 	// shutdown and delete the executor you created for the loop, 

@@ -13,6 +13,21 @@
 
 // here conn_fd, is the connection file discriptor, you can read and write to this discriptor, to communicate
 // returns the failure response, in starting the server
-int serve(int DOMAIN, int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, unsigned long long int PORT, unsigned long long int backlog_queue_size, void (*connection_handler)(int conn_fd));
+int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*connection_handler)(int conn_fd));
+
+
+/*
+	above function is very complicated with a log of parameters, so here below are a few smaller function for ther server
+*/
+
+#define DEFAULT_BACKLOG_QUEUE_SIZE 10
+
+int serve_tcp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+int serve_tcp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+int serve_udp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+int serve_udp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd));
 
 #endif

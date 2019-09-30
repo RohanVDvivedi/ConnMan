@@ -1,12 +1,12 @@
 #include<server.h>
 
-int serve(int DOMAIN, int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, unsigned long long int PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*connection_handler)(int conn_fd))
+int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*connection_handler)(int conn_fd))
 {
 	int err;
 
 	// phase 1
 	// file discriptor to socket
-	err = socket(DOMAIN, TRANSMISSION_PROTOCOL_TYPE, 0);
+	err = socket(ADDRESS_FAMILY, TRANSMISSION_PROTOCOL_TYPE, 0);
 	if(err == -1)
 	{
 		goto end;
@@ -70,4 +70,36 @@ int serve(int DOMAIN, int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY
 	}
 
 	end: return err;
+}
+
+int serve_tcp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return serve(AF_INET, SOCK_STREAM,
+			INADDR_ANY, PORT,
+			DEFAULT_BACKLOG_QUEUE_SIZE,
+			connection_handler);
+}
+
+int serve_tcp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return serve(AF_INET6, SOCK_STREAM,
+			INADDR_ANY, PORT,
+			DEFAULT_BACKLOG_QUEUE_SIZE,
+			connection_handler);
+}
+
+int serve_udp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return serve(AF_INET, SOCK_DGRAM,
+			INADDR_ANY, PORT,
+			DEFAULT_BACKLOG_QUEUE_SIZE,
+			connection_handler);
+}
+
+int serve_udp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return serve(AF_INET6, SOCK_DGRAM,
+			INADDR_ANY, PORT,
+			DEFAULT_BACKLOG_QUEUE_SIZE,
+			connection_handler);
 }

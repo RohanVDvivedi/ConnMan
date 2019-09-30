@@ -1,5 +1,33 @@
 #include<server.h>
 
+typedef struct connection_handler_wrapper_input_params connection_handler_wrapper_input_params;
+struct connection_handler_wrapper_input_params
+{
+	int conn_fd;
+	void (*connection_handler)(int conn_fd);
+};
+
+connection_handler_wrapper_input_params* get_new_connection_handler_wrapper_input_params(int conn_fd, void (*connection_handler)(int conn_fd))
+{
+	connection_handler_wrapper_input_params* connection_handler_wrapper_input_params_p = (connection_handler_wrapper_input_params*)malloc(sizeof(connection_handler_wrapper_input_params));
+	connection_handler_wrapper_input_params_p->conn_fd = conn_fd;
+	connection_handler_wrapper_input_params_p->connection_handler = connection_handler;
+	return connection_handler_wrapper_input_params_p;
+}
+
+void* connection_handler_wrapper(void* connection_handler_wrapper_input_params_v_p)
+{
+	connection_handler_wrapper_input_params* handler_data = ((connection_handler_wrapper_input_params*)connection_handler_wrapper_input_params_v_p);
+	handler_data->connection_handler(handler_data->conn_fd);
+
+	// phase 5
+	// closing client socket
+	close(handler_data->conn_fd);
+
+	free(handler_data);
+	return NULL;
+}
+
 int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*connection_handler)(int conn_fd))
 {
 	int err;
@@ -33,6 +61,9 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 	{
 		goto end;
 	}
+
+	// we set up an executor to handle every accepted connection on other threads as a job
+	executor* executor_p = get_executor(CACHED_THREAD_POOL_EXECUTOR, MAXIMUM_THREADS_IO_HANDLER, NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS); 
 	
 	// start accepting in loop
 	struct sockaddr_in client_addr;
@@ -50,16 +81,15 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 		conn_fd = err;
 
 		// serve the connection that has been accepted
-		connection_handler(conn_fd);
-
-		// phase 5
-		// closing client socket
-		err = close(conn_fd);
-		if (err == -1)
-		{
-			continue;
-		}
+		job* job_p = get_job(connection_handler_wrapper, get_new_connection_handler_wrapper_input_params(conn_fd, connection_handler));
+		submit(executor_p, job_p);
 	}
+
+	// shutdown and delete the executor you created for the loop, 
+	// do not shutdown immediately, we shutdown only after the current on going requests have been handled gracefully
+	shutdown_executor(executor_p, 0);
+	wait_for_all_threads_to_complete(executor_p);
+	delete_executor(executor_p);
 
 	// phase 6
 	// closing server socket

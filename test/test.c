@@ -67,7 +67,7 @@ void datagram_handler(int serv_fd)
 
 	while(1)
 	{
-		struct sockaddr_in cliaddr; socklen_t cliaddrlen;
+		struct sockaddr_in cliaddr; socklen_t cliaddrlen = sizeof(cliaddr);
 		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, (struct sockaddr *) &cliaddr, &cliaddrlen);
 		buffer[buffreadlength] = '\0';
 
@@ -78,7 +78,6 @@ void datagram_handler(int serv_fd)
 		}
 
 		buffreadlength = strlen(buffer);
-		int ss = sendto(serv_fd, buffer, buffreadlength, 0, (struct sockaddr *) &cliaddr, cliaddrlen);
-		printf("ss = %d\n", ss);
+		sendto(serv_fd, buffer, buffreadlength, 0, (struct sockaddr *) &cliaddr, cliaddrlen);
 	}
 }

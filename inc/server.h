@@ -69,7 +69,7 @@ void (*datagram_handler)(int serv_fd)
 	char buffer[1000];
 	while(1)
 	{
-		struct sockaddr_in cliaddr; int cliaddrlen;
+		struct sockaddr_in cliaddr; socklen_t cliaddrlen = sizeof(cliaddr);
 		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, &cliaddr, &cliaddrlen);
 		if(buffreadlength == -1)
 		{

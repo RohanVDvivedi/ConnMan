@@ -147,7 +147,7 @@ int udp_loop(int server_socket_fd, void (*datagram_handler)(int fd))
 
 	// we do not assign new threads here in UDP server,
 	// in tcp it is required, because it is connection oriented, hence you get different file discriptor for different clients
-	datagram_handler(server_socket_fd);
+	datagram_handler(fd);
 
 	return 0;
 

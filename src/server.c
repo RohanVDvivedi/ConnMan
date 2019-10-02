@@ -28,7 +28,11 @@ void* connection_handler_wrapper(void* connection_handler_wrapper_input_params_v
 	return NULL;
 }
 
-int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*connection_handler)(int conn_fd))
+int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, void (*connection_handler)(int fd));
+
+int udp_loop(int server_socket_fd, void (*datagram_handler)(int fd));
+
+int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*handler)(int fd))
 {
 	int err;
 
@@ -54,6 +58,43 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 		goto end;
 	}
 
+	// go to respective function based on TRANSMISSION_PROTOCOL_TYPE
+	if(TRANSMISSION_PROTOCOL_TYPE == SOCK_STREAM)			// tcp
+	{
+		err = tcp_loop(BACKLOG_QUEUE_SIZE, fd, handler);
+	}
+	else if(TRANSMISSION_PROTOCOL_TYPE == SOCK_DGRAM)		// udp
+	{
+		err = udp_loop(fd, handler);
+	}
+	if (err == -1)
+	{
+		goto end;
+	}
+
+	// phase 6
+	// closing server socket
+	err = close(fd);
+	if (err == -1)
+	{
+		goto end;
+	}
+
+	return 0;
+
+	end: return err;
+}
+
+int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, void (*connection_handler)(int fd))
+{
+	// this is the file discriptor we are gonna del with,
+	// until we get the client connection and then we dela with conn_fd
+	// the client socket file discriptor
+	int fd = server_socket_fd;
+
+	// there can be errors anywhere at any point
+	int err;
+
 	// phase 3
 	// listenning on the socket file discriptor 
 	err = listen(fd, BACKLOG_QUEUE_SIZE);
@@ -68,7 +109,6 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 	// start accepting in loop
 	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
-	int conn_fd;
 	while(1)
 	{
 		// phase 4
@@ -78,9 +118,9 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 		{
 			continue;
 		}
-		conn_fd = err;
+		int conn_fd = err;
 
-		// serve the connection that has been accepted
+		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
 		submit(executor_p, connection_handler_wrapper, get_new_connection_handler_wrapper_input_params(conn_fd, connection_handler));
 	}
 
@@ -90,13 +130,26 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 	wait_for_all_threads_to_complete(executor_p);
 	delete_executor(executor_p);
 
-	// phase 6
-	// closing server socket
-	err = close(fd);
-	if (err == -1)
-	{
-		goto end;
-	}
+	return 0;
+
+	end: return err;
+}
+
+int udp_loop(int server_socket_fd, void (*datagram_handler)(int fd))
+{
+	// this is the file discriptor we are gonna del with,
+	// until we get the client connection and then we dela with conn_fd
+	// the client socket file discriptor
+	int fd = server_socket_fd;
+
+	// there can be errors anywhere at any point
+	int err;
+
+	// we do not assign new threads here in UDP server,
+	// in tcp it is required, because it is connection oriented, hence you get different file discriptor for different clients
+	datagram_handler(server_socket_fd);
+
+	return 0;
 
 	end: return err;
 }
@@ -117,18 +170,18 @@ int serve_tcp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd))
 			connection_handler);
 }
 
-int serve_udp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd))
+int serve_udp_on_ipv4(uint16_t PORT, void (*datagram_handler)(int serv_fd))
 {
 	return serve(AF_INET, SOCK_DGRAM,
 			INADDR_ANY, PORT,
 			DEFAULT_BACKLOG_QUEUE_SIZE,
-			connection_handler);
+			datagram_handler);
 }
 
-int serve_udp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd))
+int serve_udp_on_ipv6(uint16_t PORT, void (*datagram_handler)(int serv_fd))
 {
 	return serve(AF_INET6, SOCK_DGRAM,
 			INADDR_ANY, PORT,
 			DEFAULT_BACKLOG_QUEUE_SIZE,
-			connection_handler);
+			datagram_handler);
 }

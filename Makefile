@@ -4,9 +4,6 @@ LIB_DIR=./lib
 SRC_DIR=./src
 BIN_DIR=./bin
 
-CUTLERY_PATH=../cutlery
-BOOMPAR_PATH=../BoomPar
-
 CC=gcc
 RM=rm -f
 
@@ -21,7 +18,7 @@ ${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/server.o
 	ar rcs $@ ${OBJ_DIR}/*.o
 
 path : 
-	@echo "CONNMAN_PATH=\`pwd\`"
+	@echo "export CONNMAN_PATH=\`pwd\`"
 
 all: ${BIN_DIR}/$(TARGET)
 

@@ -18,7 +18,10 @@ ${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PAT
 	${CC} ${CFLAGS} -c $< -o $@
 
 ${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/server.o
-	ar rcs $@ ${OBJ_DIR}/*.o 
+	ar rcs $@ ${OBJ_DIR}/*.o
+
+path : 
+	@echo "CONNMAN_PATH=\`pwd\`"
 
 all: ${BIN_DIR}/$(TARGET)
 

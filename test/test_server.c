@@ -7,8 +7,8 @@ void datagram_handler(int serv_fd);
 
 int main()
 {
-	//serve_tcp_on_ipv4(6969, connection_handler);
-	serve_udp_on_ipv4(6969, datagram_handler);
+	serve_tcp_on_ipv4(6969, connection_handler);
+	//serve_udp_on_ipv4(6969, datagram_handler);
 	return 0;
 }
 

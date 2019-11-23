@@ -10,14 +10,15 @@
 #include<sys/socket.h> /* socket, connect */
 #include<netinet/in.h> /* struct sockaddr_in, struct sockaddr */
 #include<netdb.h> /* struct hostent, gethostbyname */
-#include<httpobject.h>
-#include<logger.h>
 
+int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, void (*handler)(int fd));
 
-// host = host name or ip address, port is the port number of the server it is running on
-// hrp is pointer to the request to be sent there
-// hrp is the pointer to the pointer to the response
-// it will return status of success or failure
-int retrieveResponse(char* host,int port,HttpRequest* hrq,HttpResponse** hrp);
+int connect_to_tcp_on_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+int connect_to_tcp_on_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+int connect_to_udp_on_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+int connect_to_udp_on_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
 
 #endif

@@ -41,7 +41,7 @@ void connection_handler(int conn_fd)
 	while(1)
 	{
 		int buffreadlength = recv(conn_fd, buffer, 999, 0);
-		if(buffreadlength == -1)
+		if(buffreadlength == -1 || buffreadlength == 0)
 		{
 			break;
 		}
@@ -55,7 +55,11 @@ void connection_handler(int conn_fd)
 		}
 
 		buffreadlength = strlen(buffer);
-		send(conn_fd, buffer, buffreadlength, 0);
+		int buffsentlength = send(conn_fd, buffer, buffreadlength, 0);
+		if(buffsentlength == -1 || buffsentlength == 0)
+		{
+			break;
+		}
 	}
 }
 
@@ -69,6 +73,11 @@ void datagram_handler(int serv_fd)
 	{
 		struct sockaddr_in cliaddr; socklen_t cliaddrlen = sizeof(cliaddr);
 		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, (struct sockaddr *) &cliaddr, &cliaddrlen);
+		if(buffreadlength == -1 || buffreadlength == 0)
+		{
+			break;
+		}
+
 		buffer[buffreadlength] = '\0';
 
 		// process the buffer here
@@ -78,6 +87,10 @@ void datagram_handler(int serv_fd)
 		}
 
 		buffreadlength = strlen(buffer);
-		sendto(serv_fd, buffer, buffreadlength, 0, (struct sockaddr *) &cliaddr, cliaddrlen);
+		int buffsentlength = sendto(serv_fd, buffer, buffreadlength, 0, (struct sockaddr *) &cliaddr, cliaddrlen);
+		if(buffsentlength == -1 || buffsentlength == 0)
+		{
+			break;
+		}
 	}
 }

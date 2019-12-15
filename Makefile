@@ -14,7 +14,7 @@ CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc
 ${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PATH}/inc
 	${CC} ${CFLAGS} -c $< -o $@
 
-${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/server.o ${OBJ_DIR}/client.o
+${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/server.o ${OBJ_DIR}/client.o ${OBJ_DIR}/transaction_client.o
 	ar rcs $@ ${OBJ_DIR}/*.o
 
 path : 

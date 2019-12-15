@@ -20,7 +20,7 @@ int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint3
 
 	// next we try and attempt to connect the socket formed whose file discriptor we have
 	// to connect using the address that we have in sockaddr_in struct in server_addr
-	err = connect(fd,(struct sockaddr *)&server_addr,sizeof(server_addr));
+	err = connect(fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
 	if(err == -1)
 	{
         goto end;

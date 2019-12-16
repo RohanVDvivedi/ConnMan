@@ -9,9 +9,9 @@ RM=rm -f
 
 TARGET=libconnman.a
 
-CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc
+CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc -I${RWLOCK_PATH}/inc
 
-${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PATH}/inc
+${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PATH}/inc ${RWLOCK_PATH}/inc
 	${CC} ${CFLAGS} -c $< -o $@
 
 ${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/server.o ${OBJ_DIR}/client.o ${OBJ_DIR}/transaction_client.o

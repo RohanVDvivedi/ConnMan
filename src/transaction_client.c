@@ -49,7 +49,7 @@ void get_connection_identifier(dstring* identifer, sa_family_t ADDRESS_FAMILY, i
 
 // this is a global hashmap, which will store a mapping from
 // [ tcp or udp or any other protocol ] + [ip_address of the machine] + [port on the machine to talk to] -> queue_shared among the connections for the transactions 
-// effectively dstring* vs queue* (queue of dstring*)
+// effectively dstring* vs queue* (queue of job*)
 hashmap* connection_to_transaction_queue = NULL;
 rwlock* connection_access_protector = NULL;
 

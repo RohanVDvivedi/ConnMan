@@ -9,6 +9,9 @@
 
 // the transaction_client is responsible for executing the transactions made on a connection with multiple threads one for each connection
 
+// yopu have to first call this function, to use the transaction client
+void intialize_transaction_client();
+
 // this function will open an additional of a number of connections, for doing the transactions
 void add_connections(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, int number_of_connections);
 

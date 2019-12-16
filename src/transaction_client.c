@@ -1,25 +1,63 @@
 #include<transaction_client.h>
 
-// this is a global hashmap, which will store a mapping from
-// [ tcp or udp or any other protocol ] + [ip_address of the machine] + [port on the machine to talk to] -> queue_shared among the connections for the transactions 
-hashmap* connection_to_transaction_queue = NULL;
-
-void intialize_transaction_client()
-{
-	// todo
-}
-
 // converts "tcp://127.0.0.1:80" to a randon hash number
 unsigned long long int connection_hash(dstring* connection_identifier)
 {
-	// todo
-	return 0;
+	return connection_identifier->bytes_occupied;
 }
 
 // returns things like "tcp://127.0.0.1:80"
 void get_connection_identifier(dstring* identifer, sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
-	// todo
+	make_dstring_empty(identifer);
+	switch(TRANSMISSION_PROTOCOL_TYPE)
+	{
+		case SOCK_STREAM :
+		{
+			append_to_dstring(identifer, "tcp");
+			break;
+		}
+		case SOCK_DGRAM :
+		{
+			append_to_dstring(identifer, "udp");
+			break;
+		}
+	}
+
+	append_to_dstring(identifer, "://");
+
+	for(int i = 3; i >= 0; i--)
+	{
+		char temp[10] = "";
+		uint32_t ip_part_dec = (SERVER_ADDRESS >> (i * 8)) & (0x000000ff);
+		sprintf(temp, "%u", ip_part_dec);
+		append_to_dstring(identifer, temp);
+
+		if(i != 0)
+		{
+			append_to_dstring(identifer, ".");
+		}
+	}
+
+	append_to_dstring(identifer, ":");
+
+	char temp[10] = "";
+	sprintf(temp, "%u", PORT);
+	append_to_dstring(identifer, temp);
+}
+
+
+// this is a global hashmap, which will store a mapping from
+// [ tcp or udp or any other protocol ] + [ip_address of the machine] + [port on the machine to talk to] -> queue_shared among the connections for the transactions 
+// effectively dstring* vs queue* (queue of dstring*)
+hashmap* connection_to_transaction_queue = NULL;
+
+void intialize_transaction_client()
+{
+	if(connection_to_transaction_queue == NULL)
+	{
+		connection_to_transaction_queue = get_hashmap(10, (unsigned long long int (*)(const void*))(connection_hash), (int (*)(const void* key1, const void* key2))(compare_dstring), ELEMENTS_AS_RED_BLACK_BST);
+	}
 }
 
 

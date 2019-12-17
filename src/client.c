@@ -1,6 +1,35 @@
 #include<client.h>
 
+// returns 0 if successfull, handling of the connection was successfull
 int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, void (*handler)(int fd))
+{
+	int err;
+
+	err = make_connection(ADDRESS_FAMILY, TRANSMISSION_PROTOCOL_TYPE, SERVER_ADDRESS, PORT);
+	if(err == -1)
+    {
+    	goto end;
+    }
+    int fd = err;
+
+	// pass the file discriptor to the handler, so that request can be handled
+	handler(fd);
+
+	err = close_connection(fd);
+	if(err == -1)
+    {
+    	goto end;
+    }
+
+	return 0;
+
+	end: return err;
+}
+
+// the sub functions, that make up the connect_to function
+
+// returns file-discriptor to the socket, through which client connection has been made
+int make_connection(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
 	int err;
 
@@ -26,8 +55,15 @@ int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint3
         goto end;
 	}
 
-	// pass the file discriptor to the handler, so that request can be handled
-	handler(fd);
+	return fd;
+
+	end: return err;
+}
+
+// returns 0, if the connection was closed successfully
+int close_connection(int fd)
+{
+	int err;
 
 	err = close(fd);
 	if(err == -1)
@@ -39,6 +75,8 @@ int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint3
 
 	end: return err;
 }
+
+//
 
 int connect_to_tcp_on_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
 {

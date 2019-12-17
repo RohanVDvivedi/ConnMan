@@ -62,13 +62,13 @@ struct protected_transaction_queue
 
 protected_transaction_queue* get_protected_transaction_queue()
 {
-	// todo
+	
 	return NULL;
 }
 
 void queue_transaction(protected_transaction_queue* pt_queue, dstring* transaction)
 {
-
+	// todo
 }
 
 void delete_protected_transaction_queue(protected_transaction_queue* pt_queue)

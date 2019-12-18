@@ -109,16 +109,35 @@ void* transaction_handler(transaction_handler_params* params)
 		// if not found make_connection, and insewrt the entry
 		if(fd_p == NULL)
 		{
-			fd_p = (int*)malloc(sizeof(int));
-			(*fd_p) = make_connection(conn_grp_p->ADDRESS_FAMILY, conn_grp_p->TRANSMISSION_PROTOCOL_TYPE, conn_grp_p->SERVER_ADDRESS, conn_grp_p->PORT);
+			// try to make a connection
+			int fd = make_connection(conn_grp_p->ADDRESS_FAMILY, conn_grp_p->TRANSMISSION_PROTOCOL_TYPE, conn_grp_p->SERVER_ADDRESS, conn_grp_p->PORT);
 
 			// insert a new entry for thread_id_to_file_discriptor hashmap
-			int* thread_id_key = (int*)malloc(sizeof(int));
-			(*thread_id_key) = thread_id;
-			insert_entry_in_hash(conn_grp_p->thread_id_to_file_discriptor, thread_id_key, fd_p);
+			// we insert entry only if we were successfull in. making a connection
+			if(fd != -1)
+			{
+				fd_p = (int*)malloc(sizeof(int));
+				(*fd_p) = fd;
+
+				int* thread_id_key = (int*)malloc(sizeof(int));
+				(*thread_id_key) = thread_id;
+				insert_entry_in_hash(conn_grp_p->thread_id_to_file_discriptor, thread_id_key, fd_p);
+			}
+			else
+			{
+				fd_p = NULL;
+			}
 		}
 
 		write_unlock(conn_grp_p->thread_id_to_file_discriptor_lock);
+	}
+
+	// the fd_p = NULL check here
+	// is to confirm, if the connection, we tried to make was successfull
+	if(fd_p == NULL)
+	{
+		printf("connection failed\n");
+		goto exit;
 	}
 
 	int fd = (*fd_p);
@@ -147,6 +166,8 @@ void* transaction_handler(transaction_handler_params* params)
 		// close the connection
 		close_connection(fd);
 	}
+
+	exit :;
 
 	// delete params
 	free(params);

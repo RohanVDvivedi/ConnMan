@@ -124,9 +124,9 @@ void* transaction_handler(transaction_handler_params* params)
 	int fd = (*fd_p);
 
 	// execute the transaction
-	int close_connection = params->transaction(fd, params->additional_params);
+	int close_connection_requested = params->transaction(fd, params->additional_params);
 
-	if(close_connection != 0)
+	if(close_connection_requested)
 	{
 		write_lock(conn_grp_p->thread_id_to_file_discriptor_lock);
 

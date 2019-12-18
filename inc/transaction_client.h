@@ -11,8 +11,6 @@
 
 #include<client.h>
 
-#include<job.h>
-
 // the connection_group is responsible for executing the transactions to be made on a uniquely identified connection type with multiple threads one for each connection
 // For this purpose the connection_group takes as input the executor, the connection group is not responsible for handling the executor, it will work on whatever shared executor, you provide it with
 typedef struct connection_group connection_group;
@@ -48,7 +46,7 @@ connection_group* get_connection_group(sa_family_t ADDRESS_FAMILY, int TRANSMISS
 
 // the add_transaction_to function adds a transaction to be performed on a queue
 // the transaction, can be performed by any of the connection, specified by tuple => (protocol, ip, port)
-void add_transaction_to_connection_group(connection_group* conn_grp_p, void (*transaction)(int fd));
+void add_transaction_to_connection_group(connection_group* conn_grp_p, int (*transaction)(int fd, void* additional_params), void* additional_params);
 
 // this function will only delete the resources occupied by the connection_group
 // this function must be called only after all the jobs in the transaction_executor have been completed

@@ -56,8 +56,8 @@ connection_group* get_connection_group(sa_family_t ADDRESS_FAMILY, int TRANSMISS
 
 	conn_grp_p->transaction_executor = transaction_executor;
 
-	conn_grp_p->thread_to_file_discriptor = get_hashmap(10, (unsigned long long int (*)(const void* key))(thread_id_hash), (int (*)(const void* key1, const void* key2))(compare_thread_ids), ELEMENTS_AS_RED_BLACK_BST);
-	conn_grp_p->thread_to_file_discriptor_lock = get_rwlock();
+	conn_grp_p->thread_id_to_file_discriptor = get_hashmap(10, (unsigned long long int (*)(const void* key))(thread_id_hash), (int (*)(const void* key1, const void* key2))(compare_thread_ids), ELEMENTS_AS_RED_BLACK_BST);
+	conn_grp_p->thread_id_to_file_discriptor_lock = get_rwlock();
 
 	conn_grp_p->ADDRESS_FAMILY = ADDRESS_FAMILY;
 	conn_grp_p->TRANSMISSION_PROTOCOL_TYPE = TRANSMISSION_PROTOCOL_TYPE;
@@ -74,5 +74,9 @@ void add_transaction_to_connection_group(connection_group* conn_grp_p, void (*tr
 
 void delete_connection_group(connection_group* conn_grp_p)
 {
+	// delete all the elements of the thread_id_to_file_discriptor hashmap
 
+	delete_hashmap(conn_grp_p->thread_id_to_file_discriptor);
+	delete_rwlock(conn_grp_p->thread_id_to_file_discriptor_lock);
+	free(conn_grp_p);
 }

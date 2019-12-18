@@ -22,8 +22,8 @@ struct connection_group
 
 	// the threads of connection_group, have to remember which connection they were working on
 	// this hashmap is shared among the threads to access, their own file discriptors
-	hashmap* thread_to_file_discriptor;
-	rwlock* thread_to_file_discriptor_lock;
+	hashmap* thread_id_to_file_discriptor;
+	rwlock* thread_id_to_file_discriptor_lock;
 
 	// specifies if the protocol is tcp or ip
 	int TRANSMISSION_PROTOCOL_TYPE;

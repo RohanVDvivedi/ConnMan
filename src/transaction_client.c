@@ -163,10 +163,11 @@ void add_transaction_to_connection_group(connection_group* conn_grp_p, int (*tra
 	submit(conn_grp_p->transaction_executor, (void* (*)(void*))(transaction_handler), params);
 }
 
-void delete_entry_operation(int* key, int* value, const void* ap)
+void delete_entry_operation(int* thread_id_p, int* file_discriptor_p, const void* ap)
 {
-	free(key);
-	free(value);
+	close_connection(*file_discriptor_p);
+	free(thread_id_p);
+	free(file_discriptor_p);
 }
 
 void delete_connection_group(connection_group* conn_grp_p)

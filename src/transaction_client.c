@@ -72,9 +72,16 @@ void add_transaction_to_connection_group(connection_group* conn_grp_p, void (*tr
 
 }
 
+void delete_entry_operation(int* key, int* value, const void* ap)
+{
+	free(key);
+	free(value);
+}
+
 void delete_connection_group(connection_group* conn_grp_p)
 {
 	// delete all the elements of the thread_id_to_file_discriptor hashmap
+	for_each_entry_in_hash(conn_grp_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(delete_entry_operation), NULL);
 
 	delete_hashmap(conn_grp_p->thread_id_to_file_discriptor);
 	delete_rwlock(conn_grp_p->thread_id_to_file_discriptor_lock);

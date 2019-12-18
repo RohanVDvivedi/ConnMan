@@ -20,6 +20,8 @@ struct connection_group
 {
 	executor* transaction_executor;
 
+	// the threads of connection_group, have to remember which connection they were working on
+	// this hashmap is shared among the threads to access, their own file discriptors
 	hashmap* thread_to_file_discriptor;
 	rwlock* thread_to_file_discriptor_lock;
 
@@ -36,6 +38,8 @@ struct connection_group
 	uint16_t PORT;
 };
 
+// returns things like "tcp://127.0.0.1:80"
+void get_connection_group_identifier(dstring* identifer, connection_group* conn_grp_p);
 
 // this function will take an executor service as input parameter, each of whose threads, are responsible for doing the transactions on their individual connections
 // unless their connections break, the connection persists across the transactions

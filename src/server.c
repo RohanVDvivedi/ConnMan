@@ -45,6 +45,16 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 	}
 	int fd = err;
 
+	// we set the SO_REUSEADDR option to 1 here, this enables us to restart the server faster
+	// in general, even after closing a tcp server, the address is still bound to be in use
+	// by setting this option, we also let others to listen on the same address, this breaks security of the socket
+	int enable = 1;
+	err = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+	if(err == -1)
+	{
+		goto end;
+	}
+
 	struct sockaddr_in server_addr;
 	server_addr.sin_family = ADDRESS_FAMILY;
 	server_addr.sin_addr.s_addr = htonl(SERVER_ADDRESS);
@@ -85,6 +95,21 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 	end: return err;
 }
 
+// for a TCP server, it is mandatory for us to stop listenning for new connections
+// , and shutdown gracefully, shutting down the thread executors, 
+// and free up other resources that we might have hoarded, here is an interrupt handler for this
+static volatile int keepServersRunning = 1;
+static volatile int* tcpListenningFd = NULL;
+void intHandler(int dummy) {
+    keepServersRunning = 0;
+    if(tcpListenningFd != NULL)
+    {
+    	// phase 6
+		// closing server socket
+		close(*tcpListenningFd);
+    }
+}
+
 int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, void (*connection_handler)(int fd))
 {
 	// this is the file discriptor we are gonna del with,
@@ -109,7 +134,9 @@ int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, vo
 	// start accepting in loop
 	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
-	while(1)
+	tcpListenningFd = &fd;
+	signal(SIGINT, intHandler); // this will help us to handle ctrl + c interrupt, to shutdown server gracefully
+	while(keepServersRunning)
 	{
 		// phase 4
 		// accept uses backlog queue connection and de-queues them 
@@ -126,7 +153,7 @@ int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, vo
 
 	// shutdown and delete the executor you created for the loop, 
 	// do not shutdown immediately, we shutdown only after the current on going requests have been handled gracefully
-	shutdown_executor(executor_p, 0);
+	shutdown_executor(executor_p, 1);
 	wait_for_all_threads_to_complete(executor_p);
 	delete_executor(executor_p);
 

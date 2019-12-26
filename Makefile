@@ -29,7 +29,7 @@ ${OBJ_DIR} :
 ${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${HEADER_DEPENDENCIES} | ${OBJ_DIR}
 	${CC} ${CFLAGS} -c $< -o $@
 
-# rule to make the banaries directory
+# rule to make the directory for binaries or libraries
 ${BIN_DIR} :
 	mkdir -p $@
 

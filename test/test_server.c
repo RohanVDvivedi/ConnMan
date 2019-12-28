@@ -1,3 +1,4 @@
+#include<connection_group.h>
 #include<server.h>
 
 #include<string.h>
@@ -7,8 +8,15 @@ void datagram_handler(int serv_fd);
 
 int main()
 {
-	serve_tcp_on_ipv4(6969, connection_handler);
-	//serve_udp_on_ipv4(6969, datagram_handler);
+	connection_group* cgp = NULL;
+
+	cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
+	serve(cgp, connection_handler);
+
+	//cgp = get_connection_group_udp_ipv4(0x7f000001, 6969);
+	//serve(cgp, datagram_handler);
+
+	delete_connection_group(cgp);
 	return 0;
 }
 

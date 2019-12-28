@@ -21,7 +21,7 @@ void queue_transaction(transaction_client* tclient, int (*transaction)(int fd, v
 
 // you must call shutdown_transaction_client before delete_transaction_client
 // this method will close all the connections and wait till, all the threads complete
-void shutdown_transaction_client(transaction_client* tclient, int immediately);
+void shutdown_transaction_client(transaction_client* tclient);
 
 // this function releases all the resources acquired by the transaction_client
 void delete_transaction_client(transaction_client* tclient);

@@ -85,9 +85,9 @@ void queue_transaction(transaction_client* tclient, int (*transaction)(int fd, v
 	submit_job_parameters(tclient->manager, params);
 }
 
-void shutdown_transaction_client(transaction_client* tclient, int immediately)
+void shutdown_transaction_client(transaction_client* tclient)
 {
-	close_all_connections_and_wait_for_shutdown(tclient->manager, immediately);
+	close_all_connections_and_wait_for_shutdown(tclient->manager, 1);
 }
 
 void delete_transaction_client(transaction_client* tclient)

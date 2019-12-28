@@ -1,6 +1,13 @@
 #ifndef CONNECTION_THREAD_POOL_MANAGER_H
 #define CONNECTION_THREAD_POOL_MANAGER_H
 
+#include<stdio.h>
+#include<stdlib.h>
+
+#include<executor.h>
+
+#include<connection_mapping.h>
+
 typedef struct connection_thread_pool_manager connection_thread_pool_manager;
 struct connection_thread_pool_manager
 {
@@ -9,7 +16,7 @@ struct connection_thread_pool_manager
 
 	// the handler that will be used by the thread_pool,
 	// this way you will only have to submit the parameters
-	void* handler(void* params);
+	void* (*handler)(void* params);
 
 	// the threads of thread_pool, have to remember which connection they were working on
 	// this hashmap is shared among the threads to access, their own file discriptors
@@ -28,9 +35,10 @@ connection_thread_pool_manager* get_connection_thread_pool_manager(unsigned long
 int submit_job_parameters(connection_thread_pool_manager* manager, void* params);
 
 // you must call this function before calling delete_connection_thread_pool_manager
-void close_all_connections_and_shutdown(connection_thread_pool_manager* manager);
+void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager);
 
-// this function will only delete the resources occupied by the manager
+// this function will only delete the resources occupied by the manager, 
+// you must call void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager), before deletion
 void delete_connection_thread_pool_manager(connection_thread_pool_manager* manager);
 
 #endif

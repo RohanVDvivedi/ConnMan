@@ -6,6 +6,7 @@ connection_thread_pool_manager* get_connection_thread_pool_manager(unsigned long
 	manager->thread_pool = get_executor(CACHED_THREAD_POOL_EXECUTOR, max_connection_count, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS);
 	manager->handler = handler;
 	manager->connection_mapping = get_connection_mapper(max_connection_count);
+	return manager;
 }
 
 int submit_job_parameters(connection_thread_pool_manager* manager, void* params)
@@ -13,15 +14,15 @@ int submit_job_parameters(connection_thread_pool_manager* manager, void* params)
 	return submit(manager->thread_pool, manager->handler, params);
 }
 
-void close_all_connections_and_shutdown(connection_thread_pool_manager* manager)
+void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager)
 {
 	close_all_file_discriptors(manager->connection_mapping);
 	shutdown_executor(manager->thread_pool, 1);
+	wait_for_all_threads_to_complete(manager->thread_pool);
 }
 
-void delete_connection_thread_pool_manager(connection_thread_pool_manager* manager);
+void delete_connection_thread_pool_manager(connection_thread_pool_manager* manager)
 {
-	wait_for_all_threads_to_complete(manager->thread_pool);
 	delete_executor(manager->thread_pool);
 	delete_connection_mapper(manager->connection_mapping);
 	free(manager);

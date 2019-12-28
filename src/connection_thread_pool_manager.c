@@ -36,3 +36,18 @@ void delete_connection_thread_pool_manager(connection_thread_pool_manager* manag
 	delete_connection_mapper(manager->connection_mapping);
 	free(manager);
 }
+
+int get_file_discriptor_for_current_thread(connection_thread_pool_manager* manager)
+{
+	return get_mapping(manager->connection_mapping, pthread_self());
+}
+
+void insert_mapping_with_current_thread(connection_thread_pool_manager* manager, int fd)
+{
+	insert_mapping(manager->connection_mapping, pthread_self(), fd);
+}
+
+int remove_mapping_for_current_thread(connection_thread_pool_manager* manager)
+{
+	return remove_mapping(manager->connection_mapping, pthread_self());
+}

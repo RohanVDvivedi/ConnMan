@@ -22,11 +22,6 @@ connection_mapper* get_connection_mapper(unsigned long long int expected_connect
 	return conn_map_p;
 }
 
-int get_for_self(connection_mapper* conn_map_p)
-{
-	return get_mapping(conn_map_p, pthread_self());
-}
-
 int get_mapping(connection_mapper* conn_map_p, pthread_t tid)
 {
 	read_lock(conn_map_p->thread_id_to_file_discriptor_lock);
@@ -35,49 +30,11 @@ int get_mapping(connection_mapper* conn_map_p, pthread_t tid)
 	return fd;
 }
 
-int get_for_self_UNSAFE(connection_mapper* conn_map_p)
-{
-	return get_mapping_UNSAFE(conn_map_p, pthread_self());
-}
-
-int get_mapping_UNSAFE(connection_mapper* conn_map_p, pthread_t tid)
-{
-	int* fd_p = (int*)find_value_from_hash(conn_map_p->thread_id_to_file_discriptor, &tid);
-	int fd = ((fd_p == NULL) ? (-1) : (*fd_p));
-	return fd;
-}
-
-void insert_self(connection_mapper* conn_map_p, int fd)
-{
-	insert_mapping(conn_map_p, pthread_self(), fd);
-}
-
 void insert_mapping(connection_mapper* conn_map_p, pthread_t tid, int fd)
 {
 	write_lock(conn_map_p->thread_id_to_file_discriptor_lock);
 	insert_mapping_UNSAFE(conn_map_p, tid, fd);
 	write_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
-}
-
-void insert_self_UNSAFE(connection_mapper* conn_map_p, int fd)
-{
-	insert_mapping_UNSAFE(conn_map_p, pthread_self(), fd);
-}
-
-void insert_mapping_UNSAFE(connection_mapper* conn_map_p, pthread_t tid, int fd)
-{
-	int* fd_p = (int*) malloc(sizeof(int));
-	(*fd_p) = fd;
-
-	pthread_t* tid_p = (pthread_t*) malloc(sizeof(pthread_t));
-	(*tid_p) = tid;
-
-	insert_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, tid_p, fd_p);
-}
-
-int remove_self(connection_mapper* conn_map_p)
-{
-	return remove_mapping(conn_map_p, pthread_self());
 }
 
 int remove_mapping(connection_mapper* conn_map_p, pthread_t tid)

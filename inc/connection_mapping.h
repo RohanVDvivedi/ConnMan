@@ -24,20 +24,10 @@ struct connection_mapper
 connection_mapper* get_connection_mapper(unsigned long long int expected_connections);
 
 // returns the file discriptor, that was mapped with the given thread
-int get_for_self(connection_mapper* conn_map_p);
-
-// returns the file discriptor, that was mapped with the given thread
 int get_mapping(connection_mapper* conn_map_p, pthread_t tid);
-
-// insert mapping between the current thread and the given file_discriptor fd
-void insert_self(connection_mapper* conn_map_p, int fd);
 
 // insert mapping between the given thread and the given file_discriptor fd
 void insert_mapping(connection_mapper* conn_map_p, pthread_t tid, int fd);
-
-// remove the mapping to the file_discriptor, of the current thread
-// returns the number of mappings removed from the connection_mapper
-int remove_self(connection_mapper* conn_map_p);
 
 // remove the mapping to the file_discriptor, of the given thread
 // returns the number of mappings removed from the connection_mapper
@@ -51,20 +41,5 @@ void close_all_file_discriptors(connection_mapper* conn_map_p);
 
 // delete the given connection mapping
 void delete_connection_mapper(connection_mapper* conn_map_p);
-
-// below are the UNSAFE versions of the function,
-// they are not thread safe
-
-// returns the file discriptor, that was mapped with the given thread
-int get_for_self_UNSAFE(connection_mapper* conn_map_p);
-
-// returns the file discriptor, that was mapped with the given thread
-int get_mapping_UNSAFE(connection_mapper* conn_map_p, pthread_t tid);
-
-// insert mapping between the current thread and the given file_discriptor fd
-void insert_self_UNSAFE(connection_mapper* conn_map_p, int fd);
-
-// insert mapping between the given thread and the given file_discriptor fd
-void insert_mapping_UNSAFE(connection_mapper* conn_map_p, pthread_t tid, int fd);
 
 #endif

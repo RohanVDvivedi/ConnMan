@@ -44,4 +44,17 @@ void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager*
 // you must call void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager), before deletion
 void delete_connection_thread_pool_manager(connection_thread_pool_manager* manager);
 
+// these are the methods of the connection thread pool manager,
+// that will do the task for mapping of threads, when called by corresponding threads
+
+// returns the file discriptor, that was mapped with the given thread
+int get_file_discriptor_for_current_thread(connection_thread_pool_manager* manager);
+
+// insert mapping between the current thread and the given file_discriptor fd
+void insert_mapping_with_current_thread(connection_thread_pool_manager* manager, int fd);
+
+// remove the mapping to the file_discriptor, of the current thread, that is in use
+// returns the number of mappings removed from the connection_mapper
+int remove_mapping_for_current_thread(connection_thread_pool_manager* manager);
+
 #endif

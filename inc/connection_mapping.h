@@ -16,6 +16,12 @@ struct connection_mapper
 
 connection_mapper* get_connection_mapper();
 
+// returns the file discriptor, that was mapped with the given thread
+int get(connection_mapper* conn_map_p);
+
+// returns the file discriptor, that was mapped with the given thread
+int get_mapping(connection_mapper* conn_map_p, pthread_t tid);
+
 // insert mapping between the current thread and the given file_discriptor fd
 void insert(connection_mapper* conn_map_p, int fd);
 
@@ -23,15 +29,17 @@ void insert(connection_mapper* conn_map_p, int fd);
 void insert_mapping(connection_mapper* conn_map_p, pthread_t tid, int fd);
 
 // remove the mapping to the file_discriptor, of the current thread
-void remove(connection_mapper* conn_map_p);
+// returns the number of mappings removed from the connection_mapper
+int remove(connection_mapper* conn_map_p);
 
 // remove the mapping to the file_discriptor, of the given thread
-void remove_mapping(connection_mapper* conn_map_p, pthread_t tid);
+// returns the number of mappings removed from the connection_mapper
+int remove_mapping(connection_mapper* conn_map_p, pthread_t tid);
 
 // removes all the mappings from the connection_mapper
 void remove_all_mapping(connection_mapper* conn_map_p);
 
-// 
+// close all the file discriptors that are present in the connection_mapper
 void close_all_file_discriptors(connection_mapper* conn_map_p);
 
 // delete the given connection mapping

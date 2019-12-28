@@ -14,10 +14,10 @@ int compare_thread_ids(const pthread_t* a, const pthread_t* b)
 
 // utility functions for the hashmap used in connection_mapping <<<<----
 
-connection_mapper* get_connection_mapper()
+connection_mapper* get_connection_mapper(unsigned long long int expected_connections)
 {
 	connection_mapper* conn_map_p = (connection_mapper*)malloc(sizeof(connection_mapper));
-	conn_map_p->thread_id_to_file_discriptor = get_hashmap(10, (unsigned long long int (*)(const void*))(thread_id_hash), (int (*)(const void*, const void*))(compare_thread_ids), ELEMENTS_AS_RED_BLACK_BST);
+	conn_map_p->thread_id_to_file_discriptor = get_hashmap(((expected_connections/3) + 5), (unsigned long long int (*)(const void*))(thread_id_hash), (int (*)(const void*, const void*))(compare_thread_ids), ELEMENTS_AS_RED_BLACK_BST);
 	conn_map_p->thread_id_to_file_discriptor_lock = get_rwlock();
 	return conn_map_p;
 }

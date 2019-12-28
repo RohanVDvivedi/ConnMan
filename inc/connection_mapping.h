@@ -21,7 +21,7 @@ struct connection_mapper
 	rwlock* thread_id_to_file_discriptor_lock;
 };
 
-connection_mapper* get_connection_mapper();
+connection_mapper* get_connection_mapper(unsigned long long int expected_connections);
 
 // returns the file discriptor, that was mapped with the given thread
 int get_for_self(connection_mapper* conn_map_p);

@@ -1,6 +1,13 @@
 #ifndef CONNECTION_MAPPING_H
 #define CONNECTION_MAPPING_H
 
+#include<unistd.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+#include<hashmap.h>
+#include<rwlock.h>
+
 // the connection_mapper is a construct, which stores mapping from
 // a thread to a file discriptor, this mapping will help us remember which thread
 // is responsible for serving what connection
@@ -17,20 +24,20 @@ struct connection_mapper
 connection_mapper* get_connection_mapper();
 
 // returns the file discriptor, that was mapped with the given thread
-int get(connection_mapper* conn_map_p);
+int get_for_self(connection_mapper* conn_map_p);
 
 // returns the file discriptor, that was mapped with the given thread
 int get_mapping(connection_mapper* conn_map_p, pthread_t tid);
 
 // insert mapping between the current thread and the given file_discriptor fd
-void insert(connection_mapper* conn_map_p, int fd);
+void insert_self(connection_mapper* conn_map_p, int fd);
 
 // insert mapping between the given thread and the given file_discriptor fd
 void insert_mapping(connection_mapper* conn_map_p, pthread_t tid, int fd);
 
 // remove the mapping to the file_discriptor, of the current thread
 // returns the number of mappings removed from the connection_mapper
-int remove(connection_mapper* conn_map_p);
+int remove_self(connection_mapper* conn_map_p);
 
 // remove the mapping to the file_discriptor, of the given thread
 // returns the number of mappings removed from the connection_mapper

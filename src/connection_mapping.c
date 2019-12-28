@@ -16,11 +16,13 @@ int compare_thread_ids(const pthread_t* a, const pthread_t* b)
 
 connection_mapper* get_connection_mapper()
 {
-	conn_grp_p->thread_id_to_file_discriptor = get_hashmap(10, (unsigned long long int (*)(const void*))(thread_id_hash), (int (*)(const void*, const void*))(compare_thread_ids), ELEMENTS_AS_RED_BLACK_BST);
-	conn_grp_p->thread_id_to_file_discriptor_lock = get_rwlock();
+	connection_mapper* conn_map_p = (connection_mapper*)malloc(sizeof(connection_mapper));
+	conn_map_p->thread_id_to_file_discriptor = get_hashmap(10, (unsigned long long int (*)(const void*))(thread_id_hash), (int (*)(const void*, const void*))(compare_thread_ids), ELEMENTS_AS_RED_BLACK_BST);
+	conn_map_p->thread_id_to_file_discriptor_lock = get_rwlock();
+	return conn_map_p;
 }
 
-int get(connection_mapper* conn_map_p)
+int get_for_self(connection_mapper* conn_map_p)
 {
 	return get_mapping(conn_map_p, pthread_self());
 }
@@ -29,14 +31,14 @@ int get_mapping(connection_mapper* conn_map_p, pthread_t tid)
 {
 	read_lock(conn_map_p->thread_id_to_file_discriptor_lock);
 
-	int fd = *(int*)find_value_from_hash(conn_grp_p->thread_id_to_file_discriptor, &tid);
+	int fd = *(int*)find_value_from_hash(conn_map_p->thread_id_to_file_discriptor, &tid);
 
 	read_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
 
 	return fd;
 }
 
-void insert(connection_mapper* conn_map_p, int fd)
+void insert_self(connection_mapper* conn_map_p, int fd)
 {
 	insert_mapping(conn_map_p, pthread_self(), fd);
 }
@@ -51,12 +53,12 @@ void insert_mapping(connection_mapper* conn_map_p, pthread_t tid, int fd)
 	pthread_t* tid_p = (pthread_t*) malloc(sizeof(pthread_t));
 	(*tid_p) = tid;
 
-	insert_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, tid_P, fd_p);
+	insert_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, tid_p, fd_p);
 
 	write_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
 }
 
-int remove_mapping(connection_mapper* conn_map_p)
+int remove_self(connection_mapper* conn_map_p)
 {
 	return remove_mapping(conn_map_p, pthread_self());
 }
@@ -65,13 +67,15 @@ int remove_mapping(connection_mapper* conn_map_p, pthread_t tid)
 {
 	write_lock(conn_map_p->thread_id_to_file_discriptor_lock);
 
-	int entry_deleted = delete_entry_from_hash(conn_grp_p->thread_id_to_file_discriptor, &thread_id, &rkey, &rvalue);
+	const void* rkey = NULL;
+	const void* rvalue = NULL;
+	int entry_deleted = delete_entry_from_hash(conn_map_p->thread_id_to_file_discriptor, &tid, &rkey, &rvalue);
 	if(entry_deleted)
 	{
 		if(rkey != NULL)
-		{free((void*)rkey);}
+		{free((pthread_t*)rkey);}
 		if(rvalue != NULL)
-		{free((void*)rvalue);}
+		{free((int*)rvalue);}
 	}
 
 	write_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
@@ -79,31 +83,31 @@ int remove_mapping(connection_mapper* conn_map_p, pthread_t tid)
 	return entry_deleted;
 }
 
-void delete_entry_operation(pthread_t* thread_id_p, int* file_discriptor_p, const void* ap)
+void delete_entry_operation(pthread_t* tid_p, int* fd_p, const void* ap)
 {
-	free(thread_id_p);
-	free(file_discriptor_p);
+	free(tid_p);
+	free(fd_p);
 }
 
 void delete_all_mappings(connection_mapper* conn_map_p)
 {
-	for_each_entry_in_hash(conn_grp_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(delete_entry_operation), NULL);
+	for_each_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(delete_entry_operation), NULL);
 }
 
-void close_entry_operation(pthread_t* thread_id_p, int* file_discriptor_p, const void* ap)
+void close_entry_operation(pthread_t* tid_p, int* fd_p, const void* ap)
 {
-	close(*tid_p);
+	close(*fd_p);
 }
 
 void close_all_file_discriptors(connection_mapper* conn_map_p)
 {
-	for_each_entry_in_hash(conn_grp_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(close_entry_operation), NULL);
+	for_each_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(close_entry_operation), NULL);
 }
 
 void delete_connection_mapper(connection_mapper* conn_map_p)
 {
 	// delete all the elements of the thread_id_to_file_discriptor hashmap
 	delete_all_mappings(conn_map_p);
-	delete_hashmap(conn_grp_p->thread_id_to_file_discriptor);
-	delete_rwlock(conn_grp_p->thread_id_to_file_discriptor_lock);
+	delete_hashmap(conn_map_p->thread_id_to_file_discriptor);
+	delete_rwlock(conn_map_p->thread_id_to_file_discriptor_lock);
 }

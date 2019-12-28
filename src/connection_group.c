@@ -61,3 +61,25 @@ void delete_connection_group(connection_group* conn_grp_p)
 	delete_connection_mapper(conn_grp_p->connection_mapping);
 	free(conn_grp_p);
 }
+
+// fast utils
+
+connection_group* get_connection_group_tcp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return get_connection_group(SOCK_STREAM, AF_INET, SERVER_ADDRESS, PORT, NULL);
+}
+
+connection_group* get_connection_group_tcp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return get_connection_group(SOCK_STREAM, AF_INET6, SERVER_ADDRESS, PORT, NULL);
+}
+
+connection_group* get_connection_group_udp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return get_connection_group(SOCK_DGRAM, AF_INET, SERVER_ADDRESS, PORT, NULL);
+}
+
+connection_group* get_connection_group_udp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+{
+	return get_connection_group(SOCK_DGRAM, AF_INET6, SERVER_ADDRESS, PORT, NULL);
+}

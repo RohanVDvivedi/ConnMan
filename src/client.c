@@ -1,11 +1,11 @@
 #include<client.h>
 
 // returns 0 if successfull, handling of the connection was successfull
-int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, void (*handler)(int fd))
+int connect_to(int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, uint16_t PORT, void (*handler)(int fd))
 {
 	int err;
 
-	err = make_connection(ADDRESS_FAMILY, TRANSMISSION_PROTOCOL_TYPE, SERVER_ADDRESS, PORT);
+	err = make_connection(TRANSMISSION_PROTOCOL_TYPE, ADDRESS_FAMILY, SERVER_ADDRESS, PORT);
 	if(err == -1)
     {
     	goto end;
@@ -29,7 +29,7 @@ int connect_to(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint3
 // the sub functions, that make up the connect_to function
 
 // returns file-discriptor to the socket, through which client connection has been made
-int make_connection(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT)
+int make_connection(int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
 	int err;
 
@@ -74,34 +74,4 @@ int close_connection(int fd)
 	return 0;
 
 	end: return err;
-}
-
-//
-
-int connect_to_tcp_on_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
-{
-	return connect_to(AF_INET, SOCK_STREAM,
-			SERVER_ADDRESS, PORT,
-			connection_handler);
-}
-
-int connect_to_tcp_on_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
-{
-	return connect_to(AF_INET6, SOCK_STREAM,
-			SERVER_ADDRESS, PORT,
-			connection_handler);
-}
-
-int connect_to_udp_on_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
-{
-	return connect_to(AF_INET, SOCK_DGRAM,
-			SERVER_ADDRESS, PORT,
-			connection_handler);
-}
-
-int connect_to_udp_on_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
-{
-	return connect_to(AF_INET6, SOCK_DGRAM,
-			SERVER_ADDRESS, PORT,
-			connection_handler);
 }

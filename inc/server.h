@@ -41,19 +41,6 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 // it closes the file discriptor, hence the connection, here the parameter fd is the file discriptor of the listenning socket
 int server_stop(int fd);
 
-
-/*
-	above function is very complicated with a log of parameters, so here below are a few smaller function for the server
-*/
-
-int serve_tcp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd));
-
-int serve_tcp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd));
-
-int serve_udp_on_ipv4(uint16_t PORT, void (*datagram_handler)(int serv_fd));
-
-int serve_udp_on_ipv6(uint16_t PORT, void (*datagram_handler)(int serv_fd));
-
 #endif
 
 // Examples for 

@@ -186,27 +186,3 @@ int udp_loop(int server_socket_fd, void (*datagram_handler)(int fd))
 
 	end: return err;
 }
-
-int serve_tcp_on_ipv4(uint16_t PORT, void (*connection_handler)(int conn_fd))
-{
-	return serve_default(AF_INET, SOCK_STREAM,
-			INADDR_ANY, PORT, connection_handler);
-}
-
-int serve_tcp_on_ipv6(uint16_t PORT, void (*connection_handler)(int conn_fd))
-{
-	return serve_default(AF_INET6, SOCK_STREAM,
-			INADDR_ANY, PORT, connection_handler);
-}
-
-int serve_udp_on_ipv4(uint16_t PORT, void (*datagram_handler)(int serv_fd))
-{
-	return serve_default(AF_INET, SOCK_DGRAM,
-			INADDR_ANY, PORT, datagram_handler);
-}
-
-int serve_udp_on_ipv6(uint16_t PORT, void (*datagram_handler)(int serv_fd))
-{
-	return serve_default(AF_INET6, SOCK_DGRAM,
-			INADDR_ANY, PORT, datagram_handler);
-}

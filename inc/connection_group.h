@@ -18,7 +18,7 @@ struct connection_group
 	int TRANSMISSION_PROTOCOL_TYPE;
 
 	// ADDRESS_FAMILY specifies whether, it is an ipv4 or ipv6 connection
-	sa_family_t ADDRESS_FAMILY; // AF_INET or AF_INET
+	sa_family_t ADDRESS_FAMILY; // AF_INET or AF_INET6
 
 	// ip address as a 32 bit integer, in host byte order
 	uint32_t SERVER_ADDRESS;
@@ -45,5 +45,15 @@ connection_group* get_connection_group(int TRANSMISSION_PROTOCOL_TYPE, sa_family
 // this function will only delete the resources occupied by the connection_group
 // this function must be called only after all the jobs in the transaction_executor have been completed
 void delete_connection_group(connection_group* conn_grp_p);
+
+// fast utils
+
+connection_group* get_connection_group_tcp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+connection_group* get_connection_group_tcp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+connection_group* get_connection_group_udp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
+
+connection_group* get_connection_group_udp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd));
 
 #endif

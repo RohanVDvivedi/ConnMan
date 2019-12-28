@@ -54,7 +54,7 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
 
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
-	connection_thread_pool_manager* manager = get_connection_thread_pool_manager(DEFAULT_MAXIMUM_CONNECTIONS, handler_wrapper);
+	connection_thread_pool_manager* manager = get_cached_connection_thread_pool_manager(DEFAULT_MAXIMUM_CONNECTIONS, handler_wrapper);
 	while(1)
 	{
 		// phase 4

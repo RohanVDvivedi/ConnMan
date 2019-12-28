@@ -27,8 +27,11 @@ struct connection_thread_pool_manager
 // in the cached thread_pool if the thread does not receive a job in this time period, it will terminate itself
 // this is not applicable for fixed thread pools
 
-// this function will create an executor, each of whose threads, are responsible for handling the connections individually
-connection_thread_pool_manager* get_connection_thread_pool_manager(unsigned long long int max_connection_count, void* (*handler)(void* params));
+// this function will create a CACHED_THREAD_POOL_EXECUTOR executor, each of whose threads, are responsible for handling the connections individually
+connection_thread_pool_manager* get_cached_connection_thread_pool_manager(unsigned long long int max_connection_count, void* (*handler)(void* params));
+
+// this function will create a FIXED_THREAD_COUNT_EXECUTOR executor, each of whose threads, are responsible for handling the connections individually
+connection_thread_pool_manager* get_fixed_connection_thread_pool_manager(unsigned long long int connection_count, void* (*handler)(void* params));
 
 // you may not call this function, after calling close_all_connections_and_shutdown
 // returns 1 if the job was submitted, else 0

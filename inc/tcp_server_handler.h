@@ -1,9 +1,8 @@
 #ifndef TCP_HANDLER_H
 #define TCP_HANDLER_H
 
-#include<sys/types.h>
-#include<sys/socket.h>
 #include<netinet/in.h>
+
 #include<errno.h>
 
 #include<connection_thread_pool_manager.h>

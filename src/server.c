@@ -137,7 +137,7 @@ int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, vo
 	}
 
 	// we set up an executor to handle every accepted connection on other threads as a job
-	executor* executor_p = get_executor(CACHED_THREAD_POOL_EXECUTOR, MAXIMUM_THREADS_IO_HANDLER, NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS); 
+	executor* executor_p = get_executor(CACHED_THREAD_POOL_EXECUTOR, DEFAULT_MAXIMUM_THREADS_IO_HANDLER, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS); 
 	
 	// start accepting in loop
 	struct sockaddr_in client_addr;

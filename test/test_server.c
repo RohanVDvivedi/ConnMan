@@ -3,12 +3,14 @@
 
 #include<string.h>
 
-int listen_fd = -1;
+volatile int listen_fd = -1;
 
 void intHandler(int dummy)
 {
+	printf("interrupt ctrl + c\n");
 	if(listen_fd != -1)
 	{
+		printf("closing listenning socket\n");
     	server_stop(listen_fd);
     }
 }
@@ -23,7 +25,7 @@ int main()
 	connection_group* cgp = NULL;
 
 	cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
-	listen_fd = serve(cgp, connection_handler);
+	serve(cgp, connection_handler, &listen_fd);
 
 	//cgp = get_connection_group_udp_ipv4(0x7f000001, 6969);
 	//serve(cgp, datagram_handler);
@@ -58,9 +60,12 @@ void connection_handler(int conn_fd)
 	printf("TCP Connection : %d\n", conn_fd);
 	char buffer[1000];
 
+	int buffreadlength = -1;
+	int buffsentlength = -1;
+
 	while(1)
 	{
-		int buffreadlength = recv(conn_fd, buffer, 999, 0);
+		buffreadlength = recv(conn_fd, buffer, 999, 0);
 		if(buffreadlength == -1 || buffreadlength == 0)
 		{
 			break;
@@ -75,7 +80,7 @@ void connection_handler(int conn_fd)
 		}
 
 		buffreadlength = strlen(buffer);
-		int buffsentlength = send(conn_fd, buffer, buffreadlength, 0);
+		buffsentlength = send(conn_fd, buffer, buffreadlength, 0);
 		if(buffsentlength == -1 || buffsentlength == 0)
 		{
 			break;

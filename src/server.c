@@ -1,6 +1,6 @@
 #include<server.h>
 
-int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd))
+int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), volatile int* listen_fd_p)
 {
 	int err;
 
@@ -12,6 +12,7 @@ int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd))
 		goto end;
 	}
 	int listen_fd = err;
+	(*listen_fd_p) = err;
 
 	struct sockaddr_in server_addr;
 	server_addr.sin_family = conn_grp_p->ADDRESS_FAMILY;
@@ -44,7 +45,7 @@ int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd))
 		goto end;
 	}
 
-	return listen_fd;
+	return 0;
 	end: return err;
 }
 

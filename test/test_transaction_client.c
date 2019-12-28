@@ -6,16 +6,16 @@ int main()
 {
 	connection_group* cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
 
-	transaction_client tcli = get_transaction_client(cgp, 3);
+	transaction_client* tcli = get_transaction_client(cgp, 3);
 
-	add_transaction_to_connection_group(tcli, transaction, get_dstring("hello\r\n", 10));
-	add_transaction_to_connection_group(tcli, transaction, get_dstring("ping\r\n", 10));
-	add_transaction_to_connection_group(tcli, transaction, get_dstring("pong\r\n", 10));
-	add_transaction_to_connection_group(tcli, transaction, get_dstring("world\r\n", 10));
-	add_transaction_to_connection_group(tcli, transaction, get_dstring("hey !! man\r\n", 10));
-	add_transaction_to_connection_group(tcli, transaction, get_dstring("This is main\r\n", 10));
+	queue_transaction(tcli, transaction, get_dstring("hello\r\n", 10));
+	queue_transaction(tcli, transaction, get_dstring("ping\r\n", 10));
+	queue_transaction(tcli, transaction, get_dstring("pong\r\n", 10));
+	queue_transaction(tcli, transaction, get_dstring("world\r\n", 10));
+	queue_transaction(tcli, transaction, get_dstring("hey !! man\r\n", 10));
+	queue_transaction(tcli, transaction, get_dstring("This is main\r\n", 10));
 
-	shutdown_transaction_client(tcli);
+	shutdown_transaction_client(tcli, 0);
 	delete_transaction_client(tcli);
 
 	delete_connection_group(cgp);

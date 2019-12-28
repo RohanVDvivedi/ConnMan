@@ -76,7 +76,7 @@ void* transaction_handler(transaction_handler_params* params)
 	return NULL;
 }
 
-void add_transaction_to_connection_group(transaction_client* tclient, int (*transaction)(int fd, void* additional_params), void* additional_params)
+void queue_transaction(transaction_client* tclient, int (*transaction)(int fd, void* additional_params), void* additional_params)
 {
 	transaction_handler_params* params = (transaction_handler_params*) malloc(sizeof(transaction_handler_params));
 	params->tclient = tclient;

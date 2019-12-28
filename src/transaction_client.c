@@ -47,7 +47,7 @@ void* transaction_handler(transaction_handler_params* params)
 		if(fd == -1)
 		{
 			// try to make a connection
-			fd = make_connection(params->tclient->conn_group->TRANSMISSION_PROTOCOL_TYPE, params->tclient->conn_group->ADDRESS_FAMILY, params->tclient->conn_group->SERVER_ADDRESS, params->tclient->conn_group->PORT);
+			fd = make_connection(params->tclient->conn_group);
 
 			// insert a new entry for thread_id_to_file_discriptor hashmap
 			// we insert entry only if we were successfull in. making a connection

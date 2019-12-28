@@ -32,32 +32,21 @@ void* transaction_handler(transaction_handler_params* params)
 {
 	int fd = -1;
 
-	// find fd_p, the file_discriptor in the hashmap (thread_id_to_file_discriptor)
-	fd = get_for_self(params->tclient->manager->connection_mapping);
+	// find fd_p, that can be used by the current thread
+	fd = get_file_discriptor_for_current_thread(params->tclient->manager);
 
-	// make connection, and insert entry, if the connection does not exist
+	// if not found make_connection, and insert the entry
 	if(fd == -1)
 	{
-		write_lock(params->tclient->manager->connection_mapping->thread_id_to_file_discriptor_lock);
+		// try to make a connection
+		fd = make_connection(params->tclient->conn_group);
 
-		// find fd_p, the file_discriptor in the hashmap (thread_id_to_file_discriptor)
-		fd = get_for_self_UNSAFE(params->tclient->manager->connection_mapping);
-
-		// if not found make_connection, and insewrt the entry
-		if(fd == -1)
+		// insert a new entry for thread_id_to_file_discriptor hashmap
+		// we insert entry only if we were successfull in. making a connection
+		if(fd != -1)
 		{
-			// try to make a connection
-			fd = make_connection(params->tclient->conn_group);
-
-			// insert a new entry for thread_id_to_file_discriptor hashmap
-			// we insert entry only if we were successfull in. making a connection
-			if(fd != -1)
-			{
-				insert_self_UNSAFE(params->tclient->manager->connection_mapping, fd);
-			}
+			insert_mapping_with_current_thread(params->tclient->manager, fd);
 		}
-
-		write_unlock(params->tclient->manager->connection_mapping->thread_id_to_file_discriptor_lock);
 	}
 
 	// the fd_p = NULL check here
@@ -73,7 +62,7 @@ void* transaction_handler(transaction_handler_params* params)
 
 	if(close_connection_requested)
 	{
-		remove_self(params->tclient->manager->connection_mapping);
+		remove_mapping_for_current_thread(params->tclient->manager);
 
 		// close the connection
 		close_connection(fd);

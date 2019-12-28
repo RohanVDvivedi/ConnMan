@@ -1,23 +1,23 @@
 #include<server.h>
 
-typedef struct connection_handler_wrapper_input_params connection_handler_wrapper_input_params;
-struct connection_handler_wrapper_input_params
+typedef struct handler_wrapper_input_params handler_wrapper_input_params;
+struct handler_wrapper_input_params
 {
 	int conn_fd;
-	void (*connection_handler)(int conn_fd);
+	void (*handler)(int conn_fd);
 };
 
-connection_handler_wrapper_input_params* get_new_connection_handler_wrapper_input_params(int conn_fd, void (*connection_handler)(int conn_fd))
+handler_wrapper_input_params* get_new_handler_wrapper_input_params(int conn_fd, void (*handler)(int conn_fd))
 {
-	connection_handler_wrapper_input_params* connection_handler_wrapper_input_params_p = (connection_handler_wrapper_input_params*)malloc(sizeof(connection_handler_wrapper_input_params));
-	connection_handler_wrapper_input_params_p->conn_fd = conn_fd;
-	connection_handler_wrapper_input_params_p->connection_handler = connection_handler;
-	return connection_handler_wrapper_input_params_p;
+	handler_wrapper_input_params* handler_wrapper_input_params_p = (handler_wrapper_input_params*)malloc(sizeof(handler_wrapper_input_params));
+	handler_wrapper_input_params_p->conn_fd = conn_fd;
+	handler_wrapper_input_params_p->handler = chandler;
+	return handler_wrapper_input_params_p;
 }
 
-void* connection_handler_wrapper(void* connection_handler_wrapper_input_params_v_p)
+void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 {
-	connection_handler_wrapper_input_params* handler_data = ((connection_handler_wrapper_input_params*)connection_handler_wrapper_input_params_v_p);
+	handler_wrapper_input_params* handler_data = ((handler_wrapper_input_params*)handler_wrapper_input_params_v_p);
 	handler_data->connection_handler(handler_data->conn_fd);
 
 	// phase 5
@@ -28,49 +28,49 @@ void* connection_handler_wrapper(void* connection_handler_wrapper_input_params_v
 	return NULL;
 }
 
-int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, void (*connection_handler)(int fd));
+int tcp_loop(int server_socket_fd, void (*connection_handler)(int fd));
 
 int udp_loop(int server_socket_fd, void (*datagram_handler)(int fd));
 
-int serve_default(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, void (*handler)(int fd))
+server* serve(connection_group* conn_grp_p, void (*handler)(int conn_fd))
 {
-	return serve(ADDRESS_FAMILY, TRANSMISSION_PROTOCOL_TYPE, SERVER_ADDRESS, PORT, DEFAULT_BACKLOG_QUEUE_SIZE, handler);
-}
+	server* server_p = (server*) malloc(sizeof(server));
+	server_p->group = conn_grp_p;
+	server_p->handler = handler;
 
-int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t SERVER_ADDRESS, uint16_t PORT, unsigned long long int BACKLOG_QUEUE_SIZE, void (*handler)(int fd))
-{
 	int err;
 
 	// phase 1
 	// file discriptor to socket
-	err = socket(ADDRESS_FAMILY, TRANSMISSION_PROTOCOL_TYPE, 0);
+	err = socket(server_p->group->ADDRESS_FAMILY, server_p->group->TRANSMISSION_PROTOCOL_TYPE, 0);
 	if(err == -1)
 	{
 		goto end;
 	}
-	int fd = err;
+	server_p->listenfd = err;
 
 	struct sockaddr_in server_addr;
-	server_addr.sin_family = ADDRESS_FAMILY;
-	server_addr.sin_addr.s_addr = htonl(SERVER_ADDRESS);
-	server_addr.sin_port = htons(PORT);
+	server_addr.sin_family = server_p->group->ADDRESS_FAMILY;
+	server_addr.sin_addr.s_addr = htonl(server_p->group->SERVER_ADDRESS);
+	server_addr.sin_port = htons(server_p->group->PORT);
 
 	// phase 2
 	// bind server address struct with the file discriptor
-	err = bind(fd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+	err = bind(server_p->listenfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
 	if(err == -1)
 	{
 		goto end;
 	}
 
 	// go to respective function based on TRANSMISSION_PROTOCOL_TYPE
-	if(TRANSMISSION_PROTOCOL_TYPE == SOCK_STREAM)			// tcp
+	if(server_p->group->TRANSMISSION_PROTOCOL_TYPE == SOCK_STREAM)			// tcp
 	{
-		err = tcp_loop(BACKLOG_QUEUE_SIZE, fd, handler);
+		server_p->keepTcpServerListenning = 1;
+		err = tcp_loop(server_p);
 	}
-	else if(TRANSMISSION_PROTOCOL_TYPE == SOCK_DGRAM)		// udp
+	else if(server_p->group->TRANSMISSION_PROTOCOL_TYPE == SOCK_DGRAM)		// udp
 	{
-		err = udp_loop(fd, handler);
+		err = udp_loop(server_p);
 	}
 	else
 	{
@@ -81,68 +81,41 @@ int serve(sa_family_t ADDRESS_FAMILY, int TRANSMISSION_PROTOCOL_TYPE, uint32_t S
 		goto end;
 	}
 
-	return fd;
-
-	end: return err;
+	return server_p;
+	free(server_p);
+	end: return NULL;
 }
 
-int server_stop(int fd)
+int server_stop(server* server_p)
 {
-	int err;
-
 	// phase 6
 	// closing server socket
-	err = close(fd);
+	int err = close(server_p->listenfd);
+	free(server_p);
 	if (err == -1)
 	{
 		goto end;
 	}
-
 	return 0;
-
 	end: return err;
 }
 
-// for a TCP server, it is mandatory for us to stop listenning for new connections
-// , and shutdown gracefully, shutting down the thread executors, 
-// and free up other resources that we might have hoarded, here is an interrupt handler for this
-static volatile int keepServersRunning = 1;
-static volatile int* tcpListenningFd = NULL;
-void intHandler(int dummy) {
-    keepServersRunning = 0;
-    if(tcpListenningFd != NULL)
-    {
-    	// phase 6
-		// closing server socket
-		close(*tcpListenningFd);
-    }
-}
-
-int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, void (*connection_handler)(int fd))
+int tcp_loop(server* server_p)
 {
-	// this is the file discriptor we are gonna deal with,
-	// until we get the client connection and then we dela with conn_fd
-	// the client socket file discriptor
-	int fd = server_socket_fd;
-
 	// there can be errors anywhere at any point
 	int err;
 
 	// phase 3
 	// listenning on the socket file discriptor 
-	err = listen(fd, BACKLOG_QUEUE_SIZE);
+	err = listen(server_p->listenfd, DEFAULT_BACKLOG_QUEUE_SIZE);
 	if (err == -1)
 	{
 		goto end;
 	}
 
-	// we set up an executor to handle every accepted connection on other threads as a job
-	executor* executor_p = get_executor(CACHED_THREAD_POOL_EXECUTOR, DEFAULT_MAXIMUM_THREADS_IO_HANDLER, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS); 
-	
 	// start accepting in loop
-	struct sockaddr_in client_addr;
-	socklen_t client_len = sizeof(client_addr);
-	while(keepServersRunning)
+	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
+	while(server_p->keepTcpServerListenning)
 	{
 		// phase 4
 		// accept uses backlog queue connection and de-queues them 
@@ -154,33 +127,8 @@ int tcp_loop(unsigned long long int BACKLOG_QUEUE_SIZE, int server_socket_fd, vo
 		int conn_fd = err;
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
-		submit(executor_p, connection_handler_wrapper, get_new_connection_handler_wrapper_input_params(conn_fd, connection_handler));
+		submit(server_p->group->thread_pool, connection_handler_wrapper, get_new_connection_handler_wrapper_input_params(conn_fd, server_p->handler));
 	}
-
-	// shutdown and delete the executor you created for the loop, 
-	// do not shutdown immediately, we shutdown only after the current on going requests have been handled gracefully
-	shutdown_executor(executor_p, 1);
-	wait_for_all_threads_to_complete(executor_p);
-	delete_executor(executor_p);
-
-	return 0;
-
-	end: return err;
-}
-
-int udp_loop(int server_socket_fd, void (*datagram_handler)(int fd))
-{
-	// this is the file discriptor we are gonna del with,
-	// until we get the client connection and then we dela with conn_fd
-	// the client socket file discriptor
-	int fd = server_socket_fd;
-
-	// there can be errors anywhere at any point
-	int err;
-
-	// we do not assign new threads here in UDP server,
-	// in tcp it is required, because it is connection oriented, hence you get different file discriptor for different clients
-	datagram_handler(fd);
 
 	return 0;
 

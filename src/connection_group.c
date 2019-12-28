@@ -40,46 +40,39 @@ void get_connection_group_identifier(dstring* identifer, connection_group* conn_
 	append_to_dstring(identifer, temp);
 }
 
-connection_group* get_connection_group(int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, uint16_t PORT, executor* thread_pool)
+connection_group* get_connection_group(int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
 	connection_group* conn_grp_p = (connection_group*) malloc(sizeof(connection_group));
-
 	conn_grp_p->TRANSMISSION_PROTOCOL_TYPE = TRANSMISSION_PROTOCOL_TYPE;
 	conn_grp_p->ADDRESS_FAMILY = ADDRESS_FAMILY;
 	conn_grp_p->SERVER_ADDRESS = SERVER_ADDRESS;
 	conn_grp_p->PORT = PORT;
-
-	conn_grp_p->thread_pool = thread_pool;
-
-	conn_grp_p->connection_mapping = get_connection_mapper();
-
 	return conn_grp_p;
 }
 
 void delete_connection_group(connection_group* conn_grp_p)
 {
-	delete_connection_mapper(conn_grp_p->connection_mapping);
 	free(conn_grp_p);
 }
 
 // fast utils
 
-connection_group* get_connection_group_tcp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+connection_group* get_connection_group_tcp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_STREAM, AF_INET, SERVER_ADDRESS, PORT, NULL);
+	return get_connection_group(SOCK_STREAM, AF_INET, SERVER_ADDRESS, PORT);
 }
 
-connection_group* get_connection_group_tcp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+connection_group* get_connection_group_tcp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_STREAM, AF_INET6, SERVER_ADDRESS, PORT, NULL);
+	return get_connection_group(SOCK_STREAM, AF_INET6, SERVER_ADDRESS, PORT);
 }
 
-connection_group* get_connection_group_udp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+connection_group* get_connection_group_udp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_DGRAM, AF_INET, SERVER_ADDRESS, PORT, NULL);
+	return get_connection_group(SOCK_DGRAM, AF_INET, SERVER_ADDRESS, PORT);
 }
 
-connection_group* get_connection_group_udp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT, void (*connection_handler)(int conn_fd))
+connection_group* get_connection_group_udp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_DGRAM, AF_INET6, SERVER_ADDRESS, PORT, NULL);
+	return get_connection_group(SOCK_DGRAM, AF_INET6, SERVER_ADDRESS, PORT);
 }

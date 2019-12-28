@@ -15,7 +15,7 @@ int main()
 	queue_transaction(tcli, transaction, get_dstring("hey !! man\r\n", 10));
 	queue_transaction(tcli, transaction, get_dstring("This is main\r\n", 10));
 
-	shutdown_transaction_client(tcli, 0);
+	shutdown_transaction_client(tcli);
 	delete_transaction_client(tcli);
 
 	delete_connection_group(cgp);

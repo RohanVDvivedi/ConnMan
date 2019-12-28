@@ -3,15 +3,27 @@
 
 #include<string.h>
 
+int listen_fd = -1;
+
+void intHandler(int dummy)
+{
+	if(listen_fd != -1)
+	{
+    	server_stop(listen_fd);
+    }
+}
+
 void connection_handler(int conn_fd);
 void datagram_handler(int serv_fd);
 
 int main()
 {
+	signal(SIGINT, intHandler);
+
 	connection_group* cgp = NULL;
 
 	cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
-	serve(cgp, connection_handler);
+	listen_fd = serve(cgp, connection_handler);
 
 	//cgp = get_connection_group_udp_ipv4(0x7f000001, 6969);
 	//serve(cgp, datagram_handler);

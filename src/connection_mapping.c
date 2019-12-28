@@ -25,7 +25,8 @@ connection_mapper* get_connection_mapper(unsigned long long int expected_connect
 int get_mapping(connection_mapper* conn_map_p, pthread_t tid)
 {
 	read_lock(conn_map_p->thread_id_to_file_discriptor_lock);
-	int fd = get_mapping_UNSAFE(conn_map_p, tid);
+	int* fd_p = (int*)find_value_from_hash(conn_map_p->thread_id_to_file_discriptor, &tid);
+	int fd = ((fd_p == NULL) ? (-1) : (*fd_p));
 	read_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
 	return fd;
 }
@@ -33,14 +34,17 @@ int get_mapping(connection_mapper* conn_map_p, pthread_t tid)
 void insert_mapping(connection_mapper* conn_map_p, pthread_t tid, int fd)
 {
 	write_lock(conn_map_p->thread_id_to_file_discriptor_lock);
-	insert_mapping_UNSAFE(conn_map_p, tid, fd);
+	int* fd_p = (int*) malloc(sizeof(int));
+	(*fd_p) = fd;
+	pthread_t* tid_p = (pthread_t*) malloc(sizeof(pthread_t));
+	(*tid_p) = tid;
+	insert_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, tid_p, fd_p);
 	write_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
 }
 
 int remove_mapping(connection_mapper* conn_map_p, pthread_t tid)
 {
 	write_lock(conn_map_p->thread_id_to_file_discriptor_lock);
-
 	const void* rkey = NULL;
 	const void* rvalue = NULL;
 	int entry_deleted = delete_entry_from_hash(conn_map_p->thread_id_to_file_discriptor, &tid, &rkey, &rvalue);
@@ -51,9 +55,7 @@ int remove_mapping(connection_mapper* conn_map_p, pthread_t tid)
 		if(rvalue != NULL)
 		{free((int*)rvalue);}
 	}
-
 	write_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
-
 	return entry_deleted;
 }
 

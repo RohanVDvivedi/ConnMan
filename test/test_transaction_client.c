@@ -4,24 +4,21 @@ int transaction(int fd, void* additional_params);
 
 int main()
 {
-	executor* transaction_executor = get_executor(FIXED_THREAD_COUNT_EXECUTOR, 3, -1);
+	connection_group* cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
 
-	connection_group* conn_grp_p = get_connection_group(AF_INET, SOCK_STREAM, 0x7f000001, 6969, transaction_executor);
+	transaction_client tcli = get_transaction_client(cgp, 3);
 
-	add_transaction_to_connection_group(conn_grp_p, transaction, get_dstring("hello\r\n", 10));
-	add_transaction_to_connection_group(conn_grp_p, transaction, get_dstring("ping\r\n", 10));
-	add_transaction_to_connection_group(conn_grp_p, transaction, get_dstring("pong\r\n", 10));
-	add_transaction_to_connection_group(conn_grp_p, transaction, get_dstring("world\r\n", 10));
-	add_transaction_to_connection_group(conn_grp_p, transaction, get_dstring("hey !! man\r\n", 10));
-	add_transaction_to_connection_group(conn_grp_p, transaction, get_dstring("This is main\r\n", 10));
+	add_transaction_to_connection_group(tcli, transaction, get_dstring("hello\r\n", 10));
+	add_transaction_to_connection_group(tcli, transaction, get_dstring("ping\r\n", 10));
+	add_transaction_to_connection_group(tcli, transaction, get_dstring("pong\r\n", 10));
+	add_transaction_to_connection_group(tcli, transaction, get_dstring("world\r\n", 10));
+	add_transaction_to_connection_group(tcli, transaction, get_dstring("hey !! man\r\n", 10));
+	add_transaction_to_connection_group(tcli, transaction, get_dstring("This is main\r\n", 10));
 
-	shutdown_executor(transaction_executor, 0);
+	shutdown_transaction_client(tcli);
+	delete_transaction_client(tcli);
 
-	wait_for_all_threads_to_complete(transaction_executor);
-
-	delete_executor(transaction_executor);
-
-	delete_connection_group(conn_grp_p);
+	delete_connection_group(cgp);
 
 	return 0;
 }

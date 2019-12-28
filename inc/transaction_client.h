@@ -21,7 +21,7 @@ void add_transaction_to(transaction_client* tclient, int (*transaction)(int fd, 
 
 // you must call shutdown_transaction_client before delete_transaction_client
 // this method will close all the connections and wait till, all the threads complete
-void shutdown_transaction_client(transaction_client* tclient);
+void shutdown_transaction_client(transaction_client* tclient, int immediately);
 
 // this function releases all the resources acquired by the transaction_client
 void delete_transaction_client(transaction_client* tclient);

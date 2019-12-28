@@ -85,9 +85,9 @@ void add_transaction_to_connection_group(transaction_client* tclient, int (*tran
 	submit_job_parameters(tclient->manager, params);
 }
 
-void shutdown_transaction_client(transaction_client* tclient)
+void shutdown_transaction_client(transaction_client* tclient, int immediately)
 {
-	close_all_connections_and_wait_for_shutdown(tclient->manager);
+	close_all_connections_and_wait_for_shutdown(tclient->manager, immediately);
 }
 
 void delete_transaction_client(transaction_client* tclient)

@@ -38,7 +38,7 @@ connection_thread_pool_manager* get_fixed_connection_thread_pool_manager(unsigne
 int submit_job_parameters(connection_thread_pool_manager* manager, void* params);
 
 // you must call this function before calling delete_connection_thread_pool_manager
-void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager);
+void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager, int immediately);
 
 // this function will only delete the resources occupied by the manager, 
 // you must call void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager), before deletion

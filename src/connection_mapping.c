@@ -67,7 +67,9 @@ void delete_entry_operation(pthread_t* tid_p, int* fd_p, const void* ap)
 
 void delete_all_mappings(connection_mapper* conn_map_p)
 {
+	write_lock(conn_map_p->thread_id_to_file_discriptor_lock);
 	for_each_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(delete_entry_operation), NULL);
+	write_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
 }
 
 void close_entry_operation(pthread_t* tid_p, int* fd_p, const void* ap)
@@ -77,7 +79,9 @@ void close_entry_operation(pthread_t* tid_p, int* fd_p, const void* ap)
 
 void close_all_file_discriptors(connection_mapper* conn_map_p)
 {
+	read_lock(conn_map_p->thread_id_to_file_discriptor_lock);
 	for_each_entry_in_hash(conn_map_p->thread_id_to_file_discriptor, (void (*)(const void*, const void*, const void*))(close_entry_operation), NULL);
+	read_unlock(conn_map_p->thread_id_to_file_discriptor_lock);
 }
 
 void delete_connection_mapper(connection_mapper* conn_map_p)

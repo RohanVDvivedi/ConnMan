@@ -8,12 +8,57 @@ int main()
 
 	transaction_client* tcli = get_transaction_client(cgp, 3);
 
-	queue_transaction(tcli, transaction, get_dstring("hello\r\n", 10));
-	queue_transaction(tcli, transaction, get_dstring("ping\r\n", 10));
-	queue_transaction(tcli, transaction, get_dstring("pong\r\n", 10));
-	queue_transaction(tcli, transaction, get_dstring("world\r\n", 10));
-	queue_transaction(tcli, transaction, get_dstring("hey !! man\r\n", 10));
-	queue_transaction(tcli, transaction, get_dstring("This is main\r\n", 10));
+	job* job_1 = queue_transaction(tcli, transaction, get_dstring("hello\r\n", 10));
+	job* job_2 = queue_transaction(tcli, transaction, get_dstring("ping\r\n", 10));
+	job* job_3 = queue_transaction(tcli, transaction, get_dstring("pong\r\n", 10));
+	job* job_4 = queue_transaction(tcli, transaction, get_dstring("world\r\n", 10));
+	job* job_5 = queue_transaction(tcli, transaction, get_dstring("hey !! man\r\n", 10));
+	job* job_6 = queue_transaction(tcli, transaction, get_dstring("This is main\r\n", 10));
+
+	dstring* output = NULL;
+	dstring* input = NULL;
+
+	output = get_result_for_transaction(job_1, (void**)&input);
+	printf("-> ");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	delete_dstring(input);
+	input = NULL;
+	delete_dstring(output);
+	output = NULL;
+
+	output = get_result_for_transaction(job_2, (void**)&input);
+	printf("-> ");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	delete_dstring(input);
+	input = NULL;
+	delete_dstring(output);
+	output = NULL;
+
+	output = get_result_for_transaction(job_3, (void**)&input);
+	printf("-> ");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	delete_dstring(input);
+	input = NULL;
+	delete_dstring(output);
+	output = NULL;
+
+	output = get_result_for_transaction(job_4, (void**)&input);
+	printf("-> ");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	delete_dstring(input);
+	input = NULL;
+	delete_dstring(output);
+	output = NULL;
+
+	output = get_result_for_transaction(job_5, (void**)&input);
+	printf("-> ");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	delete_dstring(input);
+	input = NULL;
+	delete_dstring(output);
+	output = NULL;
+
+	output = get_result_for_transaction(job_6, (void**)&input);
+	printf("-> ");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	delete_dstring(input);
+	input = NULL;
+	delete_dstring(output);
+	output = NULL;
 
 	shutdown_transaction_client(tcli);
 	delete_transaction_client(tcli);

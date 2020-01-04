@@ -8,9 +8,9 @@ struct transaction_handler_params
 	void* additional_params;
 
 	// this is the transaction, that the transaction_handler has to execute
-	// a transaction returns 0 for success, hence the connection will continue
-	// return -1 (or any non zero), if the connection is corrupted, so the connection will be closed
-	int (*transaction)(int fd, void* additional_params);
+	// set close_connection_requested to 1, if the connection is corrupted/closed by server, so the connection will be closed, and restarted on any other transaction
+	// your transaction must return a result, that you receive after talking with the server
+	void* (*transaction)(int fd, int* close_connection_requested, void* additional_params);
 
 	// this is the transaction_client, that this transaction belongs to
 	// tclient->manager->connection_mapping where you need to explicitly specify, on what connection file discriptor you are working with
@@ -57,8 +57,10 @@ void* transaction_handler(transaction_handler_params* params)
 		goto exit;
 	}
 
+	int close_connection_requested = 0;
+
 	// execute the transaction
-	int close_connection_requested = params->transaction(fd, params->additional_params);
+	void* result = params->transaction(fd, &close_connection_requested, params->additional_params);
 
 	if(close_connection_requested)
 	{
@@ -73,10 +75,10 @@ void* transaction_handler(transaction_handler_params* params)
 	// delete params
 	free(params);
 
-	return NULL;
+	return result;
 }
 
-job* queue_transaction(transaction_client* tclient, int (*transaction)(int fd, void* additional_params), void* additional_params)
+job* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd, int* close_connection_requested, void* additional_params), void* additional_params)
 {
 	transaction_handler_params* params = (transaction_handler_params*) malloc(sizeof(transaction_handler_params));
 	params->tclient = tclient;

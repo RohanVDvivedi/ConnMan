@@ -20,7 +20,26 @@ connection_thread_pool_manager* get_fixed_connection_thread_pool_manager(unsigne
 
 int submit_job_parameters(connection_thread_pool_manager* manager, void* params)
 {
-	return submit(manager->thread_pool, manager->handler, params);
+	return submit_function(manager->thread_pool, manager->handler, params);
+}
+
+job* submit_job_with_promise(connection_thread_pool_manager* manager, void* params)
+{
+	job* job_p = get_job(manager->handler, params);
+	int was_job_queued = submit_function(manager->thread_pool, manager->handler, params);
+	if(was_job_queued == 0)
+	{
+		delete_job(job_p);
+		job_p = NULL;
+	}
+	return job_p;
+}
+
+void* get_promised_result(job* job_p)
+{
+	void* output_p = get_result(job_p);
+	delete_job(job_p);
+	return output_p;
 }
 
 void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager)

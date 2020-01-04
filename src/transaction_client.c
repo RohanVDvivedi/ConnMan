@@ -76,13 +76,28 @@ void* transaction_handler(transaction_handler_params* params)
 	return NULL;
 }
 
-void queue_transaction(transaction_client* tclient, int (*transaction)(int fd, void* additional_params), void* additional_params)
+job* queue_transaction(transaction_client* tclient, int (*transaction)(int fd, void* additional_params), void* additional_params)
 {
 	transaction_handler_params* params = (transaction_handler_params*) malloc(sizeof(transaction_handler_params));
 	params->tclient = tclient;
 	params->additional_params = additional_params;
 	params->transaction = transaction;
-	submit_job_parameters(tclient->manager, params);
+	job* job_p = submit_job_with_promise(tclient->manager, params);
+	if(job_p == NULL)
+	{
+		free(params);
+	}
+	return job_p;
+}
+
+void* get_result_for_transaction(job* job_p, void** input_p)
+{
+	if(job_p == NULL)
+	{
+		return NULL;
+	}
+	*input_p = job_p->input_p;
+	return get_promised_result(job_p);
 }
 
 void shutdown_transaction_client(transaction_client* tclient)

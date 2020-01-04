@@ -37,6 +37,13 @@ connection_thread_pool_manager* get_fixed_connection_thread_pool_manager(unsigne
 // returns 1 if the job was submitted, else 0
 int submit_job_parameters(connection_thread_pool_manager* manager, void* params);
 
+// you may not call this function, after calling close_all_connections_and_shutdown
+// with this function a job is submitted just like the submit_jon_parameters function, but with a promise that the result will be returned to you
+// returns non NULL job pointer, to wait if the job was submitted, else Null
+job* submit_job_with_promise(connection_thread_pool_manager* manager, void* params);
+// this is the function yopu call, if you submitted a job with a promise
+void* get_promised_result(job* job_p);
+
 // you must call this function before calling delete_connection_thread_pool_manager
 // note: the shutdown of the thread_pool of the connection_thread_pool_manager is going to be immediate
 // i.e. all the left over transactions will be deleted

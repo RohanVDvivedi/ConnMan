@@ -23,10 +23,13 @@ int submit_job_parameters(connection_thread_pool_manager* manager, void* params)
 	return submit(manager->thread_pool, manager->handler, params);
 }
 
-void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager, int immediately)
+void close_all_connections_and_wait_for_shutdown(connection_thread_pool_manager* manager)
 {
 	close_all_file_discriptors(manager->connection_mapping);
-	shutdown_executor(manager->thread_pool, immediately);
+
+	// the shut down here on the thread_pool of the connection_thread_pool_manager is always immediately
+	shutdown_executor(manager->thread_pool, 1);
+
 	wait_for_all_threads_to_complete(manager->thread_pool);
 }
 

@@ -6,6 +6,11 @@
 #include<connection_group.h>
 #include<connection_thread_pool_manager.h>
 
+// the only responsibility of the transaction_client is to encapsulate
+// the connection_group and connection_thread_pool_manager for it
+// the transaction_client is not responsible for allocating or releasing memory for the connection_group
+// but the connection_thread_pool_manager will be completely managed by the transaction_client
+
 typedef struct transaction_client transaction_client;
 struct transaction_client
 {

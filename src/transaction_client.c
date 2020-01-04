@@ -87,7 +87,7 @@ void queue_transaction(transaction_client* tclient, int (*transaction)(int fd, v
 
 void shutdown_transaction_client(transaction_client* tclient)
 {
-	close_all_connections_and_wait_for_shutdown(tclient->manager, 1);
+	close_all_connections_and_wait_for_shutdown(tclient->manager);
 }
 
 void delete_transaction_client(transaction_client* tclient)

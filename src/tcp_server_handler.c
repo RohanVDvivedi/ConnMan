@@ -78,7 +78,7 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
 		submit_job_parameters(manager, get_new_handler_wrapper_input_params(conn_fd, handler, manager));
 	}
 
-	close_all_connections_and_wait_for_shutdown(manager, 1);
+	close_all_connections_and_wait_for_shutdown(manager);
 
 	delete_connection_thread_pool_manager(manager);
 

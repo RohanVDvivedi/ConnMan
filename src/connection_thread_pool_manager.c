@@ -26,7 +26,7 @@ int submit_job_parameters(connection_thread_pool_manager* manager, void* params)
 job* submit_job_with_promise(connection_thread_pool_manager* manager, void* params)
 {
 	job* job_p = get_job(manager->handler, params);
-	int was_job_queued = submit_function(manager->thread_pool, manager->handler, params);
+	int was_job_queued = submit_job(manager->thread_pool, job_p);
 	if(was_job_queued == 0)
 	{
 		delete_job(job_p);

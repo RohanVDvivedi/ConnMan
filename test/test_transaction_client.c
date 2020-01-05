@@ -21,42 +21,42 @@ int main()
 	dstring* input = NULL;
 
 	output = get_result_for_transaction(job_1, (void**)&input);
-	printf("job1-> \n");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	printf("job1-> \n");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
 	delete_dstring(input);
 	input = NULL;
 	delete_dstring(output);
 	output = NULL;
 
 	output = get_result_for_transaction(job_2, (void**)&input);
-	printf("job2-> \n");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	printf("job2-> \n");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
 	delete_dstring(input);
 	input = NULL;
 	delete_dstring(output);
 	output = NULL;
 
 	output = get_result_for_transaction(job_3, (void**)&input);
-	printf("job3-> \n");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	printf("job3-> \n");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
 	delete_dstring(input);
 	input = NULL;
 	delete_dstring(output);
 	output = NULL;
 
 	output = get_result_for_transaction(job_4, (void**)&input);
-	printf("job4-> \n");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	printf("job4-> \n");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
 	delete_dstring(input);
 	input = NULL;
 	delete_dstring(output);
 	output = NULL;
 
 	output = get_result_for_transaction(job_5, (void**)&input);
-	printf("job5-> \n");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	printf("job5-> \n");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
 	delete_dstring(input);
 	input = NULL;
 	delete_dstring(output);
 	output = NULL;
 
 	output = get_result_for_transaction(job_6, (void**)&input);
-	printf("job6-> \n");display_dstring(input);printf(" : ");display_dstring(input);printf("\n");
+	printf("job6-> \n");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
 	delete_dstring(input);
 	input = NULL;
 	delete_dstring(output);

@@ -54,7 +54,7 @@ void* transaction_handler(transaction_handler_params* params)
 	if(fd == -1)
 	{
 		printf("making connection failed\n");
-		goto exit;
+		return NULL;
 	}
 
 	int close_connection_requested = 0;
@@ -69,11 +69,6 @@ void* transaction_handler(transaction_handler_params* params)
 		// close the connection
 		close_connection(fd);
 	}
-
-	exit :;
-
-	// delete params
-	free(params);
 
 	return result;
 }
@@ -98,7 +93,9 @@ void* get_result_for_transaction(job* job_p, void** input_p)
 	{
 		return NULL;
 	}
-	*input_p = job_p->input_p;
+	transaction_handler_params* params = job_p->input_p;
+	(*input_p) = params->additional_params;
+	free(params);
 	return get_promised_result(job_p);
 }
 

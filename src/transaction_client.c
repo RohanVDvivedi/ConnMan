@@ -95,8 +95,12 @@ void* get_result_for_transaction(job* job_p, void** input_p)
 	}
 	transaction_handler_params* params = job_p->input_p;
 	(*input_p) = params->additional_params;
+	void* result = get_promised_result(job_p);
+
+	// delete the input parameters of the job only after you have got the result
 	free(params);
-	return get_promised_result(job_p);
+
+	return result;
 }
 
 void shutdown_transaction_client(transaction_client* tclient)

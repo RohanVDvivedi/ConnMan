@@ -1,2 +1,2 @@
 # ConnMan
-Multithreaded above transport layer connection handler in C
+Multithreaded transport layer connection handler in C

@@ -1,6 +1,8 @@
 #ifndef CONNECTION_GROUP_H
 #define CONNECTION_GROUP_H
 
+#include<stdint.h>
+
 #include<sys/socket.h>
 
 #include<dstring.h>

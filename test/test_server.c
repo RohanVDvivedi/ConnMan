@@ -2,6 +2,7 @@
 #include<server.h>
 
 #include<string.h>
+#include<signal.h>
 
 volatile int listen_fd = -1;
 

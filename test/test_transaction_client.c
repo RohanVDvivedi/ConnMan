@@ -8,17 +8,44 @@ int main()
 
 	transaction_client* tcli = get_transaction_client(cgp, 1);
 
-	job* job_1 = queue_transaction(tcli, transaction, get_dstring("hello", 10));
+	job* job_0 = queue_transaction(tcli, transaction, get_dstring("Ready Server Brother", 10));
+	job* job_1 = queue_transaction(tcli, transaction, get_dstring("hello, I am client", 10));
 	job* job_2 = queue_transaction(tcli, transaction, get_dstring("ping", 10));
-	job* job_3 = queue_transaction(tcli, transaction, get_dstring("pong", 10));
+	job* job_3 = queue_transaction(tcli, transaction, get_dstring("exit", 10));
 	job* job_4 = queue_transaction(tcli, transaction, get_dstring("world", 10));
 	job* job_5 = queue_transaction(tcli, transaction, get_dstring("hey !! man", 10));
 	job* job_6 = queue_transaction(tcli, transaction, get_dstring("This is main", 10));
+	job* job_7 = queue_transaction(tcli, transaction, get_dstring("exit", 10));
+	job* job_8 = queue_transaction(tcli, transaction, get_dstring("p0ng", 10));
+	job* job_9 = queue_transaction(tcli, transaction, get_dstring("pong", 10));
+	job* job_10 = queue_transaction(tcli, transaction, get_dstring("exit", 10));
+	job* job_11 = queue_transaction(tcli, transaction, get_dstring("hola", 10));
+	job* job_12 = queue_transaction(tcli, transaction, get_dstring("seniorita", 10));
 
 	printf("transactions queued successfully\n");
 
 	dstring* output = NULL;
 	dstring* input = NULL;
+
+	if(job_0 != NULL)
+	{
+		output = get_result_for_transaction(job_0, (void**)&input);
+		printf("job0-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job0\n");
+	}
 
 	if(job_1 != NULL)
 	{
@@ -138,6 +165,126 @@ int main()
 	else
 	{
 		printf("could not queue job6\n");
+	}
+
+	if(job_7 != NULL)
+	{
+		output = get_result_for_transaction(job_7, (void**)&input);
+		printf("job7-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job7\n");
+	}
+
+	if(job_8 != NULL)
+	{
+		output = get_result_for_transaction(job_8, (void**)&input);
+		printf("job8-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job8\n");
+	}
+
+	if(job_9 != NULL)
+	{
+		output = get_result_for_transaction(job_9, (void**)&input);
+		printf("job9-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job9\n");
+	}
+
+	if(job_10 != NULL)
+	{
+		output = get_result_for_transaction(job_10, (void**)&input);
+		printf("job10-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job10\n");
+	}
+
+	if(job_11 != NULL)
+	{
+		output = get_result_for_transaction(job_11, (void**)&input);
+		printf("job11-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job11\n");
+	}
+
+	if(job_12 != NULL)
+	{
+		output = get_result_for_transaction(job_12, (void**)&input);
+		printf("job12-> ");display_dstring(input);printf(" : ");display_dstring(output);printf("\n");
+		if(input != NULL)
+		{
+			delete_dstring(input);
+			input = NULL;
+		}
+		if(output != NULL)
+		{
+			delete_dstring(output);
+			output = NULL;
+		}
+	}
+	else
+	{
+		printf("could not queue job12\n");
 	}
 
 	printf("shutdown transaction client\n");

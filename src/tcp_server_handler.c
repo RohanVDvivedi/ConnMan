@@ -5,31 +5,21 @@ struct handler_wrapper_input_params
 {
 	int conn_fd;
 	void (*handler)(int conn_fd);
-
-	// this is the hashmap in which we have to explicitly tell on which file discriptor we will be working
-	connection_thread_pool_manager* manager;
 };
 
-handler_wrapper_input_params* get_new_handler_wrapper_input_params(int conn_fd, void (*handler)(int conn_fd), connection_thread_pool_manager* manager)
+handler_wrapper_input_params* get_new_handler_wrapper_input_params(int conn_fd, void (*handler)(int conn_fd))
 {
 	handler_wrapper_input_params* handler_wrapper_input_params_p = (handler_wrapper_input_params*)malloc(sizeof(handler_wrapper_input_params));
 	handler_wrapper_input_params_p->conn_fd = conn_fd;
 	handler_wrapper_input_params_p->handler = handler;
-	handler_wrapper_input_params_p->manager = manager;
 	return handler_wrapper_input_params_p;
 }
 
 void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 {
 	handler_wrapper_input_params* handler_data = ((handler_wrapper_input_params*)handler_wrapper_input_params_v_p);
-	
-	// make the connection_thread_pool_manager aware about which file_discriptor, we will be working with
-	insert_mapping_with_current_thread(handler_data->manager, handler_data->conn_fd);
 
 	handler_data->handler(handler_data->conn_fd);
-
-	// remove your own self from this connection_thread_pool_manager's mapping
-	remove_mapping_for_current_thread(handler_data->manager);
 
 	// phase 5
 	// closing client socket
@@ -54,7 +44,7 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
 
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
-	connection_thread_pool_manager* manager = get_cached_connection_thread_pool_manager(DEFAULT_MAXIMUM_CONNECTIONS, handler_wrapper);
+	executor* connection_executor = get_executor(CACHED_THREAD_POOL_EXECUTOR, DEFAULT_MAXIMUM_CONNECTIONS, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
 	while(1)
 	{
 		// phase 4
@@ -75,12 +65,14 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
 		int conn_fd = err;
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
-		submit_job_parameters(manager, get_new_handler_wrapper_input_params(conn_fd, handler, manager));
+		submit_function(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, handler));
 	}
 
-	close_all_connections_and_wait_for_shutdown(manager);
+	shutdown_executor(connection_executor, 1);
 
-	delete_connection_thread_pool_manager(manager);
+	wait_for_all_threads_to_complete(connection_executor);
+
+	delete_executor(connection_executor);
 
 	return 0;
 

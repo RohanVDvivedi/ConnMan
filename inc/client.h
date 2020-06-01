@@ -1,9 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include<sys/socket.h>
-#include<netinet/in.h>
-
 #include<connection_group.h>
 
 int connect_to(connection_group* conn_grp_p, void (*handler)(int fd));

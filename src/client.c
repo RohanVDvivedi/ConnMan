@@ -34,7 +34,7 @@ int make_connection(connection_group* conn_grp_p)
 	int err;
 
 	// then we try to set up socket and retrieve the file discriptor that is returned
-	err = socket(conn_grp_p->ADDRESS_FAMILY, conn_grp_p->TRANSMISSION_PROTOCOL_TYPE, 0);
+	err = socket(conn_grp_p->ADDRESS.sin_family, conn_grp_p->PROTOCOL, 0);
     if(err == -1)
     {
     	goto end;
@@ -42,10 +42,7 @@ int make_connection(connection_group* conn_grp_p)
     int fd = err;
 
     // then we set up socket address with the address received from the host using the get host name function 
-	struct sockaddr_in server_addr;
-	server_addr.sin_family = conn_grp_p->ADDRESS_FAMILY;
-	server_addr.sin_addr.s_addr = htonl(conn_grp_p->SERVER_ADDRESS);
-	server_addr.sin_port = htons(conn_grp_p->PORT);
+	struct sockaddr_in server_addr = conn_grp_p->ADDRESS;
 
 	// next we try and attempt to connect the socket formed whose file discriptor we have
 	// to connect using the address that we have in sockaddr_in struct in server_addr

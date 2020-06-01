@@ -4,7 +4,7 @@
 void get_connection_group_identifier(dstring* identifer, connection_group* conn_grp_p)
 {
 	make_dstring_empty(identifer);
-	switch(conn_grp_p->TRANSMISSION_PROTOCOL_TYPE)
+	switch(conn_grp_p->PROTOCOL)
 	{
 		case SOCK_STREAM :
 		{
@@ -23,7 +23,7 @@ void get_connection_group_identifier(dstring* identifer, connection_group* conn_
 	for(int i = 3; i >= 0; i--)
 	{
 		char temp[10] = "";
-		uint32_t ip_part_dec = (conn_grp_p->SERVER_ADDRESS >> (i * 8)) & (0x000000ff);
+		uint32_t ip_part_dec = (( ntohl((conn_grp_p->ADDRESS).sin_addr.s_addr) ) >> (i * 8)) & (0x000000ff);
 		sprintf(temp, "%u", ip_part_dec);
 		append_to_dstring(identifer, temp);
 
@@ -36,18 +36,17 @@ void get_connection_group_identifier(dstring* identifer, connection_group* conn_
 	append_to_dstring(identifer, ":");
 
 	char temp[10] = "";
-	sprintf(temp, "%u", conn_grp_p->PORT);
+	sprintf(temp, "%u", ntohs(conn_grp_p->ADDRESS.sin_port));
 	append_to_dstring(identifer, temp);
 }
 
-connection_group* get_connection_group(int TRANSMISSION_PROTOCOL_TYPE, sa_family_t ADDRESS_FAMILY, uint32_t SERVER_ADDRESS, uint16_t PORT)
+connection_group get_connection_group(int PROTOCOL, sa_family_t ADDRESS_FAMILY, uint16_t PORT)
 {
-	connection_group* conn_grp_p = (connection_group*) malloc(sizeof(connection_group));
-	conn_grp_p->TRANSMISSION_PROTOCOL_TYPE = TRANSMISSION_PROTOCOL_TYPE;
-	conn_grp_p->ADDRESS_FAMILY = ADDRESS_FAMILY;
-	conn_grp_p->SERVER_ADDRESS = SERVER_ADDRESS;
-	conn_grp_p->PORT = PORT;
-	return conn_grp_p;
+	connection_group conn_grp;
+	conn_grp.PROTOCOL = PROTOCOL;
+	conn_grp.ADDRESS.sin_family = ADDRESS_FAMILY;
+	conn_grp.ADDRESS.sin_port = PORT;
+	return conn_grp;
 }
 
 void delete_connection_group(connection_group* conn_grp_p)
@@ -57,22 +56,30 @@ void delete_connection_group(connection_group* conn_grp_p)
 
 // fast utils
 
-connection_group* get_connection_group_tcp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT)
+connection_group get_connection_group_tcp_ipv4(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_STREAM, AF_INET, SERVER_ADDRESS, PORT);
+	connection_group conn_grp = get_connection_group(SOCK_STREAM, AF_INET, PORT);
+	inet_aton(SERVER_ADDRESS, &(conn_grp.ADDRESS.sin_addr));
+	return conn_grp;
 }
 
-connection_group* get_connection_group_tcp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT)
+connection_group get_connection_group_tcp_ipv6(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_STREAM, AF_INET6, SERVER_ADDRESS, PORT);
+	connection_group conn_grp = get_connection_group(SOCK_STREAM, AF_INET6, PORT);
+	//conn_grp.ADDRESS.sin_addr.s_addr = SERVER_ADDRESS;
+	return conn_grp;
 }
 
-connection_group* get_connection_group_udp_ipv4(uint32_t SERVER_ADDRESS, uint16_t PORT)
+connection_group get_connection_group_udp_ipv4(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_DGRAM, AF_INET, SERVER_ADDRESS, PORT);
+	connection_group conn_grp = get_connection_group(SOCK_DGRAM, AF_INET, PORT);
+	inet_aton(SERVER_ADDRESS, &(conn_grp.ADDRESS.sin_addr));
+	return conn_grp;
 }
 
-connection_group* get_connection_group_udp_ipv6(uint32_t SERVER_ADDRESS, uint16_t PORT)
+connection_group get_connection_group_udp_ipv6(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_DGRAM, AF_INET6, SERVER_ADDRESS, PORT);
+	connection_group conn_grp = get_connection_group(SOCK_DGRAM, AF_INET6, PORT);
+	//conn_grp.ADDRESS.sin_addr.s_addr = SERVER_ADDRESS;
+	return conn_grp;
 }

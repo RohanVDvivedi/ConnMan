@@ -3,7 +3,7 @@
 connection_thread_pool_manager* get_cached_connection_thread_pool_manager(unsigned long long int max_connection_count, void* (*handler)(void* params))
 {
 	connection_thread_pool_manager* manager = (connection_thread_pool_manager*) malloc(sizeof(connection_thread_pool_manager));
-	manager->thread_pool = get_executor(CACHED_THREAD_POOL_EXECUTOR, max_connection_count, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS);
+	manager->thread_pool = get_executor(CACHED_THREAD_POOL_EXECUTOR, max_connection_count, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
 	manager->handler = handler;
 	manager->connection_mapping = get_connection_mapper(max_connection_count);
 	return manager;
@@ -12,7 +12,7 @@ connection_thread_pool_manager* get_cached_connection_thread_pool_manager(unsign
 connection_thread_pool_manager* get_fixed_connection_thread_pool_manager(unsigned long long int connection_count, void* (*handler)(void* params))
 {
 	connection_thread_pool_manager* manager = (connection_thread_pool_manager*) malloc(sizeof(connection_thread_pool_manager));
-	manager->thread_pool = get_executor(FIXED_THREAD_COUNT_EXECUTOR, connection_count, -1);
+	manager->thread_pool = get_executor(FIXED_THREAD_COUNT_EXECUTOR, connection_count, -1, NULL, NULL, NULL);
 	manager->handler = handler;
 	manager->connection_mapping = get_connection_mapper(connection_count);
 	return manager;

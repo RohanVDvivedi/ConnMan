@@ -17,8 +17,8 @@ struct connection_mapper
 {
 	// the threads of connection_group, have to remember which connection they were working on
 	// this hashmap is shared among the threads to access, their own file discriptors
-	hashmap* thread_id_to_file_discriptor;
-	rwlock* thread_id_to_file_discriptor_lock;
+	hashmap thread_id_to_file_discriptor;
+	rwlock thread_id_to_file_discriptor_lock;
 };
 
 connection_mapper* get_connection_mapper(unsigned long long int expected_connections);

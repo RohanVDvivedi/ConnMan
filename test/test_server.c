@@ -23,15 +23,14 @@ int main()
 {
 	signal(SIGINT, intHandler);
 
-	connection_group* cgp = NULL;
+	connection_group cgp;
 
-	cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
-	serve(cgp, connection_handler, &listen_fd);
+	cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	serve(&cgp, connection_handler, &listen_fd);
 
-	//cgp = get_connection_group_udp_ipv4(0x7f000001, 6969);
-	//serve(cgp, datagram_handler, &listen_fd);
+	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
+	//serve(&cgp, datagram_handler, &listen_fd);
 
-	delete_connection_group(cgp);
 	return 0;
 }
 

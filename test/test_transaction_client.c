@@ -4,7 +4,7 @@ void* transaction(int fd, int* close_connection_requested, void* additional_para
 
 int main()
 {
-	connection_group* cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
+	connection_group cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
 
 	transaction_client* tcli = get_transaction_client(cgp, 1);
 
@@ -294,10 +294,6 @@ int main()
 	printf("delete transaction client\n");
 
 	delete_transaction_client(tcli);
-
-	printf("delete connection group\n");
-
-	delete_connection_group(cgp);
 
 	return 0;
 }

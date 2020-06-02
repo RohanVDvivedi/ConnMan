@@ -7,15 +7,14 @@ void connection_handler(int conn_fd);
 
 int main()
 {
-	connection_group* cgp = NULL;
+	connection_group cgp;
 
-	cgp = get_connection_group_tcp_ipv4(0x7f000001, 6969);
-	connect_to(cgp, connection_handler);
+	cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	connect_to(&cgp, connection_handler);
 
-	//cgp = get_connection_group_udp_ipv4(0x7f000001, 6969);
-	//connect_to(cgp, datagram_handler);
+	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
+	//connect_to(&cgp, datagram_handler);
 
-	delete_connection_group(cgp);
 	return 0;
 }
 

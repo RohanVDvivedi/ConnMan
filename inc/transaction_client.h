@@ -1,6 +1,8 @@
 #ifndef TRANSACTION_CLINET_H
 #define TRANSACTION_CLINET_H
 
+#include<executor.h>
+
 #include<client.h>
 
 #include<connection_group.h>
@@ -9,7 +11,7 @@ typedef struct transaction_client transaction_client;
 struct transaction_client
 {
 	connection_group conn_group;
-	pthread_key_t connection_file_discriptor_key;
+	
 	executor* transaction_executor;
 };
 

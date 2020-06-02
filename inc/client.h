@@ -10,7 +10,4 @@ int connect_to(connection_group* conn_grp_p, void (*handler)(int fd));
 // returns file-discriptor to the socket, through which client connection has been made
 int make_connection(connection_group* conn_grp_p);
 
-// returns 0, if the connection was closed successfully
-int close_connection(int fd);
-
 #endif

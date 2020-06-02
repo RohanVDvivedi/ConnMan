@@ -68,6 +68,9 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
 		submit_function(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, handler));
 	}
 
+	// ### TODO
+	// need to call close on all connection, some how
+
 	shutdown_executor(connection_executor, 1);
 
 	wait_for_all_threads_to_complete(connection_executor);

@@ -15,7 +15,7 @@ int connect_to(connection_group* conn_grp_p, void (*handler)(int fd))
 	// pass the file discriptor to the handler, so that request can be handled
 	handler(fd);
 
-	err = close_connection(fd);
+	err = close(fd);
 	if(err == -1)
     {
     	goto end;
@@ -53,22 +53,6 @@ int make_connection(connection_group* conn_grp_p)
 	}
 
 	return fd;
-
-	end: return err;
-}
-
-// returns 0, if the connection was closed successfully
-int close_connection(int fd)
-{
-	int err;
-
-	err = close(fd);
-	if(err == -1)
-    {
-    	goto end;
-    }
-
-	return 0;
 
 	end: return err;
 }

@@ -107,14 +107,20 @@ job* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd,
 	return job_p;
 }
 
-void* get_result_for_transaction(job* job_p, void** input_p)
+void* get_result_for_transaction(job* job_p, void** additional_params_return_p)
 {
 	if(job_p == NULL)
 	{
 		return NULL;
 	}
+
 	transaction_handler_params* params = job_p->input_p;
-	(*input_p) = params->additional_params;
+
+	if(additional_params_return_p != NULL)
+	{
+		(*additional_params_return_p) = params->additional_params;
+	}
+
 	void* result = get_result(job_p);
 
 	// delete the input parameters of the job only after you have got the result

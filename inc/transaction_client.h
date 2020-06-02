@@ -34,8 +34,8 @@ anatomy of transaction function :
 ********************************************************************* */
 
 // this function returns the result of the submitted transaction,
-// it also give you pointer to the additional params that were submitted
-void* get_result_for_transaction(job* job_p, void** additional_params);
+// it also returns you pointer to the additional_params that were submitted, if additional_params_return_p is not NULL
+void* get_result_for_transaction(job* job_p, void** additional_params_return_p);
 
 // you must call shutdown_transaction_client before delete_transaction_client
 // this method will close all the connections and wait till, all the threads complete

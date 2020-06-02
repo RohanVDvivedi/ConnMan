@@ -45,7 +45,7 @@ connection_group get_connection_group(int PROTOCOL, sa_family_t ADDRESS_FAMILY, 
 	connection_group conn_grp;
 	conn_grp.PROTOCOL = PROTOCOL;
 	conn_grp.ADDRESS.sin_family = ADDRESS_FAMILY;
-	conn_grp.ADDRESS.sin_port = PORT;
+	conn_grp.ADDRESS.sin_port = htons(PORT);
 	return conn_grp;
 }
 

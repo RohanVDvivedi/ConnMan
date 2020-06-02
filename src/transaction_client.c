@@ -12,10 +12,8 @@ struct transaction_handler_params
 	// your transaction must return a result, that you receive after talking with the server
 	void* (*transaction)(int fd, int* close_connection_requested, void* additional_params);
 
-	// this is the transaction_client, that this transaction belongs to
-	// tclient->manager->connection_mapping where you need to explicitly specify, on what connection file discriptor you are working with
-	// tclient->connection_group, which you will have to use to open new connection
-	transaction_client* tclient;
+	// tclient->conn_group, which you will have to use to open new connection
+	connection_group* conn_group;
 };
 
 static void* transaction_handler(transaction_handler_params* params);
@@ -58,7 +56,7 @@ static void* transaction_handler(transaction_handler_params* params)
 	if(*fd_p == -1)
 	{
 		// try to make a connection
-		*fd_p = make_connection(&(params->tclient->conn_group));
+		*fd_p = make_connection(params->conn_group);
 	}
 
 	// to confirm, if the connection, we tried to make was successfull
@@ -77,6 +75,8 @@ static void* transaction_handler(transaction_handler_params* params)
 	{
 		// close the connection
 		close(*fd_p);
+
+		*fd_p = -1;
 	}
 
 	return result;
@@ -89,13 +89,15 @@ static void transaction_worker_finish(void* args)
 	if(fd_p != NULL)
 	{
 		close(*fd_p);
+		pthread_setspecific(connection_file_discriptor_key, NULL);
+		free(fd_p);
 	}
 }
 
 job* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd, int* close_connection_requested, void* additional_params), void* additional_params)
 {
 	transaction_handler_params* params = (transaction_handler_params*) malloc(sizeof(transaction_handler_params));
-	params->tclient = tclient;
+	params->conn_group = &(tclient->conn_group);
 	params->additional_params = additional_params;
 	params->transaction = transaction;
 	job* job_p = get_job( (void*(*)(void*)) transaction_handler, params);

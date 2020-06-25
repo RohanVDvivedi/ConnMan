@@ -13,11 +13,16 @@
 
 int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count);
 
-// Examples for 
 /*
+
 TCP connection handler
-do not close any file discriptors here, just return when you want to exit the current client connection and close it
-server does not shutdown by returning, from here, you return from here to exit this client connection only, other clients may be still being served
+do not close any file discriptors here,
+just return when you want to exit the current client connection and close it
+server does not shutdown if you return from the connection handler,
+you return from here to exit this client's connection only, 
+other clients may be still being served
+
+each connection handler is called, with an idea that it will only serve this connection and die
 
 void (*connection_handler)(int conn_fd)
 {
@@ -36,30 +41,6 @@ void (*connection_handler)(int conn_fd)
 
 		buffreadlength = strlen(buffer);
 		send(conn_fd, buffer, buffreadlength, 0);
-	}
-}
-
-UDP datagram handler
-do not close any file discriptors here, just return when you want to exit the server, and stop serving altogether
-
-void (*datagram_handler)(int serv_fd)
-{
-	char buffer[1000];
-	while(1)
-	{
-		struct sockaddr_in cliaddr; socklen_t cliaddrlen = sizeof(cliaddr);
-		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, &cliaddr, &cliaddrlen);
-		if(buffreadlength == -1)
-		{
-			break;
-		}
-
-		buffer[buffreadlength] = '\0';
-
-		// process the buffer here
-
-		buffreadlength = strlen(buffer);
-		sendto(serv_fd, buffer, buffreadlength, 0, &cliaddr, cliaddrlen); 
 	}
 }
 

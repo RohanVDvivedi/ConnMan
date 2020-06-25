@@ -18,16 +18,11 @@ static void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 
 int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count)
 {
-	// there can be errors anywhere at any point
-	int err;
-
 	// phase 3
 	// listenning on the socket file discriptor 
-	err = listen(listen_fd, DEFAULT_BACKLOG_QUEUE_SIZE);
-	if (err == -1)
-	{
-		goto end;
-	}
+	int err = listen(listen_fd, DEFAULT_BACKLOG_QUEUE_SIZE);
+	if(err == -1)
+		return err;
 
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
@@ -37,17 +32,11 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int
 		// phase 4
 		// accept uses backlog queue connection and de-queues them 
 		err = accept(listen_fd, (struct sockaddr*)&client_addr, &client_len);
-		if (err == -1)
+		if(err == -1)
 		{
 			// break the listenning loop, if the listen_fd file discriptor is closed
-			if(errno == EBADF || errno == ECONNABORTED || errno == EINVAL || errno == EINVAL || errno == ENOTSOCK || errno == EPERM)
-			{
+			if(errno == EBADF || errno == ECONNABORTED || errno == EINVAL || errno == ENOTSOCK || errno == EPERM)
 				break;
-			}
-			else
-			{
-				continue;
-			}
 		}
 		int conn_fd = err;
 
@@ -62,6 +51,4 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int
 	delete_executor(connection_executor);
 
 	return 0;
-
-	end: return err;
 }

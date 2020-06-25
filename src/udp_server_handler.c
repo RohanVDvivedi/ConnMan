@@ -14,9 +14,6 @@ static void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 
 int udp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count)
 {
-	// there can be errors anywhere at any point
-	int err;
-
 	executor* message_executor = get_executor(FIXED_THREAD_COUNT_EXECUTOR, thread_count, 0, NULL, NULL, NULL);
 
 	// create as many number of jobs as the number of threads
@@ -36,6 +33,4 @@ int udp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int
 	delete_executor(message_executor);
 
 	return 0;
-
-	end: return err;
 }

@@ -6,6 +6,9 @@
 #include<tcp_server_handler.h>
 #include<udp_server_handler.h>
 
+#define INVALID_THREAD_COUNT 59985923
+#define INVALID_PROTOCOL     59489213
+
 // here conn_fd, is the connection file discriptor, you can read and write to this discriptor, to communicate
 // the client_addr, will hold the socket address of the client, we will this aswell to you
 // returns the file discriptor to the tcp or udp socket, on which the server is listening to

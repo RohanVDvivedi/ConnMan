@@ -19,11 +19,11 @@ void intHandler(int dummy)
 void connection_handler(int conn_fd);
 void datagram_handler(int serv_fd);
 
+connection_group cgp;
+
 int main()
 {
 	signal(SIGINT, intHandler);
-
-	connection_group cgp;
 
 	//cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
 	//serve(&cgp, connection_handler, 10, &listen_fd);
@@ -31,11 +31,11 @@ int main()
 	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
 	//serve(&cgp, datagram_handler, 10, &listen_fd);
 
-	cgp = get_connection_group_tcp_ipv6("::1", 6969);
-	serve(&cgp, connection_handler, 10, &listen_fd);
-
-	//cgp = get_connection_group_udp_ipv6("::1", 6969);
+	//cgp = get_connection_group_tcp_ipv6("::1", 6969);
 	//serve(&cgp, connection_handler, 10, &listen_fd);
+
+	cgp = get_connection_group_udp_ipv6("::1", 6969);
+	serve(&cgp, datagram_handler, 10, &listen_fd);
 
 	return 0;
 }
@@ -102,7 +102,8 @@ void datagram_handler(int serv_fd)
 
 	while(1)
 	{
-		struct sockaddr_in cliaddr; socklen_t cliaddrlen = sizeof(cliaddr);
+		struct sockaddr_in6 cliaddr;
+		socklen_t cliaddrlen = (cgp.ADDRESS.sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
 		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, (struct sockaddr *) &cliaddr, &cliaddrlen);
 		if(buffreadlength == -1 || buffreadlength == 0)
 		{

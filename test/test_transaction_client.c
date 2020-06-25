@@ -5,9 +5,11 @@ void* transaction(int fd, int* close_connection_requested, void* additional_para
 int main()
 {
 	//connection_group cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
-	connection_group cgp = get_connection_group_tcp_ipv6("::1", 6969);
+	//connection_group cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
+	//connection_group cgp = get_connection_group_tcp_ipv6("::1", 6969);
+	connection_group cgp = get_connection_group_udp_ipv6("::1", 6969);
 
-	transaction_client* tcli = get_transaction_client(cgp, 1);
+	transaction_client* tcli = get_transaction_client(cgp, 3);
 
 	job* job_0 = queue_transaction(tcli, transaction, get_dstring("Ready Server Brother", 10));
 	job* job_1 = queue_transaction(tcli, transaction, get_dstring("hello, I am client", 10));

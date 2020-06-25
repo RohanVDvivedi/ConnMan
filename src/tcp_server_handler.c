@@ -1,29 +1,16 @@
 #include<tcp_server_handler.h>
 
-typedef struct handler_wrapper_input_params handler_wrapper_input_params;
-struct handler_wrapper_input_params
-{
-	int conn_fd;
-	void (*handler)(int conn_fd);
-};
+#include<handler_wrapper_params.h>
 
-handler_wrapper_input_params* get_new_handler_wrapper_input_params(int conn_fd, void (*handler)(int conn_fd))
-{
-	handler_wrapper_input_params* handler_wrapper_input_params_p = (handler_wrapper_input_params*)malloc(sizeof(handler_wrapper_input_params));
-	handler_wrapper_input_params_p->conn_fd = conn_fd;
-	handler_wrapper_input_params_p->handler = handler;
-	return handler_wrapper_input_params_p;
-}
-
-void* handler_wrapper(void* handler_wrapper_input_params_v_p)
+static void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 {
 	handler_wrapper_input_params* handler_data = ((handler_wrapper_input_params*)handler_wrapper_input_params_v_p);
 
-	handler_data->handler(handler_data->conn_fd);
+	handler_data->handler(handler_data->fd);
 
 	// phase 5
 	// closing client socket
-	close(handler_data->conn_fd);
+	close(handler_data->fd);
 
 	free(handler_data);
 	return NULL;
@@ -67,9 +54,6 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
 		submit_function(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, handler));
 	}
-
-	// ### TODO
-	// need to call close on all connection, some how
 
 	shutdown_executor(connection_executor, 1);
 

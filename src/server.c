@@ -25,13 +25,9 @@ int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned i
 
 	// go to respective function based on TRANSMISSION_PROTOCOL_TYPE
 	if(conn_grp_p->PROTOCOL == SOCK_STREAM)			// tcp
-	{
 		return tcp_server_handler(listen_fd, handler, thread_count);
-	}
 	else if(conn_grp_p->PROTOCOL == SOCK_DGRAM)		// udp
-	{
 		return udp_server_handler(listen_fd, handler, thread_count);
-	}
 	else
 		return INVALID_PROTOCOL;
 }

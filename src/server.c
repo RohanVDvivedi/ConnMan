@@ -2,24 +2,23 @@
 
 int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned int thread_count, volatile int* listen_fd_p)
 {
-	int err;
-
 	if(!thread_count)
 		return INVALID_THREAD_COUNT;
 
 	// phase 1
 	// file discriptor to socket
-	err = socket(conn_grp_p->ADDRESS.sin_family, conn_grp_p->PROTOCOL, 0);
+	int err = socket(conn_grp_p->ADDRESS.sa_family, conn_grp_p->PROTOCOL, 0);
 	if(err == -1)
 		return err;
 	int listen_fd = err;
 	(*listen_fd_p) = err;
 
-	struct sockaddr_in server_addr = conn_grp_p->ADDRESS;
-
 	// phase 2
 	// bind server address struct with the file discriptor
-	err = bind(listen_fd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+	if(conn_grp_p->ADDRESS.sa_family == AF_INET)
+		err = bind(listen_fd, &(conn_grp_p->ADDRESS), sizeof(conn_grp_p->ADDRESS_ipv4));
+	else if(conn_grp_p->ADDRESS.sa_family == AF_INET6)
+		err = bind(listen_fd, &(conn_grp_p->ADDRESS), sizeof(conn_grp_p->ADDRESS_ipv6));
 	if(err == -1)
 		return err;
 

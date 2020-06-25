@@ -1,7 +1,7 @@
 #ifndef UDP_SERVER_HANDLER_H
 #define UDP_SERVER_HANDLER_H
 
-int udp_server_handler(int listen_fd, void (*handler)(int conn_fd));
+int udp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count);
 
 /*
 TCP connection handler

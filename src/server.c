@@ -1,6 +1,6 @@
 #include<server.h>
 
-int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), volatile int* listen_fd_p)
+int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned int thread_count, volatile int* listen_fd_p)
 {
 	int err;
 
@@ -27,11 +27,11 @@ int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), volatile i
 	// go to respective function based on TRANSMISSION_PROTOCOL_TYPE
 	if(conn_grp_p->PROTOCOL == SOCK_STREAM)			// tcp
 	{
-		err = tcp_server_handler(listen_fd, handler);
+		err = tcp_server_handler(listen_fd, handler, thread_count);
 	}
 	else if(conn_grp_p->PROTOCOL == SOCK_DGRAM)		// udp
 	{
-		err = udp_server_handler(listen_fd, handler);
+		err = udp_server_handler(listen_fd, handler, thread_count);
 	}
 	else
 	{

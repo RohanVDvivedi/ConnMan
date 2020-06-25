@@ -29,7 +29,7 @@ void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 	return NULL;
 }
 
-int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
+int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count)
 {
 	// there can be errors anywhere at any point
 	int err;
@@ -44,7 +44,7 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd))
 
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
-	executor* connection_executor = get_executor(CACHED_THREAD_POOL_EXECUTOR, DEFAULT_MAXIMUM_CONNECTIONS, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
+	executor* connection_executor = get_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
 	while(1)
 	{
 		// phase 4

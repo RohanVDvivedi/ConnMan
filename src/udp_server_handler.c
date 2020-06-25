@@ -1,6 +1,6 @@
 #include<udp_server_handler.h>
 
-int udp_server_handler(int listen_fd, void (*handler)(int conn_fd))
+int udp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count)
 {
 	// there can be errors anywhere at any point
 	int err;

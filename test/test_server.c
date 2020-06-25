@@ -25,8 +25,8 @@ int main()
 {
 	signal(SIGINT, intHandler);
 
-	//cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
-	//serve(&cgp, connection_handler, 10, &listen_fd);
+	cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	serve(&cgp, connection_handler, 10, &listen_fd);
 
 	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
 	//serve(&cgp, datagram_handler, 10, &listen_fd);
@@ -34,8 +34,8 @@ int main()
 	//cgp = get_connection_group_tcp_ipv6("::1", 6969);
 	//serve(&cgp, connection_handler, 10, &listen_fd);
 
-	cgp = get_connection_group_udp_ipv6("::1", 6969);
-	serve(&cgp, datagram_handler, 10, &listen_fd);
+	//cgp = get_connection_group_udp_ipv6("::1", 6969);
+	//serve(&cgp, datagram_handler, 10, &listen_fd);
 
 	return 0;
 }
@@ -46,6 +46,7 @@ int process(char* buffer)
 
 	if(strcmp(buffer, "exit\r\n") == 0 || strcmp(buffer, "exit\n") == 0 || strcmp(buffer, "exit") == 0)
 	{
+		strcpy(buffer, "xit\r\n");
 		return -1;
 	}
 	else if(strcmp(buffer, "ping\r\n") == 0 || strcmp(buffer, "ping\n") == 0 || strcmp(buffer, "ping") == 0)
@@ -80,14 +81,16 @@ void connection_handler(int conn_fd)
 		buffer[buffreadlength] = '\0';
 
 		// process the buffer here
-		if(process(buffer) != 0)
-		{
-			break;
-		}
+		int process_result = process(buffer);
 
 		buffreadlength = strlen(buffer);
 		buffsentlength = send(conn_fd, buffer, buffreadlength, 0);
 		if(buffsentlength == -1 || buffsentlength == 0)
+		{
+			break;
+		}
+
+		if(process_result != 0)
 		{
 			break;
 		}
@@ -113,14 +116,16 @@ void datagram_handler(int serv_fd)
 		buffer[buffreadlength] = '\0';
 
 		// process the buffer here
-		if(process(buffer) != 0)
-		{
-			break;
-		}
+		int process_result = process(buffer);
 
 		buffreadlength = strlen(buffer);
 		int buffsentlength = sendto(serv_fd, buffer, buffreadlength, 0, (struct sockaddr *) &cliaddr, cliaddrlen);
 		if(buffsentlength == -1 || buffsentlength == 0)
+		{
+			break;
+		}
+
+		if(process_result != 0)
 		{
 			break;
 		}

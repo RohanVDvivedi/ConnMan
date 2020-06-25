@@ -9,17 +9,17 @@ int main()
 {
 	connection_group cgp;
 
-	//cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
-	//connect_to(&cgp, connection_handler);
+	cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	connect_to(&cgp, connection_handler);
 
 	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
-	//connect_to(&cgp, datagram_handler);
+	//connect_to(&cgp, connection_handler);
 
 	//cgp = get_connection_group_tcp_ipv6("::1", 6969);
 	//connect_to(&cgp, connection_handler);
 
-	cgp = get_connection_group_udp_ipv6("::1", 6969);
-	connect_to(&cgp, connection_handler);
+	//cgp = get_connection_group_udp_ipv6("::1", 6968);
+	//connect_to(&cgp, connection_handler);
 
 	return 0;
 }

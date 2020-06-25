@@ -4,7 +4,8 @@ void* transaction(int fd, int* close_connection_requested, void* additional_para
 
 int main()
 {
-	connection_group cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	//connection_group cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	connection_group cgp = get_connection_group_tcp_ipv6("::1", 6969);
 
 	transaction_client* tcli = get_transaction_client(cgp, 1);
 

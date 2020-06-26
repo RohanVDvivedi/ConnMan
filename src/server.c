@@ -19,6 +19,8 @@ int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned i
 		err = bind(listen_fd, &(conn_grp_p->ADDRESS), sizeof(conn_grp_p->ADDRESS_ipv4));
 	else if(conn_grp_p->ADDRESS.sa_family == AF_INET6)
 		err = bind(listen_fd, &(conn_grp_p->ADDRESS), sizeof(conn_grp_p->ADDRESS_ipv6));
+	else
+		return INVALID_ADDRESS_FAMILY;
 	if(err == -1)
 		return err;
 

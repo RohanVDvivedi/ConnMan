@@ -6,8 +6,9 @@
 #include<tcp_server_handler.h>
 #include<udp_server_handler.h>
 
-#define INVALID_THREAD_COUNT 59985923
-#define INVALID_PROTOCOL     59489213
+#define INVALID_THREAD_COUNT 	59985923
+#define INVALID_PROTOCOL     	59489213
+#define INVALID_ADDRESS_FAMILY	59546876
 
 /*
 **	FOR TCP : 

@@ -20,8 +20,7 @@
 */
 
 // here conn_fd, is the connection file discriptor, you can read and write to this discriptor, to communicate
-// the client_addr, will hold the socket address of the client, we will this aswell to you
-// returns the file discriptor to the tcp or udp socket, on which the server is listening to
+// returns the file discriptor to the tcp or udp socket, on which the server is listening
 int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned int thread_count, volatile int* listen_fd_p);
 
 // stops the server that was started using the serve function

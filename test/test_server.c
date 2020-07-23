@@ -16,8 +16,8 @@ void intHandler(int dummy)
     }
 }
 
-void connection_handler(int conn_fd);
-void datagram_handler(int serv_fd);
+void connection_handler(int conn_fd, void* additional_params);
+void datagram_handler(int serv_fd, void* additional_params);
 
 connection_group cgp;
 
@@ -26,16 +26,16 @@ int main()
 	signal(SIGINT, intHandler);
 
 	cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
-	serve(&cgp, connection_handler, 10, &listen_fd);
+	serve(&cgp, NULL, connection_handler, 10, &listen_fd);
 
 	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
-	//serve(&cgp, datagram_handler, 10, &listen_fd);
+	//serve(&cgp, NULL, datagram_handler, 10, &listen_fd);
 
 	//cgp = get_connection_group_tcp_ipv6("::1", 6969);
-	//serve(&cgp, connection_handler, 10, &listen_fd);
+	//serve(&cgp, NULL, connection_handler, 10, &listen_fd);
 
 	//cgp = get_connection_group_udp_ipv6("::1", 6969);
-	//serve(&cgp, datagram_handler, 10, &listen_fd);
+	//serve(&cgp, NULL, datagram_handler, 10, &listen_fd);
 
 	return 0;
 }
@@ -62,7 +62,7 @@ int process(char* buffer)
 }
 
 // for tcp
-void connection_handler(int conn_fd)
+void connection_handler(int conn_fd, void* additional_params)
 {
 	printf("TCP Connection : %d\n", conn_fd);
 	char buffer[1000];
@@ -98,7 +98,7 @@ void connection_handler(int conn_fd)
 }
 
 // for udp
-void datagram_handler(int serv_fd)
+void datagram_handler(int serv_fd, void* additional_params)
 {
 	printf("UDP Server : %d\n", serv_fd);
 	char buffer[1000];

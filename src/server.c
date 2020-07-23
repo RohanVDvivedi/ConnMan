@@ -1,6 +1,6 @@
 #include<server.h>
 
-int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned int thread_count, volatile int* listen_fd_p)
+int serve(connection_group* conn_grp_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
 {
 	if(!thread_count)
 		return INVALID_THREAD_COUNT;
@@ -26,9 +26,9 @@ int serve(connection_group* conn_grp_p, void (*handler)(int conn_fd), unsigned i
 
 	// go to respective function based on TRANSMISSION_PROTOCOL_TYPE
 	if(conn_grp_p->PROTOCOL == SOCK_STREAM)			// tcp
-		return tcp_server_handler(listen_fd, handler, thread_count);
+		return tcp_server_handler(listen_fd, additional_params, handler, thread_count);
 	else if(conn_grp_p->PROTOCOL == SOCK_DGRAM)		// udp
-		return udp_server_handler(listen_fd, handler, thread_count);
+		return udp_server_handler(listen_fd, additional_params, handler, thread_count);
 	else
 		return INVALID_PROTOCOL;
 }

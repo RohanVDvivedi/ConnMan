@@ -3,7 +3,7 @@
 
 #include<executor.h>
 
-int udp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count);
+int udp_server_handler(int listen_fd, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count);
 
 /*
 

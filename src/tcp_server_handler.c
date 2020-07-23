@@ -6,7 +6,7 @@ static void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 {
 	handler_wrapper_input_params* handler_data = ((handler_wrapper_input_params*)handler_wrapper_input_params_v_p);
 
-	handler_data->handler(handler_data->fd);
+	handler_data->handler(handler_data->fd, handler_data->additional_params);
 
 	// phase 5
 	// closing client socket
@@ -16,7 +16,7 @@ static void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 	return NULL;
 }
 
-int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int thread_count)
+int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count)
 {
 	// phase 3
 	// listenning on the socket file discriptor 
@@ -41,7 +41,7 @@ int tcp_server_handler(int listen_fd, void (*handler)(int conn_fd), unsigned int
 		int conn_fd = err;
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
-		submit_function(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, handler));
+		submit_function(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, additional_params, handler));
 	}
 
 	shutdown_executor(connection_executor, 1);

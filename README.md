@@ -7,4 +7,4 @@ setup instructions
  * git clone https://github.com/RohanVDvivedi/ConnMan.git
  * cd ConnMan
  * sudo make clean install
- * add "-lconnman" linker flag, while compiling your application
+ * add "-lconnman -lboompar -lpthread -lcutlery" linker flag, while compiling your application

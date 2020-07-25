@@ -20,7 +20,7 @@ BINARY:=${BIN_DIR}/connman.out
 # compiler flags
 CFLAGS=-Wall -O3 -I${INC_DIR}
 # linker flags, this will used to compile the binary
-LFLAGS=-lconnman -lboompar -lpthread -lcutlery
+LFLAGS=-L${LIB_DIR} -lconnman -lboompar -lpthread -lcutlery
 
 # rule to make the object directory
 ${OBJ_DIR} :

@@ -1,5 +1,8 @@
 #include<client.h>
 
+#include<sys/socket.h>
+#include<unistd.h>			// close
+
 // returns 0 if successfull, handling of the connection was successfull
 int connect_to(connection_group* conn_grp_p, void (*handler)(int fd))
 {

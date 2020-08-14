@@ -1,6 +1,8 @@
 #ifndef HANDLER_WRAPPER_PARAMS_H
 #define HANDLER_WRAPPER_PARAMS_H
 
+#include<stdlib.h> // malloc and free
+
 typedef struct handler_wrapper_input_params handler_wrapper_input_params;
 struct handler_wrapper_input_params
 {

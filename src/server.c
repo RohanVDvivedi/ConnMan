@@ -1,5 +1,8 @@
 #include<server.h>
 
+#include<sys/socket.h>	// socket, bind
+#include<unistd.h>		// close
+
 #include<tcp_server_handler.h>
 #include<udp_server_handler.h>
 

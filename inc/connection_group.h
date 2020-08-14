@@ -1,15 +1,9 @@
 #ifndef CONNECTION_GROUP_H
 #define CONNECTION_GROUP_H
 
+#include<netinet/in.h>	// structure definitions of sockaddr_*
+
 #include<stdint.h>
-
-#include<unistd.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<netinet/in.h>
-#include<arpa/inet.h>
-
-#include<dstring.h>
 
 // the connection_group is responsible to uniquely identify al connection group with multiple threads one for each connection,
 typedef struct connection_group connection_group;

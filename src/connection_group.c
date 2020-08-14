@@ -1,5 +1,9 @@
 #include<connection_group.h>
 
+#include<sys/types.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+
 connection_group get_connection_group(int PROTOCOL, sa_family_t ADDRESS_FAMILY, uint16_t PORT, char* SERVER_ADDRESS)
 {
 	connection_group conn_grp;

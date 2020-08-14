@@ -1,5 +1,13 @@
 #include<transaction_client.h>
 
+#include<unistd.h>	// close
+#include<stdlib.h>	// free and malloc
+#include<stdio.h>	// printf
+
+//#include<executor.h>	// executor for the maintaining FIXED_THREAD_COUNT_EXECUTOR thread pool one for each connection
+
+#include<client.h>
+
 typedef struct transaction_handler_params transaction_handler_params;
 struct transaction_handler_params
 {

@@ -19,15 +19,10 @@ It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ip
 ## Using The library
  * add `-lconnman -lboompar -lpthread -lcutlery` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
-   * `#include<array.h>`
-   * `#include<stack.h>`
-   * `#include<queue.h>`
-   * `#include<heap.h>`
-   * `#include<linkedlist.h>`
-   * `#include<bst.h>`
-   * `#include<hashmap.h>`
-   * `#include<dstring.h>`
-   * `#include<bitmap.h>`
+   * `#include<server.h>`
+   * `#include<client.h>`
+   * `#include<transaction_client.h>`
+   * `#include<connection_group.h>`
 
 ## Instructions for uninstalling library
 

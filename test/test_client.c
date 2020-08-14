@@ -1,6 +1,7 @@
 #include<connection_group.h>
 #include<client.h>
 
+#include<string.h>
 #include<stdio.h>
 
 void connection_handler(int conn_fd);

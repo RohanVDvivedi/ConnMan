@@ -1,5 +1,8 @@
 #include<transaction_client.h>
 
+#include<stdio.h>
+#include<dstring.h>
+
 void* transaction(int fd, int* close_connection_requested, void* additional_params);
 
 connection_group cgp;

@@ -47,7 +47,7 @@ int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 		int conn_fd = err;
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
-		submit_function(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, additional_params, handler));
+		submit_job(connection_executor, handler_wrapper, get_new_handler_wrapper_input_params(conn_fd, additional_params, handler), NULL);
 	}
 
 	shutdown_executor(connection_executor, 1);

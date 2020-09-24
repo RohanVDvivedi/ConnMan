@@ -62,13 +62,15 @@ int main()
 	if(promise_0 != NULL)
 	{
 		output = get_result_for_transaction(promise_0);
-		printf("promise0-> ");display_dstring(&input_0);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise0-> ");display_dstring(&input_0);printf(" : ");
 		deinit_dstring(&input_0);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -78,13 +80,15 @@ int main()
 	if(promise_1 != NULL)
 	{
 		output = get_result_for_transaction(promise_1);
-		printf("promise1-> ");display_dstring(&input_1);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise1-> ");display_dstring(&input_1);printf(" : ");
 		deinit_dstring(&input_1);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -94,13 +98,15 @@ int main()
 	if(promise_2 != NULL)
 	{
 		output = get_result_for_transaction(promise_2);
-		printf("promise2-> ");display_dstring(&input_2);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise2-> ");display_dstring(&input_2);printf(" : ");
 		deinit_dstring(&input_2);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -110,13 +116,15 @@ int main()
 	if(promise_3 != NULL)
 	{
 		output = get_result_for_transaction(promise_3);
-		printf("promise3-> ");display_dstring(&input_3);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise3-> ");display_dstring(&input_3);printf(" : ");
 		deinit_dstring(&input_3);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -126,13 +134,15 @@ int main()
 	if(promise_4 != NULL)
 	{
 		output = get_result_for_transaction(promise_4);
-		printf("promise4-> ");display_dstring(&input_4);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise4-> ");display_dstring(&input_4);printf(" : ");
 		deinit_dstring(&input_4);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -142,13 +152,15 @@ int main()
 	if(promise_5 != NULL)
 	{
 		output = get_result_for_transaction(promise_5);
-		printf("promise5-> ");display_dstring(&input_5);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise5-> ");display_dstring(&input_5);printf(" : ");
 		deinit_dstring(&input_5);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -158,13 +170,15 @@ int main()
 	if(promise_6 != NULL)
 	{
 		output = get_result_for_transaction(promise_6);
-		printf("promise6-> ");display_dstring(&input_6);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise6-> ");display_dstring(&input_6);printf(" : ");
 		deinit_dstring(&input_6);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -174,13 +188,15 @@ int main()
 	if(promise_7 != NULL)
 	{
 		output = get_result_for_transaction(promise_7);
-		printf("promise7-> ");display_dstring(&input_7);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise7-> ");display_dstring(&input_7);printf(" : ");
 		deinit_dstring(&input_7);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -190,13 +206,15 @@ int main()
 	if(promise_8 != NULL)
 	{
 		output = get_result_for_transaction(promise_8);
-		printf("promise8-> ");display_dstring(&input_10);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise8-> ");display_dstring(&input_10);printf(" : ");
 		deinit_dstring(&input_8);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -206,13 +224,15 @@ int main()
 	if(promise_9 != NULL)
 	{
 		output = get_result_for_transaction(promise_9);
-		printf("promise9-> ");display_dstring(&input_11);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise9-> ");display_dstring(&input_11);printf(" : ");
 		deinit_dstring(&input_9);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -222,13 +242,15 @@ int main()
 	if(promise_10 != NULL)
 	{
 		output = get_result_for_transaction(promise_10);
-		printf("promise10-> ");display_dstring(&input_10);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise10-> ");display_dstring(&input_10);printf(" : ");
 		deinit_dstring(&input_10);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -238,13 +260,15 @@ int main()
 	if(promise_11 != NULL)
 	{
 		output = get_result_for_transaction(promise_11);
-		printf("promise11-> ");display_dstring(&input_11);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise11-> ");display_dstring(&input_11);printf(" : ");
 		deinit_dstring(&input_11);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{
@@ -254,13 +278,15 @@ int main()
 	if(promise_12 != NULL)
 	{
 		output = get_result_for_transaction(promise_12);
-		printf("promise12-> ");display_dstring(&input_12);printf(" : ");display_dstring(output);printf("\n");
+		printf("promise12-> ");display_dstring(&input_12);printf(" : ");
 		deinit_dstring(&input_12);
 		if(output != NULL)
 		{
+			display_dstring(output);
 			delete_dstring(output);
 			output = NULL;
 		}
+		printf("\n");
 	}
 	else
 	{

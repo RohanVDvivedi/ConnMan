@@ -17,7 +17,7 @@ transaction_client* get_transaction_client(connection_group conn_group, unsigned
 
 // the add_transaction_to function adds a transaction to be performed on a queue
 // the transaction, can be performed by any of the connection, specified by tuple => (protocol, ip, port) of the connection_group
-job* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd, int* close_connection_requested, void* additional_params), void* additional_params);
+promise* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd, int* close_connection_requested, void* additional_params), void* additional_params);
 
 /* ******************************************************************
 anatomy of transaction function :
@@ -31,9 +31,8 @@ anatomy of transaction function :
 		-> this same pointer will be returned back to you when you call get_result_for_transaction, but only after that transaction is completed
 ********************************************************************* */
 
-// this function returns the result of the submitted transaction,
-// it also returns you pointer to the additional_params that were submitted, if additional_params_return_p is not NULL
-void* get_result_for_transaction(job* job_p, void** additional_params_return_p);
+// this function returns the result of the submitted transaction
+void* get_result_for_transaction(promise* promised_response);
 
 // you must call shutdown_transaction_client before delete_transaction_client
 // this method will close all the connections and wait till, all the threads complete

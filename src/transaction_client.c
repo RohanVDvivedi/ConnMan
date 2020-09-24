@@ -78,6 +78,7 @@ static void* transaction_handler(transaction_handler_params* params)
 
 	// execute the transaction
 	void* result = params->transaction(*fd_p, &close_connection_requested, params->additional_params);
+	free(params);
 
 	if(close_connection_requested)
 	{
@@ -102,41 +103,26 @@ static void transaction_worker_finish(void* args)
 	}
 }
 
-job* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd, int* close_connection_requested, void* additional_params), void* additional_params)
+promise* queue_transaction(transaction_client* tclient, void* (*transaction)(int fd, int* close_connection_requested, void* additional_params), void* additional_params)
 {
 	transaction_handler_params* params = (transaction_handler_params*) malloc(sizeof(transaction_handler_params));
 	params->conn_group = &(tclient->conn_group);
 	params->additional_params = additional_params;
 	params->transaction = transaction;
-	job* job_p = get_job( (void*(*)(void*)) transaction_handler, params);
-	if(!submit_job(tclient->transaction_executor, job_p))
+	promise* promised_response = get_promise();
+	if(!submit_job(tclient->transaction_executor, (void*(*)(void*)) transaction_handler, params, promised_response))
 	{
-		delete_job(job_p);
+		delete_promise(promised_response);
 		free(params);
-	}
-	return job_p;
-}
-
-void* get_result_for_transaction(job* job_p, void** additional_params_return_p)
-{
-	if(job_p == NULL)
-	{
 		return NULL;
 	}
+	return promised_response;
+}
 
-	transaction_handler_params* params = job_p->input_p;
-
-	if(additional_params_return_p != NULL)
-	{
-		(*additional_params_return_p) = params->additional_params;
-	}
-
-	void* result = get_result(job_p);
-
-	// delete the input parameters of the job only after you have got the result
-	delete_job(job_p);
-	free(params);
-
+void* get_result_for_transaction(promise* promised_response)
+{
+	void* result = get_promised_result(promised_response);
+	delete_promise(promised_response);
 	return result;
 }
 

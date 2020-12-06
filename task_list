@@ -1,0 +1,2 @@
+ * provide an event based multi threaded io model - future
+   * not select or poll based

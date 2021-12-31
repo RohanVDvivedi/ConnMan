@@ -20,12 +20,12 @@ struct connection_group
 	};
 };
 
-connection_group get_connection_group_tcp_ipv4(char* SERVER_ADDRESS, uint16_t PORT);
+connection_group new_connection_group_tcp_ipv4(char* SERVER_ADDRESS, uint16_t PORT);
 
-connection_group get_connection_group_tcp_ipv6(char* SERVER_ADDRESS, uint16_t PORT);
+connection_group new_connection_group_tcp_ipv6(char* SERVER_ADDRESS, uint16_t PORT);
 
-connection_group get_connection_group_udp_ipv4(char* SERVER_ADDRESS, uint16_t PORT);
+connection_group new_connection_group_udp_ipv4(char* SERVER_ADDRESS, uint16_t PORT);
 
-connection_group get_connection_group_udp_ipv6(char* SERVER_ADDRESS, uint16_t PORT);
+connection_group new_connection_group_udp_ipv6(char* SERVER_ADDRESS, uint16_t PORT);
 
 #endif

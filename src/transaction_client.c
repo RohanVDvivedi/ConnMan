@@ -38,14 +38,14 @@ static void connection_file_discriptor_key_create()
 	pthread_key_create(&connection_file_discriptor_key, free);
 }
 
-transaction_client* get_transaction_client(connection_group conn_group, unsigned long long int connection_count)
+transaction_client* new_transaction_client(connection_group conn_group, unsigned long long int connection_count)
 {
 	// key create once call => may or may not be called, based on previous invocation
 	pthread_once(&connection_file_discriptor_key_once_control, connection_file_discriptor_key_create);
 	
 	transaction_client* tclient = (transaction_client*) malloc(sizeof(transaction_client));
 	tclient->conn_group = conn_group;
-	tclient->transaction_executor = get_executor(FIXED_THREAD_COUNT_EXECUTOR, connection_count, 0, NULL, transaction_worker_finish, NULL);
+	tclient->transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, connection_count, 0, NULL, transaction_worker_finish, NULL);
 	return tclient;
 }
 
@@ -109,7 +109,7 @@ promise* queue_transaction(transaction_client* tclient, void* (*transaction)(int
 	params->conn_group = &(tclient->conn_group);
 	params->additional_params = additional_params;
 	params->transaction = transaction;
-	promise* promised_response = get_promise();
+	promise* promised_response = new_promise();
 	if(!submit_job(tclient->transaction_executor, (void*(*)(void*)) transaction_handler, params, promised_response))
 	{
 		delete_promise(promised_response);

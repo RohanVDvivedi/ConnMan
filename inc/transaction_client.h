@@ -13,7 +13,7 @@ struct transaction_client
 	executor* transaction_executor;
 };
 
-transaction_client* get_transaction_client(connection_group conn_group, unsigned long long int connection_count);
+transaction_client* new_transaction_client(connection_group conn_group, unsigned long long int connection_count);
 
 // the add_transaction_to function adds a transaction to be performed on a queue
 // the transaction, can be performed by any of the connection, specified by tuple => (protocol, ip, port) of the connection_group

@@ -4,7 +4,7 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 
-connection_group get_connection_group(int PROTOCOL, sa_family_t ADDRESS_FAMILY, uint16_t PORT, char* SERVER_ADDRESS)
+connection_group new_connection_group(int PROTOCOL, sa_family_t ADDRESS_FAMILY, uint16_t PORT, char* SERVER_ADDRESS)
 {
 	connection_group conn_grp;
 	conn_grp.PROTOCOL = PROTOCOL;
@@ -25,22 +25,22 @@ connection_group get_connection_group(int PROTOCOL, sa_family_t ADDRESS_FAMILY, 
 
 // fast utils
 
-connection_group get_connection_group_tcp_ipv4(char* SERVER_ADDRESS, uint16_t PORT)
+connection_group new_connection_group_tcp_ipv4(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_STREAM,  AF_INET, PORT, SERVER_ADDRESS);
+	return new_connection_group(SOCK_STREAM,  AF_INET, PORT, SERVER_ADDRESS);
 }
 
-connection_group get_connection_group_tcp_ipv6(char* SERVER_ADDRESS, uint16_t PORT)
+connection_group new_connection_group_tcp_ipv6(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group(SOCK_STREAM, AF_INET6, PORT, SERVER_ADDRESS);
+	return new_connection_group(SOCK_STREAM, AF_INET6, PORT, SERVER_ADDRESS);
 }
 
-connection_group get_connection_group_udp_ipv4(char* SERVER_ADDRESS, uint16_t PORT)
+connection_group new_connection_group_udp_ipv4(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group( SOCK_DGRAM,  AF_INET, PORT, SERVER_ADDRESS);
+	return new_connection_group( SOCK_DGRAM,  AF_INET, PORT, SERVER_ADDRESS);
 }
 
-connection_group get_connection_group_udp_ipv6(char* SERVER_ADDRESS, uint16_t PORT)
+connection_group new_connection_group_udp_ipv6(char* SERVER_ADDRESS, uint16_t PORT)
 {
-	return get_connection_group( SOCK_DGRAM, AF_INET6, PORT, SERVER_ADDRESS);
+	return new_connection_group( SOCK_DGRAM, AF_INET6, PORT, SERVER_ADDRESS);
 }

@@ -26,16 +26,16 @@ int main()
 {
 	signal(SIGINT, intHandler);
 
-	cgp = get_connection_group_tcp_ipv4("127.0.0.1", 6969);
+	cgp = new_connection_group_tcp_ipv4("127.0.0.1", 6969);
 	serve(&cgp, NULL, connection_handler, 10, &listen_fd);
 
-	//cgp = get_connection_group_udp_ipv4("127.0.0.1", 6969);
+	//cgp = new_connection_group_udp_ipv4("127.0.0.1", 6969);
 	//serve(&cgp, NULL, datagram_handler, 10, &listen_fd);
 
-	//cgp = get_connection_group_tcp_ipv6("::1", 6969);
+	//cgp = new_connection_group_tcp_ipv6("::1", 6969);
 	//serve(&cgp, NULL, connection_handler, 10, &listen_fd);
 
-	//cgp = get_connection_group_udp_ipv6("::1", 6969);
+	//cgp = new_connection_group_udp_ipv6("::1", 6969);
 	//serve(&cgp, NULL, datagram_handler, 10, &listen_fd);
 
 	return 0;

@@ -1,3 +1,7 @@
  
  * The library is working perfectly fine as a multi threaded TCP/IP or UDP/IP server. As a maintainer I also aim to also provide functionality for non-blocking serve() function, in the future development.
    	 * use epoll (edge triggered) and not select or poll (level triggered) based
+
+ * implement connection_stream as per the implementation of cutlery
+ * test the library after boompar implements co routine support
+ * propogate the connection_stream based api to dependent libraries

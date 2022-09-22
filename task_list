@@ -1,3 +1,4 @@
+ * use streams instead of raw file descriptors in handlers
  
  * The library is working perfectly fine as a multi threaded TCP/IP or UDP/IP server. As a maintainer I also aim to also provide functionality for non-blocking serve() function, in the future development.
    	 * use epoll (edge triggered) and not select or poll (level triggered) based

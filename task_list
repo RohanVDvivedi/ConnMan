@@ -2,7 +2,8 @@
    * start with implementing file descriptor based streams
    * then replace that in all the later projects
    * streams use smart_pointers to store stream contexts
- * build streams for file-descriptors, dstrings and pipes
+ * build streams for file-descriptors (including the one for stdio), dstrings and pipes
+   * provide vsnprintf and vsnscanf like utilities for write_stream and read_stream respectively
  
  * The library is working perfectly fine as a multi threaded TCP/IP or UDP/IP server. As a maintainer I also aim to also provide functionality for non-blocking serve() function, in the future development.
    	 * use epoll (edge triggered) and not select or poll (level triggered) based

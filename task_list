@@ -1,3 +1,5 @@
+ * segregate code for udp server/client leaving it with previous api
+
  * use streams instead of raw file descriptors in handlers
    * start with implementing file descriptor based streams
    * then replace that in all the later projects

@@ -10,8 +10,6 @@ struct read_stream
 	unsigned int (*read)(void* stream_context, void* data, unsigned int data_size);
 
 	int (*close)(void* stream_context);
-
-	int (*is_closed)(void* stream_context);
 };
 
 typedef struct write_stream write_stream;
@@ -23,8 +21,6 @@ struct write_stream
 	unsigned int (*write)(void* stream_context, const void* data, unsigned int data_size);
 
 	int (*close)(void* stream_context);
-
-	int (*is_closed)(void* stream_context);
 };
 
 #endif

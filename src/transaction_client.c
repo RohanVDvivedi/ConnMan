@@ -45,7 +45,7 @@ transaction_client* new_transaction_client(connection_group conn_group, unsigned
 	
 	transaction_client* tclient = (transaction_client*) malloc(sizeof(transaction_client));
 	tclient->conn_group = conn_group;
-	tclient->transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, connection_count, 0, NULL, transaction_worker_finish, NULL);
+	tclient->transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, connection_count, connection_count * 128, 0, NULL, transaction_worker_finish, NULL);
 	return tclient;
 }
 
@@ -110,7 +110,7 @@ promise* queue_transaction(transaction_client* tclient, void* (*transaction)(int
 	params->additional_params = additional_params;
 	params->transaction = transaction;
 	promise* promised_response = new_promise();
-	if(!submit_job(tclient->transaction_executor, (void*(*)(void*)) transaction_handler, params, promised_response))
+	if(!submit_job(tclient->transaction_executor, (void*(*)(void*)) transaction_handler, params, promised_response, TRANSACTION_SUBMISSION_TIMOUT_IN_MICROSECONDS))
 	{
 		delete_promise(promised_response);
 		free(params);

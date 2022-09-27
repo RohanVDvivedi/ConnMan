@@ -1,7 +1,6 @@
  * use streams instead of raw file descriptors in handlers
    * start with implementing file descriptor based streams
    * then replace that in all the later projects
-   * streams use smart_pointers to store stream contexts
  * build streams for file-descriptors (including the one for stdio), dstrings and pipes
    * provide vsnprintf and vsnscanf like utilities for write_stream and read_stream respectively
  

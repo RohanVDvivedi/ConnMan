@@ -6,6 +6,9 @@
 #include<tcp_server_handler.h>
 #include<udp_server_handler.h>
 
+#include<stream.h>
+#include<tcp_server_stream_handler.h>
+
 static int make_server_ready_to_listen(connection_group* conn_grp_p)
 {
 	// phase 1
@@ -27,22 +30,46 @@ static int make_server_ready_to_listen(connection_group* conn_grp_p)
 	}
 }
 
+#define DEFAULT_MAX_THREAD_COUNT 8
+
 int serve_using_handlers(connection_group* conn_grp_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
 {
-	if(!thread_count)
+	if(thread_count == 0)
+		thread_count = DEFAULT_MAX_THREAD_COUNT;
+
+	if(conn_grp_p->PROTOCOL != SOCK_STREAM && conn_grp_p->PROTOCOL != SOCK_DGRAM)
 		return -1;
 
 	*listen_fd_p = make_server_ready_to_listen(conn_grp_p);
 	if(*listen_fd_p < 0)
 		return *listen_fd_p;
 
-	// go to respective function based on TRANSMISSION_PROTOCOL_TYPE
+	int err;
 	if(conn_grp_p->PROTOCOL == SOCK_STREAM)			// tcp
-		return tcp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
+		err = tcp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
 	else if(conn_grp_p->PROTOCOL == SOCK_DGRAM)		// udp
-		return udp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
-	else
-		return -3;
+		err = udp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
+
+	close(*listen_fd_p);
+	return err;
+}
+
+int serve_using_stream_handlers(connection_group* conn_grp_p, void* additional_params, void (*stream_handler)(read_stream* rs, write_stream* ws, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, volatile int* listen_fd_p)
+{
+	if(thread_count == 0)
+		thread_count = DEFAULT_MAX_THREAD_COUNT;
+
+	if(conn_grp_p->PROTOCOL != SOCK_STREAM && conn_grp_p->PROTOCOL != SOCK_DGRAM)
+		return -1;
+
+	*listen_fd_p = make_server_ready_to_listen(conn_grp_p);
+	if(*listen_fd_p < 0)
+		return *listen_fd_p;
+
+	int err = tcp_server_stream_handler(*listen_fd_p, additional_params, stream_handler, thread_count, ssl_ctx);
+
+	close(*listen_fd_p);
+	return err;
 }
 
 int server_stop(int listen_fd)

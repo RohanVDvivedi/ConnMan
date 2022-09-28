@@ -30,12 +30,34 @@ static int close_stream(void* stream_context)
 	return SSL_shutdown(stream_context);
 }
 
-int initialize_streams_for_ssl(read_stream* rs, write_stream* ws, SSL_CTX* ctx, int conn_fd)
+int initialize_streams_for_ssl_server(read_stream* rs, write_stream* ws, SSL_CTX* ctx, int conn_fd)
 {
 	SSL* ssl = SSL_new(ctx);
 	SSL_set_fd(ssl, conn_fd);
 
 	if(SSL_accept(ssl) == -1)
+	{
+		SSL_free(ssl);
+		return 0;
+	}
+
+	rs->stream_context = ssl;
+	rs->read_from_stream = read_from_stream;
+	rs->close_stream = close_stream;
+
+	ws->stream_context = ssl;
+	ws->write_to_stream = write_to_stream;
+	ws->close_stream = close_stream;
+
+	return 1;
+}
+
+int initialize_streams_for_ssl_client(read_stream* rs, write_stream* ws, SSL_CTX* ctx, int conn_fd)
+{
+	SSL* ssl = SSL_new(ctx);
+	SSL_set_fd(ssl, conn_fd);
+
+	if(SSL_connect(ssl) == -1)
 	{
 		SSL_free(ssl);
 		return 0;

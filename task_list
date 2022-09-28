@@ -1,12 +1,11 @@
- * segregate code for udp server/client leaving it with previous api
+ * add serve_using_stream_handlers
+ * transaction client mods to using only stream based api
 
- * use streams instead of raw file descriptors in handlers
+ * use streams instead of raw file descriptors in stream handlers
    * start with implementing file descriptor based streams
    * then replace that in all the later projects
  * build streams for file-descriptors (including the one for stdio), dstrings and pipes
-   * provide vsnprintf and vsnscanf like utilities for write_stream and read_stream respectively
  
  * The library is working perfectly fine as a multi threaded TCP/IP or UDP/IP server. As a maintainer I also aim to also provide functionality for non-blocking serve() function, in the future development.
-   	 * use epoll (edge triggered) and not select or poll (level triggered) based
 
  * propogate the connection_stream based api to dependent libraries

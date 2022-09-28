@@ -9,9 +9,10 @@
 typedef struct connection_group connection_group;
 struct connection_group
 {
-	// specifies if the protocol is tcp or ip
+	// specifies if the protocol is tcp or udp
 	int PROTOCOL;
 
+	// below union stores corresponding ipv4 or ipv6 address of the server
 	union
 	{
 		struct sockaddr     ADDRESS;

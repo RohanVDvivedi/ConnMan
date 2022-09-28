@@ -3,6 +3,10 @@
 
 #include<connection_group.h>
 
+#include<stream.h>
+
+#include<openssl/ssl.h>
+
 /*
 **	FOR TCP : 
 		the handler is called once per connection

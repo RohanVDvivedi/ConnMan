@@ -44,7 +44,7 @@ int serve_using_handlers(connection_group* conn_grp_p, void* additional_params, 
 	if(*listen_fd_p < 0)
 		return *listen_fd_p;
 
-	int err;
+	int err = -1;
 	if(conn_grp_p->PROTOCOL == SOCK_STREAM)			// tcp
 		err = tcp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
 	else if(conn_grp_p->PROTOCOL == SOCK_DGRAM)		// udp

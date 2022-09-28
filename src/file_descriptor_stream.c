@@ -16,7 +16,7 @@ static unsigned int read_from_stream(void* stream_context, void* data, unsigned 
 static unsigned int write_to_stream(void* stream_context, const void* data, unsigned int data_size)
 {
 	unsigned int bytes_written = 0;
-	while(data_size)
+	while(bytes_written < data_size)
 	{
 		ssize_t ret = write(*((int*)stream_context), data + bytes_written, data_size - bytes_written);
 

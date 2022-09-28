@@ -15,7 +15,7 @@
 
 // here conn_fd, is the connection file discriptor, you can read and write to this discriptor, to communicate
 // returns the file discriptor to the tcp or udp socket, on which the server is listening
-int serve(connection_group* conn_grp_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p);
+int serve_using_handlers(connection_group* conn_grp_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p);
 
 // stops the server that was started using the serve function
 // it closes the file discriptor, hence the connection, here the parameter fd is the file discriptor of the listenning socket

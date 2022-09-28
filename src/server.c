@@ -27,7 +27,7 @@ static int make_server_ready_to_listen(connection_group* conn_grp_p)
 	}
 }
 
-int serve(connection_group* conn_grp_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
+int serve_using_handlers(connection_group* conn_grp_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
 {
 	if(!thread_count)
 		return -1;

@@ -17,6 +17,10 @@ static int make_server_ready_to_listen(connection_group* conn_grp_p)
 	if(listen_fd == -1)
 		return -1;
 
+	// set socket options so that it allows you to reuse the address and port right after using it once
+	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
+	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT, &(int){1}, sizeof(int));
+
 	// phase 2
 	// bind server address struct with the file descriptor
 	if(conn_grp_p->ADDRESS.sa_family == AF_INET)

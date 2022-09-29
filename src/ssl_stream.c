@@ -25,11 +25,6 @@ static unsigned int write_to_stream(void* ssl_stream_context, const void* data, 
 	return bytes_written;
 }
 
-static int close_stream(void* stream_context)
-{
-	return SSL_shutdown(stream_context);
-}
-
 int initialize_streams_for_ssl_server(read_stream* rs, write_stream* ws, SSL_CTX* ctx, int conn_fd)
 {
 	SSL* ssl = SSL_new(ctx);
@@ -43,11 +38,9 @@ int initialize_streams_for_ssl_server(read_stream* rs, write_stream* ws, SSL_CTX
 
 	rs->stream_context = ssl;
 	rs->read_from_stream = read_from_stream;
-	rs->close_stream = close_stream;
 
 	ws->stream_context = ssl;
 	ws->write_to_stream = write_to_stream;
-	ws->close_stream = close_stream;
 
 	return 1;
 }
@@ -65,18 +58,16 @@ int initialize_streams_for_ssl_client(read_stream* rs, write_stream* ws, SSL_CTX
 
 	rs->stream_context = ssl;
 	rs->read_from_stream = read_from_stream;
-	rs->close_stream = close_stream;
 
 	ws->stream_context = ssl;
 	ws->write_to_stream = write_to_stream;
-	ws->close_stream = close_stream;
 
 	return 1;
 }
 
 void deinitialize_streams_for_ssl(read_stream* rs, write_stream* ws)
 {
-	close_stream(rs->stream_context);
+	SSL_shutdown(rs->stream_context);
 	SSL_free(rs->stream_context);
 	(*rs) = (read_stream){};
 	(*ws) = (write_stream){};

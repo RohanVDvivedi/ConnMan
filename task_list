@@ -8,3 +8,5 @@
 
  6* propogate the connection_stream based api to dependent libraries
  --1* write new testcases and test old functioning using Serc and current test cases at every point
+
+ 7* (future) look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

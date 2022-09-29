@@ -1,11 +1,10 @@
- * add serve_using_stream_handlers
- * transaction client mods to using only stream based api
+ 4* transaction client mods to using only stream based api
+ 3* add DNS resolver helper methods for transaction client
 
- * use streams instead of raw file descriptors in stream handlers
-   * start with implementing file descriptor based streams
-   * then replace that in all the later projects
- * build streams for file-descriptors (including the one for stdio), dstrings and pipes
- 
- * The library is working perfectly fine as a multi threaded TCP/IP or UDP/IP server. As a maintainer I also aim to also provide functionality for non-blocking serve() function, in the future development.
+ 2* simplistic helper functions to create SSL_CTX
 
- * propogate the connection_stream based api to dependent libraries
+ 1* build streams for dstrings and (cutlery) pipes
+ 5* build write and read stream api for zlib compressors and decompressors
+
+ 6* propogate the connection_stream based api to dependent libraries
+ --1* write new testcases and test old functioning using Serc and current test cases at every point

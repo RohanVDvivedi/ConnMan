@@ -30,6 +30,7 @@ int initialize_streams_for_ssl_server(read_stream* rs, write_stream* ws, SSL_CTX
 	SSL* ssl = SSL_new(ctx);
 	SSL_set_fd(ssl, conn_fd);
 
+	SSL_set_accept_state(ssl);
 	if(SSL_accept(ssl) == -1)
 	{
 		SSL_free(ssl);
@@ -50,6 +51,7 @@ int initialize_streams_for_ssl_client(read_stream* rs, write_stream* ws, SSL_CTX
 	SSL* ssl = SSL_new(ctx);
 	SSL_set_fd(ssl, conn_fd);
 
+	SSL_set_connect_state(ssl);
 	if(SSL_connect(ssl) == -1)
 	{
 		SSL_free(ssl);

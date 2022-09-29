@@ -24,7 +24,7 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 		initialize_write_stream_for_fd(&ws, handler_data->fd);
 		streams_initilized = 1;
 	}
-	else
+	else // SSL_accept the connection 
 		streams_initilized = initialize_streams_for_ssl_server(&rs, &ws, handler_data->ssl_ctx, handler_data->fd);
 
 	// only if the streams were successfully initialized

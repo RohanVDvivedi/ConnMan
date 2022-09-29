@@ -1,11 +1,12 @@
 1* build streams for dstrings and (cutlery) pipes
-2* simplistic helper functions to create SSL_CTX
-3* add DNS resolver helper methods for transaction client
-4* add client_port to connect using an explicit port (-1 for not binding)
-5* transaction client mods to using only stream based api
-6* build write and read stream api for zlib compressors and decompressors
-7* propogate the connection_stream based api to dependent libraries
+2* modify connction_group to server_address
+3* simplistic helper functions to create SSL_CTX
+4* add DNS resolver helper methods for transaction client
+5* add client_port to connect using an explicit port (-1 for not binding)
+6* transaction client mods to using only stream based api
+7* build write and read stream api for zlib compressors and decompressors
+8* propogate the connection_stream based api to dependent libraries
 
  --1* write new testcases and test old functioning using Serc and current test cases at every point
 
-8* (future) look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc
+9* (future) look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

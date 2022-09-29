@@ -1,9 +1,12 @@
 1* build streams for dstrings and (cutlery) pipes
+1.1* make a struct consisting of stream pair
+1.2* only write streams can be closed, and only read streams can check for end_of_stream, which is true if the write end was closed
 2* modify connction_group to just conn_address pass conn_address to server handlers
 3* simplistic helper functions to create SSL_CTX
 4* add DNS resolver helper methods for transaction client
 5* add client_port to connect using an explicit port (-1 for not binding)
 6* transaction client mods to using only stream based api
+6.1* obliterate tclient to just maintain a queue of empty connections to a server and give these to requesting threads on a hire, such that they are returned later on
 7* build write and read stream api for zlib compressors and decompressors
 8* propogate the connection_stream based api to dependent libraries
 

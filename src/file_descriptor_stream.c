@@ -2,54 +2,38 @@
 
 #include<stdlib.h>
 #include<unistd.h>
+#include<errno.h>
 
-static unsigned int read_from_stream(void* stream_context, void* data, unsigned int data_size)
+static unsigned int read_from_fd(void* stream_context, void* data, unsigned int data_size, int* error)
 {
-	ssize_t bytes_read = read(*((int*)stream_context), data, data_size);
-
-	if(bytes_read < 0)
-		return 0;
-
-	return bytes_read;
-}
-
-static unsigned int write_to_stream(void* stream_context, const void* data, unsigned int data_size)
-{
-	unsigned int bytes_written = 0;
-	while(bytes_written < data_size)
+	ssize_t ret = read(*((int*)stream_context), data, data_size);
+	if(ret == -1)
 	{
-		ssize_t ret = write(*((int*)stream_context), data + bytes_written, data_size - bytes_written);
-
-		if(ret < 0)
-			break;
-
-		bytes_written += ret;
+		*error = errno;
+		return 0;
 	}
-	return bytes_written;
+	return ret;
 }
 
-void initialize_read_stream_for_fd(read_stream* rs, int fd)
+static unsigned int write_to_fd(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
-	rs->stream_context = malloc(sizeof(int));
-	*((int*)rs->stream_context) = fd;
-	rs->read_from_stream = read_from_stream;
+	ssize_t ret = write(*((int*)stream_context), data, data_size);
+	if(ret == -1)
+	{
+		*error = errno;
+		return 0;
+	}
+	return ret;
 }
 
-void initialize_write_stream_for_fd(write_stream* ws, int fd)
+static void destroy_stream_context_fd(void* stream_context)
 {
-	ws->stream_context = malloc(sizeof(int));
-	*((int*)ws->stream_context) = fd;
-	ws->write_to_stream = write_to_stream;
+	free(stream_context);
 }
 
-void deinitialize_read_stream_for_fd(read_stream* rs)
+void initialize_stream_for_fd(stream* strm, int fd)
 {
-	free(rs->stream_context);
-	(*rs) = (read_stream){};
-}
-
-void deinitialize_write_stream_for_fd(write_stream* ws)
-{
-	free(ws->stream_context);
-	(*ws) = (write_stream){};
+	int* stream_context = malloc(sizeof(int));
+	*stream_context = fd;
+	initialize_stream(strm, stream_context, read_from_fd, write_to_fd, destroy_stream_context_fd);
 }

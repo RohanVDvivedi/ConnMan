@@ -25,7 +25,7 @@ It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ip
    * `#include<server.h>`
    * `#include<client.h>`
    * `#include<transaction_client.h>`
-   * `#include<connection_group.h>`
+   * `#include<comm_address.h>`
 
 ## Instructions for uninstalling library
 

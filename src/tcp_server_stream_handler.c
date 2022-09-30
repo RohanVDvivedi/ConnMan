@@ -13,34 +13,25 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 {
 	stream_handler_wrapper_input_params* handler_data = ((stream_handler_wrapper_input_params*)stream_handler_wrapper_input_params_v_p);
 
-	read_stream rs;
-	write_stream ws;
-
+	stream strm;
+	
 	int streams_initilized = 0;
 
 	if(handler_data->ssl_ctx == NULL)
 	{
-		initialize_read_stream_for_fd(&rs, handler_data->fd);
-		initialize_write_stream_for_fd(&ws, handler_data->fd);
+		initialize_stream_for_fd(&strm, handler_data->fd);
 		streams_initilized = 1;
 	}
 	else // SSL_accept the connection 
-		streams_initilized = initialize_streams_for_ssl_server(&rs, &ws, handler_data->ssl_ctx, handler_data->fd);
+		streams_initilized = initialize_stream_for_ssl_server(&strm, handler_data->ssl_ctx, handler_data->fd);
 
 	// only if the streams were successfully initialized
 	if(streams_initilized)
 	{
-		handler_data->stream_handler(&rs, &ws, handler_data->additional_params);
+		handler_data->stream_handler(&strm, handler_data->additional_params);
 
-		// phase 5
-		// deinitializing streams, this will also close sockets
-		if(handler_data->ssl_ctx == NULL)
-		{
-			deinitialize_read_stream_for_fd(&rs);
-			deinitialize_write_stream_for_fd(&ws);
-		}
-		else
-			deinitialize_streams_for_ssl(&rs, &ws);
+		// deinitializing stream
+		deinitialize_stream(&strm);
 	}
 
 	// phase 5
@@ -51,7 +42,7 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 	return NULL;
 }
 
-int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*stream_handler)(read_stream* rs, write_stream* ws, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx)
+int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx)
 {
 	// phase 3
 	// listenning on the socket file discriptor 

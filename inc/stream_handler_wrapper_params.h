@@ -11,10 +11,10 @@ struct stream_handler_wrapper_input_params
 	int fd;
 	SSL_CTX* ssl_ctx;
 	void* additional_params;
-	void (*stream_handler)(read_stream* rs, write_stream* ws, void* additional_params);
+	void (*stream_handler)(stream* strm, void* additional_params);
 };
 
-static stream_handler_wrapper_input_params* new_stream_handler_wrapper_input_params(int fd, SSL_CTX* ssl_ctx, void* additional_params, void (*stream_handler)(read_stream* rs, write_stream* ws, void* additional_params))
+static stream_handler_wrapper_input_params* new_stream_handler_wrapper_input_params(int fd, SSL_CTX* ssl_ctx, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params))
 {
 	stream_handler_wrapper_input_params* stream_handler_wrapper_input_params_p = (stream_handler_wrapper_input_params*)malloc(sizeof(stream_handler_wrapper_input_params));
 	stream_handler_wrapper_input_params_p->fd = fd;

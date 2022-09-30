@@ -58,7 +58,7 @@ int serve_using_handlers(connection_group* conn_grp_p, void* additional_params, 
 	return err;
 }
 
-int serve_using_stream_handlers(connection_group* conn_grp_p, void* additional_params, void (*stream_handler)(read_stream* rs, write_stream* ws, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, volatile int* listen_fd_p)
+int serve_using_stream_handlers(connection_group* conn_grp_p, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, volatile int* listen_fd_p)
 {
 	if(thread_count == 0)
 		thread_count = DEFAULT_MAX_THREAD_COUNT;

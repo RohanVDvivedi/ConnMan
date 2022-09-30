@@ -1,4 +1,5 @@
 1* build streams for (cutlery) pipes
+1.1* ssl_stream stores fd and closes that aswell on the close_stream call
 2* modify connction_group to just conn_address pass conn_address to server handlers
 3* simplistic helper functions to create SSL_CTX
 4* add DNS resolver helper methods for transaction client

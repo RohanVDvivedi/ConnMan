@@ -1,7 +1,4 @@
-0* read streams have an option to unread data, that gets pushed into a local (cutlery) pipe, next reads happen from this pipe until the pipe is empty, and then reads again happen from the underlying stream
-1* build streams for dstrings and (cutlery) pipes
-1.1* make a struct consisting of stream pair
-1.2* only write streams can be closed, and only read streams can check for end_of_stream, which is true if the write end was closed
+1* build streams for (cutlery) pipes
 2* modify connction_group to just conn_address pass conn_address to server handlers
 3* simplistic helper functions to create SSL_CTX
 4* add DNS resolver helper methods for transaction client

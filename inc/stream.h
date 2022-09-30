@@ -12,15 +12,20 @@ struct stream
 	dpipe unread_data;
 
 	// returns bytes read from data, (atmost data_size number of bytes will be touched)
+	// on error return 0 bytes read and set the value of (non-zero) error
 	unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error);
 
 	// returns bytes written from data (that consists of data_size number of bytes to be written)
+	// on error return 0 bytes read and set the value of (non-zero) error
 	unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error);
+
+	// this function will be called to destroy the stream_context
+	void (*destroy_stream_context)(void* stream_context);
 
 	int error;
 };
 
-void initialize_stream(stream* strm, void* stream_context, unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error), unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error));
+void initialize_stream(stream* strm, void* stream_context, unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error), unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error), void (*destroy_stream_context)(void* stream_context));
 
 int is_readable_stream(stream* strm);
 

@@ -2,12 +2,13 @@
 
 #include<stddef.h>
 
-void initialize_stream(stream* strm, void* stream_context, unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error), unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error))
+void initialize_stream(stream* strm, void* stream_context, unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error), unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error), void (*destroy_stream_context)(void* stream_context))
 {
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
 	strm->read_from_stream_context = read_from_stream_context;
 	strm->write_to_stream_context = write_to_stream_context;
+	strm->destroy_stream_context = destroy_stream_context;
 	strm->error = 0;
 }
 
@@ -74,5 +75,6 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 void deinitialize_stream(stream* strm)
 {
 	deinitialize_dpipe(&(strm->unread_data));
+	strm->destroy_stream_context(strm->stream_context);
 	*strm = (stream){};
 }

@@ -6,8 +6,11 @@
 6* transaction client mods to using only stream based api
 6.1* obliterate tclient to just maintain a queue of empty connections to a server and give these to requesting threads on a hire, such that they are returned later on
 6.2* rename transaction client to active_client_set
-7* build write and read stream api for zlib compressors and decompressors
-8* propogate the connection_stream based api to dependent libraries
+
+
+7* (future) build write and read stream api for zlib compressors and decompressors
+
+8* (future) propogate the connection_stream based api to dependent libraries
 
  --1* write new testcases and test old functioning using Serc and current test cases at every point
 

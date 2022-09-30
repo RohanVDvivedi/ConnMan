@@ -35,8 +35,7 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 	close_stream(&strm);
 
 	// deinitializing stream
-	if(streams_initialized)
-		deinitialize_stream(&strm);
+	deinitialize_stream(&strm);
 
 	free(handler_data);
 	return NULL;

@@ -67,11 +67,7 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 	SSL_set_accept_state(ssl_sc->ssl);
 	int ret = SSL_accept(ssl_sc->ssl);
 	if(ret <= 0)
-	{
-		destroy_stream_context_ssl(ssl_sc);
-		close(fd);
 		return 0;
-	}
 
 	initialize_stream(strm, ssl_sc->ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl);
 
@@ -90,11 +86,7 @@ int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, int fd)
 	SSL_set_connect_state(ssl_sc->ssl);
 	int ret = SSL_connect(ssl_sc->ssl);
 	if(ret <= 0)
-	{
-		destroy_stream_context_ssl(ssl_sc);
-		close(fd);
 		return 0;
-	}
 
 	initialize_stream(strm, ssl_sc, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl);
 

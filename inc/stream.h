@@ -13,6 +13,7 @@ struct stream
 
 	// returns bytes read from data, (atmost data_size number of bytes will be touched)
 	// on error return 0 bytes read and set the value of (non-zero) error
+	// reading 0 bytes, when data_size > 0 and strm->error == 0, then this implies an end_of_stream
 	unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error);
 
 	// returns bytes written from data (that consists of data_size number of bytes to be written)

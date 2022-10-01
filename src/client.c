@@ -1,6 +1,7 @@
 #include<client.h>
 
 #include<sys/socket.h>
+#include<unistd.h>
 
 // the sub functions, that make up the connect_to function
 

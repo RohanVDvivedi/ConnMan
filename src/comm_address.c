@@ -4,6 +4,8 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<stddef.h>
+#include<string.h>
+#include<netdb.h>
 
 comm_address new_comm_address(int PROTOCOL, sa_family_t ADDRESS_FAMILY, char* IP, uint16_t PORT)
 {
@@ -50,6 +52,53 @@ comm_address new_comm_address_udp_ipv4(char* IP, uint16_t PORT)
 comm_address new_comm_address_udp_ipv6(char* IP, uint16_t PORT)
 {
 	return new_comm_address( SOCK_DGRAM, AF_INET6, IP, PORT);
+}
+
+int lookup_by_name(const char* hostname, const char* service, int PROTOCOL, int IP_FAMILY, comm_address server_addr[], int server_addr_size)
+{
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = IP_FAMILY;
+	hints.ai_socktype = PROTOCOL;
+	if(PROTOCOL != 0)
+	{
+		if(PROTOCOL == SOCK_STREAM)
+			hints.ai_protocol = IPPROTO_TCP;
+		else if(PROTOCOL == SOCK_DGRAM)
+			hints.ai_protocol = IPPROTO_UDP;
+	}
+
+	struct addrinfo* results = NULL;
+
+	int err = getaddrinfo(hostname, service, &hints, &results);
+	if(err)
+	{
+		freeaddrinfo(results);
+		return -1;
+	}
+	else if(results == NULL)
+	{
+		freeaddrinfo(results);
+		return 0;
+	}
+
+	struct addrinfo* rest = results;
+	int res = 0;
+	for(int i = 0; i < server_addr_size && rest != NULL; i++, rest = rest->ai_next)
+	{
+		if(rest->ai_family != AF_INET && rest->ai_family != AF_INET6)
+			continue;
+		if(rest->ai_socktype != SOCK_STREAM && rest->ai_socktype != SOCK_DGRAM)
+			continue;
+		server_addr[i].PROTOCOL = rest->ai_socktype;
+		server_addr[i].ADDRESS.sa_family = rest->ai_family;
+		memcpy(&(server_addr[i].ADDRESS), rest->ai_addr, get_sockaddr_size(&server_addr[i]));
+		res++;
+	}
+
+	freeaddrinfo(results);
+
+	return res;
 }
 
 unsigned int get_sockaddr_size(comm_address* comm_addr_p)

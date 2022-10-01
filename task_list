@@ -1,17 +1,17 @@
 1* add DNS resolver helper methods for transaction client
-3* simplistic helper functions to create SSL_CTX
+2* simplistic helper functions to create SSL_CTX
 
-4* client connection functions to return streams (rpoviding simple fd and ssl stream)
+3* client connection functions to return streams (providing simple fd and ssl stream)
 
-5* build streams for (cutlery) pipes
-6* build client_set, that gives out a readymade connection and takes it back once you are done, it has flag called renew that renews the connection, it keeps queued active connections, number of active client set can be changed at runtime and client count is maintained almost constant - this will use sync_queue to store streams, it has all the params to build and create new clients
+4* build streams for (cutlery) pipes
+5* build client_set, that gives out a readymade connection and takes it back once you are done, it has flag called renew that renews the connection, it keeps queued active connections, number of active client set can be changed at runtime and client count is maintained almost constant - this will use sync_queue to store streams, it has all the params to build and create new clients
 
-7* server passes on its own server address and client address to its stream_handlers some how
+6* server passes on its own server address and client address to its stream_handlers some how
 
-8* (future) build write and read stream api for zlib compressors and decompressors
+7* (future) build write and read stream api for zlib compressors and decompressors
 
-9* (future) propogate the connection_stream based api to dependent libraries
+8* (future) propogate the connection_stream based api to dependent libraries
 
  --1* write new testcases and test old functioning using Serc and current test cases at every point
 
-10* (future) look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc
+9* (future) look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

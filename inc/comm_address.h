@@ -1,13 +1,13 @@
-#ifndef CONNECTION_GROUP_H
-#define CONNECTION_GROUP_H
+#ifndef COMM_ADDRESS_H
+#define COMM_ADDRESS_H
 
 #include<netinet/in.h>	// structure definitions of sockaddr_*
 
 #include<stdint.h>
 
-// the connection_group is responsible to uniquely identify al connection group with multiple threads one for each connection,
-typedef struct connection_group connection_group;
-struct connection_group
+// the comm_address is responsible to uniquely identify protocol used and the ip address and the port
+typedef struct comm_address comm_address;
+struct comm_address
 {
 	// specifies if the protocol is tcp or udp
 	int PROTOCOL;
@@ -21,12 +21,14 @@ struct connection_group
 	};
 };
 
-connection_group new_connection_group_tcp_ipv4(char* SERVER_ADDRESS, uint16_t PORT);
+// in the below functions, if IP == NULL, then IP = "0.0.0.0" or 
 
-connection_group new_connection_group_tcp_ipv6(char* SERVER_ADDRESS, uint16_t PORT);
+comm_address new_comm_address_tcp_ipv4(char* IP, uint16_t PORT);
 
-connection_group new_connection_group_udp_ipv4(char* SERVER_ADDRESS, uint16_t PORT);
+comm_address new_comm_address_tcp_ipv6(char* IP, uint16_t PORT);
 
-connection_group new_connection_group_udp_ipv6(char* SERVER_ADDRESS, uint16_t PORT);
+comm_address new_comm_address_udp_ipv4(char* IP, uint16_t PORT);
+
+comm_address new_comm_address_udp_ipv6(char* IP, uint16_t PORT);
 
 #endif

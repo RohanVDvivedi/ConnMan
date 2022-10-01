@@ -1,3 +1,4 @@
+0* reduce AF_INET/6 type checking of sockaddr struct using the new method declared
 1* add DNS resolver helper methods for transaction client
 2* add client_port to connect using an explicit port (-1 for not binding)
 3* simplistic helper functions to create SSL_CTX

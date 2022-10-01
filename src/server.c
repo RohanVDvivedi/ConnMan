@@ -9,11 +9,11 @@
 #include<stream.h>
 #include<tcp_server_stream_handler.h>
 
-static int make_server_ready_to_listen(comm_address* comm_address)
+static int make_server_ready_to_listen(comm_address* server_addr_p)
 {
 	// phase 1
 	// file descriptor to socket
-	int listen_fd = socket(comm_address->ADDRESS.sa_family, comm_address->PROTOCOL, 0);
+	int listen_fd = socket(server_addr_p->ADDRESS.sa_family, server_addr_p->PROTOCOL, 0);
 	if(listen_fd == -1)
 		return -1;
 
@@ -23,10 +23,10 @@ static int make_server_ready_to_listen(comm_address* comm_address)
 
 	// phase 2
 	// bind server address struct with the file descriptor
-	if(comm_address->ADDRESS.sa_family == AF_INET)
-		return bind(listen_fd, &(comm_address->ADDRESS), sizeof(comm_address->ADDRESS_ipv4));
-	else if(comm_address->ADDRESS.sa_family == AF_INET6)
-		return bind(listen_fd, &(comm_address->ADDRESS), sizeof(comm_address->ADDRESS_ipv6));
+	if(server_addr_p->ADDRESS.sa_family == AF_INET)
+		return bind(listen_fd, &(server_addr_p->ADDRESS), sizeof(server_addr_p->ADDRESS_ipv4));
+	else if(server_addr_p->ADDRESS.sa_family == AF_INET6)
+		return bind(listen_fd, &(server_addr_p->ADDRESS), sizeof(server_addr_p->ADDRESS_ipv6));
 	else
 	{
 		close(listen_fd);
@@ -36,37 +36,37 @@ static int make_server_ready_to_listen(comm_address* comm_address)
 
 #define DEFAULT_MAX_THREAD_COUNT 8
 
-int serve_using_handlers(comm_address* comm_address, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
+int serve_using_handlers(comm_address* server_addr_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
 {
 	if(thread_count == 0)
 		thread_count = DEFAULT_MAX_THREAD_COUNT;
 
-	if(comm_address->PROTOCOL != SOCK_STREAM && comm_address->PROTOCOL != SOCK_DGRAM)
+	if(server_addr_p->PROTOCOL != SOCK_STREAM && server_addr_p->PROTOCOL != SOCK_DGRAM)
 		return -1;
 
-	*listen_fd_p = make_server_ready_to_listen(comm_address);
+	*listen_fd_p = make_server_ready_to_listen(server_addr_p);
 	if(*listen_fd_p < 0)
 		return *listen_fd_p;
 
 	int err = -1;
-	if(comm_address->PROTOCOL == SOCK_STREAM)			// tcp
+	if(server_addr_p->PROTOCOL == SOCK_STREAM)			// tcp
 		err = tcp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
-	else if(comm_address->PROTOCOL == SOCK_DGRAM)		// udp
+	else if(server_addr_p->PROTOCOL == SOCK_DGRAM)		// udp
 		err = udp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
 
 	close(*listen_fd_p);
 	return err;
 }
 
-int serve_using_stream_handlers(comm_address* comm_address, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, volatile int* listen_fd_p)
+int serve_using_stream_handlers(comm_address* server_addr_p, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, volatile int* listen_fd_p)
 {
 	if(thread_count == 0)
 		thread_count = DEFAULT_MAX_THREAD_COUNT;
 
-	if(comm_address->PROTOCOL != SOCK_STREAM && comm_address->PROTOCOL != SOCK_DGRAM)
+	if(server_addr_p->PROTOCOL != SOCK_STREAM && server_addr_p->PROTOCOL != SOCK_DGRAM)
 		return -1;
 
-	*listen_fd_p = make_server_ready_to_listen(comm_address);
+	*listen_fd_p = make_server_ready_to_listen(server_addr_p);
 	if(*listen_fd_p < 0)
 		return *listen_fd_p;
 

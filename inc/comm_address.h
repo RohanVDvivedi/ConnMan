@@ -31,4 +31,7 @@ comm_address new_comm_address_udp_ipv4(char* IP, uint16_t PORT);
 
 comm_address new_comm_address_udp_ipv6(char* IP, uint16_t PORT);
 
+// returns the size of the underlying socket_address stored as ADDRESS field
+unsigned int get_sockaddr_size(comm_address* comm_addr_p);
+
 #endif

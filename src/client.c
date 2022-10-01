@@ -37,3 +37,26 @@ int make_connection(comm_address* server_addr_p, comm_address* client_addr_p)
 
 	return fd;
 }
+
+int make_connection_stream(stream* strm, comm_address* server_addr_p, comm_address* client_addr_p, SSL_CTX* ssl_ctx)
+{
+	int fd = make_connection(server_addr_p, client_addr_p);
+	if(fd == -1)
+		return -1;
+
+	if(ssl_ctx == NULL)
+	{
+		initialize_stream_for_fd(strm, fd);
+		return fd;
+	}
+	else
+	{
+		if(initialize_stream_for_ssl_client(strm, ssl_ctx, fd))
+		{
+			close_stream(strm); // this will close the file descriptor aswell
+			deinitialize_stream(strm);
+			return -1;
+		}
+		return fd;
+	}
+}

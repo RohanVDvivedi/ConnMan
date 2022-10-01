@@ -113,3 +113,37 @@ unsigned int get_sockaddr_size(comm_address* comm_addr_p)
 			return sizeof(comm_addr_p->ADDRESS);
 	}
 }
+
+void snprintf_comm_address(dstring* res_append, comm_address* comm_addr_p)
+{
+	switch(comm_addr_p->PROTOCOL)
+	{
+		case SOCK_DGRAM :
+		{
+			snprintf_dstring(res_append, "udp://");
+			break;
+		}
+		case SOCK_STREAM :
+		{
+			snprintf_dstring(res_append, "udp://");
+			break;
+		}
+	}
+
+	char dest[80];
+	snprintf_dstring(res_append, ":%s", inet_ntop(comm_addr_p->ADDRESS.sa_family, &(comm_addr_p->ADDRESS), dest, 80));
+
+	switch(comm_addr_p->ADDRESS.sa_family)
+	{
+		case AF_INET:
+		{
+			snprintf_dstring(res_append, ":%"PRIu16, ntohs(comm_addr_p->ADDRESS_ipv4.sin_port));
+			break;
+		}
+		case AF_INET6:
+		{
+			snprintf_dstring(res_append, ":%"PRIu16, ntohs(comm_addr_p->ADDRESS_ipv6.sin6_port));
+			break;
+		}
+	}
+}

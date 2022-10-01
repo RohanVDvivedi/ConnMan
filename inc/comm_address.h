@@ -4,6 +4,8 @@
 #include<netinet/in.h>	// structure definitions of sockaddr_*
 
 #include<stdint.h>
+#include<inttypes.h>
+#include<dstring.h>
 
 // the comm_address is responsible to uniquely identify protocol used and the ip address and the port
 typedef struct comm_address comm_address;
@@ -36,5 +38,8 @@ int lookup_by_name(const char* hostname, const char* service, int PROTOCOL, int 
 
 // returns the size of the underlying socket_address stored as ADDRESS field
 unsigned int get_sockaddr_size(comm_address* comm_addr_p);
+
+// appends printable form of comm_address to res_append
+void snprintf_comm_address(dstring* res_append, comm_address* comm_addr_p);
 
 #endif

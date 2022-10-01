@@ -82,17 +82,16 @@ int lookup_by_name(const char* hostname, const char* service, int PROTOCOL, int 
 		return 0;
 	}
 
-	struct addrinfo* rest = results;
 	int res = 0;
-	for(int i = 0; i < server_addr_size && rest != NULL; i++, rest = rest->ai_next)
+	for(struct addrinfo* rest = results; res < server_addr_size && rest != NULL; rest = rest->ai_next)
 	{
 		if(rest->ai_family != AF_INET && rest->ai_family != AF_INET6)
 			continue;
 		if(rest->ai_socktype != SOCK_STREAM && rest->ai_socktype != SOCK_DGRAM)
 			continue;
-		server_addr[i].PROTOCOL = rest->ai_socktype;
-		server_addr[i].ADDRESS.sa_family = rest->ai_family;
-		memcpy(&(server_addr[i].ADDRESS), rest->ai_addr, get_sockaddr_size(&server_addr[i]));
+		server_addr[res].PROTOCOL = rest->ai_socktype;
+		server_addr[res].ADDRESS.sa_family = rest->ai_family;
+		memcpy(&(server_addr[res].ADDRESS), rest->ai_addr, get_sockaddr_size(&server_addr[res]));
 		res++;
 	}
 

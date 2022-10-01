@@ -6,7 +6,7 @@
 5* client connection functions to return streams (rpoviding simple fd and ssl stream)
 
 6* build streams for (cutlery) pipes
-7* build client_set, that gives out a readymade connection and takes it back once you are done, it has flag called renew that renews the connection
+7* build client_set, that gives out a readymade connection and takes it back once you are done, it has flag called renew that renews the connection, it keeps queued active connections, number of active client set can be changed at runtime and client count is maintained almost constant - this will use sync_queue to store streams, it has all the params to build and create new clients
 
 
 8* (future) build write and read stream api for zlib compressors and decompressors

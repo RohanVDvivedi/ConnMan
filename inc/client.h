@@ -1,13 +1,10 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include<connection_group.h>
-
-int connect_to(connection_group* conn_grp_p, void (*handler)(int fd));
-
-// the below are the sub functions used to build the connect_to functions
+#include<comm_address.h>
 
 // returns file-discriptor to the socket, through which client connection has been made
-int make_connection(connection_group* conn_grp_p);
+// you must close the fd returned, after you are done with this client connection
+int client_connect(comm_address* server_addr_p, uint16_t client_port);
 
 #endif

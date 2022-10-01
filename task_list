@@ -1,4 +1,3 @@
-1* add DNS resolver helper methods for transaction client
 2* simplistic helper functions to create SSL_CTX
 
 3* client connection functions to return streams (providing simple fd and ssl stream)

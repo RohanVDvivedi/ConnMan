@@ -23,15 +23,15 @@ static int make_server_ready_to_listen(comm_address* server_addr_p)
 
 	// phase 2
 	// bind server address struct with the file descriptor
-	if(server_addr_p->ADDRESS.sa_family == AF_INET)
-		return bind(listen_fd, &(server_addr_p->ADDRESS), sizeof(server_addr_p->ADDRESS_ipv4));
-	else if(server_addr_p->ADDRESS.sa_family == AF_INET6)
-		return bind(listen_fd, &(server_addr_p->ADDRESS), sizeof(server_addr_p->ADDRESS_ipv6));
-	else
+	int err = bind(listen_fd, &(server_addr_p->ADDRESS), get_sockaddr_size(server_addr_p));
+	if(err)
 	{
 		close(listen_fd);
-		return -2;
+		return -1;
 	}
+
+	// on success, return listen_fd
+	return listen_fd;
 }
 
 #define DEFAULT_MAX_THREAD_COUNT 8

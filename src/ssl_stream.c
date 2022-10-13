@@ -69,6 +69,8 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 	if(ret <= 0)
 		return 0;
 
+	SSL_set_mode(ssl_sc->ssl, SSL_MODE_AUTO_RETRY);
+
 	initialize_stream(strm, ssl_sc->ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl);
 
 	return 1;
@@ -87,6 +89,8 @@ int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, int fd)
 	int ret = SSL_connect(ssl_sc->ssl);
 	if(ret <= 0)
 		return 0;
+
+	SSL_set_mode(ssl_sc->ssl, SSL_MODE_AUTO_RETRY);
 
 	initialize_stream(strm, ssl_sc, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl);
 

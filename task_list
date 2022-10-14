@@ -1,13 +1,13 @@
+Immediate tasks
+1* implement client_set
+2* server passes on its own server address and client address to its stream_handlers some how
 
-1* build streams for (cutlery) pipes
-2* build client_set, that gives out a readymade connection and takes it back once you are done, it has flag called renew that renews the connection, it keeps queued active connections, number of active client set can be changed at runtime and client count is maintained almost constant - this will use sync_queue to store streams, it has all the params to build and create new clients
+Testing of the new mods
+3* propogate the connection_stream based api to dependent libraries, serc, cashed
+4* write new testcases and test old functioning using Serc and current test cases at every point
+5* write a get https call to goolge.com to get the index page and show it in terminal
 
-3* server passes on its own server address and client address to its stream_handlers some how
-
-4* (future) build write and read stream api for zlib compressors and decompressors
-
-5* (future) propogate the connection_stream based api to dependent libraries
-
- --6* write new testcases and test old functioning using Serc and current test cases at every point
-
-7* (future) look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc
+Future
+6* build write and read stream api for zlib compressors and decompressors
+7* build streams for (cutlery) pipes, that can be initialized using a dstring
+8* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

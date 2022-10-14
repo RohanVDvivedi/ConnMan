@@ -88,23 +88,22 @@ stream* reserve_client(client_set* cls)
 
 void return_client(client_set* cls, stream* strm)
 {
-	int excess_clients = 0;
+	int client_stream_to_be_destroyed = 0;
 
 	pthread_mutex_lock(&(cls->client_count_lock));
-	if(cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
-		excess_clients = 1;
+	if(strm->error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
+	{
+		// we would be destroying a errored or an excess stream, so we need to decrement the curr_client_count 
+		cls->curr_client_count--;
+		client_stream_to_be_destroyed = 1;
+	}
 	pthread_mutex_unlock(&(cls->client_count_lock));
 
-	if(strm->error || excess_clients)
+	if(client_stream_to_be_destroyed)
 	{
 		close_stream(strm);
 		deinitialize_stream(strm);
 		free(strm);
-
-		// we destroyed a non-functional errored stream, so we need to decrement the curr_client_count 
-		pthread_mutex_lock(&(cls->client_count_lock));
-			cls->curr_client_count--;
-		pthread_mutex_unlock(&(cls->client_count_lock));
 	}
 	else // else we reinsert the stream to the active_clients_queue
 	{

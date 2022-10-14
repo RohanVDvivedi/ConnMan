@@ -88,7 +88,28 @@ stream* reserve_client(client_set* cls)
 
 void return_client(client_set* cls, stream* strm)
 {
+	int excess_clients = 0;
 
+	pthread_mutex_lock(&(cls->client_count_lock));
+	if(cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
+		excess_clients = 1;
+	pthread_mutex_unlock(&(cls->client_count_lock));
+
+	if(strm->error || excess_clients)
+	{
+		close_stream(strm);
+		deinitialize_stream(strm);
+		free(strm);
+
+		// we destroyed a non-functional errored stream, so we need to decrement the curr_client_count 
+		pthread_mutex_lock(&(cls->client_count_lock));
+			cls->curr_client_count--;
+		pthread_mutex_unlock(&(cls->client_count_lock));
+	}
+	else // else we reinsert the stream to the active_clients_queue
+	{
+		push_sync_queue_blocking(&(cls->active_clients_queue), strm, TIMEOUT_FOR_RESERVATION);
+	}
 }
 
 void shutdown_client_set(client_set* cls);

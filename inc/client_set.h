@@ -1,12 +1,25 @@
 #ifndef CLIENT_SET_H
 #define CLIENT_SET_H
 
+// you may never exceed this client_count, it is equivalent to killing your or someone else's system
+#define MAX_CLIENT_SET_CLIENT_COUNT 1024
+
+// wait for this many microseconds until a connection is available to you
+#define TIMEOUT_FOR_RESERVATION 100*1000
+
 typedef struct client_set client_set;
 struct client_set
 {
+	// comm_address of the server
+	comm_address server_addr;
+
+	// ssl_ctx for all client connections
+	SSL_CTX* ssl_ctx;
+
 	// a queue of all the active client connection stream, excluding the reserved ones
 	sync_queue active_clients_queue;
 
+	// all the attributes of the client_set below the client_count_lock are thread-safed by this lock
 	pthread_mutex_t client_count_lock;
 
 	// it starts with a value of 0, and is set to 1 when a shutdown is called
@@ -29,7 +42,8 @@ client_set* new_client_set(comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsign
 unsigned int get_max_clients(client_set* cls);
 
 // this call can be used to increment or decrement the max_client_count
-void reset_max_clients(client_set* cls, unsigned int max_clients);
+// returns 0 on failure, it fails only if shutdown was called earlier
+int reset_max_clients(client_set* cls, unsigned int max_clients);
 
 // this function returns NULL, only when the shutdown is called for the client_set
 stream* reserve_client(client_set* cls);

@@ -99,13 +99,15 @@ void return_client(client_set* cls, stream* strm)
 	pthread_mutex_lock(&(cls->client_count_lock));
 	if(strm->error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
 	{
-		// we would be destroying a errored or an excess stream, so we need to decrement the curr_client_count 
-		cls->curr_client_count--;
 		client_stream_to_be_destroyed = 1;
 
+		// we would be destroying a errored or an excess stream, so we need to decrement the curr_client_count 
+		cls->curr_client_count--;
 		if(cls->shutdown_called && cls->curr_client_count == 0)
 			pthread_cond_signal(&(cls->wait_for_all_clients_killed));
 	}
+	else // else we reinsert the stream to the active_clients_queue
+		push_sync_queue_blocking(&(cls->active_clients_queue), strm, TIMEOUT_FOR_RESERVATION);
 	pthread_mutex_unlock(&(cls->client_count_lock));
 
 	if(client_stream_to_be_destroyed)
@@ -114,8 +116,6 @@ void return_client(client_set* cls, stream* strm)
 		deinitialize_stream(strm);
 		free(strm);
 	}
-	else // else we reinsert the stream to the active_clients_queue
-		push_sync_queue_blocking(&(cls->active_clients_queue), strm, TIMEOUT_FOR_RESERVATION);
 }
 
 void shutdown_and_delete_client_set(client_set* cls)

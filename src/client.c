@@ -1,5 +1,8 @@
 #include<client.h>
 
+#include<ssl_stream.h>
+#include<file_descriptor_stream.h>
+
 #include<sys/socket.h>
 #include<unistd.h>
 

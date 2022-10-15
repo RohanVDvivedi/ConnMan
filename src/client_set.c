@@ -12,7 +12,7 @@ client_set* new_client_set(comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsign
 	cls->curr_client_count = 0;
 	if(max_clients == 0)
 		max_clients = 8;
-	if(max_clients > MAX_CLIENT_SET_CLIENT_COUNT)
+	else if(max_clients > MAX_CLIENT_SET_CLIENT_COUNT)
 		max_clients = MAX_CLIENT_SET_CLIENT_COUNT;
 	cls->max_client_count = max_clients;
 	return cls;
@@ -26,8 +26,14 @@ unsigned int get_max_clients(client_set* cls)
 	return max_clients;
 }
 
-void reset_max_clients(client_set* cls, unsigned int max_clients)
+int reset_max_clients(client_set* cls, unsigned int max_clients)
 {
+	// fix for 0 and MAX_CLIENT_SET_CLIENT_COUNT max_clients
+	if(max_clients == 0)
+		max_clients = 8;
+	else if(max_clients > MAX_CLIENT_SET_CLIENT_COUNT)
+		max_clients = MAX_CLIENT_SET_CLIENT_COUNT;
+
 	int reset_success = 0;
 	pthread_mutex_lock(&(cls->client_count_lock));
 	if(!cls->shutdown_called)
@@ -81,7 +87,7 @@ stream* reserve_client(client_set* cls)
 	}
 	else
 		// else we pop the client_connection stream from the queue, timing out in TIMEOUT_FOR_RESERVATION microseconds
-		strm = pop_sync_queue_blocking(&(cls->active_clients_queue), TIMEOUT_FOR_RESERVATION);
+		strm = (stream*) pop_sync_queue_blocking(&(cls->active_clients_queue), TIMEOUT_FOR_RESERVATION);
 
 	return strm;
 }

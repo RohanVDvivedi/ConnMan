@@ -3,8 +3,9 @@
 
 #include<comm_address.h>
 
-#include<ssl_stream.h>
-#include<file_descriptor_stream.h>
+#include<stream.h>
+
+#include<openssl/ssl.h>
 
 // returns file-discriptor to the socket, through which client connection has been made
 // you must close the fd returned, after you are done with this client connection

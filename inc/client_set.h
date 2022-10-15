@@ -1,6 +1,10 @@
 #ifndef CLIENT_SET_H
 #define CLIENT_SET_H
 
+#include<sync_queue.h>
+
+#include<client.h>
+
 // you may never exceed this client_count, it is equivalent to killing your or someone else's system
 #define MAX_CLIENT_SET_CLIENT_COUNT 1024
 
@@ -23,7 +27,7 @@ struct client_set
 	pthread_mutex_t client_count_lock;
 
 	// it starts with a value of 0, and is set to 1 when a shutdown is called
-	int shudown_called;
+	int shutdown_called;
 
 	// a signal on this condition variable is called only when shutdown_called is set and the curr_client_count reaches 0
 	pthread_cond_t wait_for_all_clients_killed;

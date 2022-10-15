@@ -102,6 +102,9 @@ void return_client(client_set* cls, stream* strm)
 		// we would be destroying a errored or an excess stream, so we need to decrement the curr_client_count 
 		cls->curr_client_count--;
 		client_stream_to_be_destroyed = 1;
+
+		if(cls->shutdown_called && cls->curr_client_count == 0)
+			pthread_cond_signal(&(cls->wait_for_all_clients_killed));
 	}
 	pthread_mutex_unlock(&(cls->client_count_lock));
 
@@ -112,11 +115,43 @@ void return_client(client_set* cls, stream* strm)
 		free(strm);
 	}
 	else // else we reinsert the stream to the active_clients_queue
-	{
 		push_sync_queue_blocking(&(cls->active_clients_queue), strm, TIMEOUT_FOR_RESERVATION);
-	}
 }
 
-void shutdown_client_set(client_set* cls);
+void shutdown_and_delete_client_set(client_set* cls)
+{
+	// shutdown logic
+	pthread_mutex_lock(&(cls->client_count_lock));
+		cls->shutdown_called = 1;
+	pthread_mutex_unlock(&(cls->client_count_lock));
 
-void delete_client_set(client_set* cls);
+	// after shutdown is called on client_set, there will not be any pushes to the queue
+	// we pop out all the 
+	while(!is_empty_sync_queue(&(cls->active_clients_queue)))
+	{
+		stream* strm = (stream*) pop_sync_queue_blocking(&(cls->active_clients_queue), TIMEOUT_FOR_RESERVATION);
+		if(strm != NULL)
+		{
+			close_stream(strm);
+			deinitialize_stream(strm);
+			free(strm);
+
+			pthread_mutex_lock(&(cls->client_count_lock));
+				cls->curr_client_count--;
+				if(cls->shutdown_called && cls->curr_client_count == 0)
+					pthread_cond_signal(&(cls->wait_for_all_clients_killed));
+			pthread_mutex_unlock(&(cls->client_count_lock));
+		}
+	}
+
+	pthread_mutex_lock(&(cls->client_count_lock));
+		while(cls->curr_client_count != 0)
+			pthread_cond_wait(&(cls->wait_for_all_clients_killed), &(cls->client_count_lock));
+	pthread_mutex_unlock(&(cls->client_count_lock));
+
+	// delete logic
+	deinitialize_sync_queue(&(cls->active_clients_queue));
+	pthread_mutex_destroy(&(cls->client_count_lock));
+	pthread_cond_destroy(&(cls->wait_for_all_clients_killed));
+	free(cls);
+}

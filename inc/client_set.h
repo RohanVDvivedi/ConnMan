@@ -56,9 +56,7 @@ stream* reserve_client(client_set* cls);
 void return_client(client_set* cls, stream* strm);
 
 // waits for all the client streams to be returned
-void shutdown_client_set(client_set* cls);
-
-// you may delete the client_set only after it has been shutdown
-void delete_client_set(client_set* cls);
+// you may delete the client_set only
+void shutdown_and_delete_client_set(client_set* cls);
 
 #endif

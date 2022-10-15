@@ -1,5 +1,4 @@
 Immediate tasks
-1* implement client_set
 2* server passes on its own server address and client address to its stream_handlers some how
 
 Testing of the new mods

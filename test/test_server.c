@@ -1,4 +1,4 @@
-#include<connection_group.h>
+#include<comm_address.h>
 #include<server.h>
 
 #include<stdio.h>
@@ -20,23 +20,18 @@ void intHandler(int dummy)
 void connection_handler(int conn_fd, void* additional_params);
 void datagram_handler(int serv_fd, void* additional_params);
 
-connection_group cgp;
+comm_address cgp;
 
 int main()
 {
 	signal(SIGINT, intHandler);
 
-	cgp = new_connection_group_tcp_ipv4("127.0.0.1", 6969);
-	serve(&cgp, NULL, connection_handler, 10, &listen_fd);
+	cgp = new_comm_address_tcp_ipv4("127.0.0.1", 6969);
+	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 6969);
+	//cgp = new_comm_address_tcp_ipv6("::1", 6969);
+	//cgp = new_comm_address_udp_ipv6("::1", 6969);
 
-	//cgp = new_connection_group_udp_ipv4("127.0.0.1", 6969);
-	//serve(&cgp, NULL, datagram_handler, 10, &listen_fd);
-
-	//cgp = new_connection_group_tcp_ipv6("::1", 6969);
-	//serve(&cgp, NULL, connection_handler, 10, &listen_fd);
-
-	//cgp = new_connection_group_udp_ipv6("::1", 6969);
-	//serve(&cgp, NULL, datagram_handler, 10, &listen_fd);
+	serve_using_handlers(&cgp, NULL, connection_handler, 10, &listen_fd);
 
 	return 0;
 }
@@ -106,9 +101,9 @@ void datagram_handler(int serv_fd, void* additional_params)
 
 	while(1)
 	{
-		struct sockaddr_in6 cliaddr;
-		socklen_t cliaddrlen = (cgp.ADDRESS.sa_family == AF_INET6) ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
-		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, (struct sockaddr *) &cliaddr, &cliaddrlen);
+		comm_address cliaddr = cgp;
+		socklen_t cliaddrlen = get_sockaddr_size(&cliaddr);
+		int buffreadlength = recvfrom(serv_fd, buffer, 999, 0, &(cliaddr.ADDRESS), &cliaddrlen);
 		if(buffreadlength == -1 || buffreadlength == 0)
 		{
 			break;
@@ -120,7 +115,7 @@ void datagram_handler(int serv_fd, void* additional_params)
 		int process_result = process(buffer);
 
 		buffreadlength = strlen(buffer);
-		int buffsentlength = sendto(serv_fd, buffer, buffreadlength, 0, (struct sockaddr *) &cliaddr, cliaddrlen);
+		int buffsentlength = sendto(serv_fd, buffer, buffreadlength, 0, &(cliaddr.ADDRESS), cliaddrlen);
 		if(buffsentlength == -1 || buffsentlength == 0)
 		{
 			break;

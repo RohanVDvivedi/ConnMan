@@ -1,26 +1,26 @@
-#include<connection_group.h>
+#include<comm_address.h>
 #include<client.h>
 
 #include<string.h>
 #include<stdio.h>
+#include<unistd.h>
 
 void connection_handler(int conn_fd);
 
 int main()
 {
-	connection_group cgp;
+	comm_address cgp;
 
-	cgp = new_connection_group_tcp_ipv4("127.0.0.1", 6969);
-	connect_to(&cgp, connection_handler);
+	cgp = new_comm_address_tcp_ipv4("127.0.0.1", 6969);
+	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 6969);
+	//cgp = new_comm_address_tcp_ipv6("::1", 6969);
+	//cgp = new_comm_address_udp_ipv6("::1", 6969);
 
-	//cgp = new_connection_group_udp_ipv4("127.0.0.1", 6969);
-	//connect_to(&cgp, connection_handler);
+	int conn_fd = make_connection(&cgp, NULL);
 
-	//cgp = new_connection_group_tcp_ipv6("::1", 6969);
-	//connect_to(&cgp, connection_handler);
+	connection_handler(conn_fd);
 
-	//cgp = new_connection_group_udp_ipv6("::1", 6968);
-	//connect_to(&cgp, connection_handler);
+	close(conn_fd);
 
 	return 0;
 }

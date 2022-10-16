@@ -7,6 +7,7 @@ It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ip
 **Install dependencies :**
  * [Cutlery](https://github.com/RohanVDvivedi/Cutlery)
  * [BoomPar](https://github.com/RohanVDvivedi/BoomPar)
+ * [openssl](https://github.com/openssl/openssl)  ($ sudo apt install libssl-dev)
 
 **Download source code :**
  * `git clone https://github.com/RohanVDvivedi/ConnMan.git`
@@ -20,7 +21,7 @@ It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ip
  * ***Once you have installed from source, you may discard the build by*** `make clean`
 
 ## Using The library
- * add `-lconnman -lboompar -lpthread -lcutlery` linker flag, while compiling your application
+ * add `-lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
    * `#include<server.h>`
    * `#include<client.h>`

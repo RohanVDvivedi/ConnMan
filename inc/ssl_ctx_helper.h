@@ -9,6 +9,6 @@ SSL_CTX* get_ssl_ctx_for_server(char* cert_file, char* key_file);
 
 SSL_CTX* get_ssl_ctx_for_client();
 
-void destroy_ssl_ctx();
+void destroy_ssl_ctx(SSL_CTX* ctx);
 
 #endif

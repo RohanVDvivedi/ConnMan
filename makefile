@@ -7,7 +7,7 @@ DOWNLOAD_DIR:=/usr/local
 # we may download all the public headers
 
 # list of public api headers (only these headers will be installed)
-PUBLIC_HEADERS:=stream.h server.h client.h client_set.h comm_address.h
+PUBLIC_HEADERS:=stream.h server.h client.h client_set.h comm_address.h ssl_ctx_helper.h
 # the library, which we will create
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library

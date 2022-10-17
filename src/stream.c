@@ -13,6 +13,7 @@ void initialize_stream(stream* strm,
 	initialize_dpipe(&(strm->unread_data), 0);
 	strm->read_from_stream_context = read_from_stream_context;
 	strm->write_to_stream_context = write_to_stream_context;
+	strm->close_stream_context = close_stream_context;
 	strm->destroy_stream_context = destroy_stream_context;
 	strm->error = 0;
 }

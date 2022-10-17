@@ -2,12 +2,11 @@ Immediate tasks
 1* server passes on its own server address and client address to its stream_handlers some how
 
 Testing of the new mods
-2* test stream test cases with ssl
-3* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset
-4* test old api using serc and cashed
-5* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
+2* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset
+3* test old api using serc and cashed
+4* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
 
 Future
-6* build write and read stream api for zlib compressors and decompressors
-7* build streams for (cutlery) pipes, that can be initialized using a dstring
-8* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc
+5* build write and read stream api for zlib compressors and decompressors
+6* build streams for (cutlery) pipes, that can be initialized using a dstring
+7* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

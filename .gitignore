@@ -3,6 +3,8 @@
 *.out
 *.DS_Store
 
+*.pem
+
 obj
 lib
 bin

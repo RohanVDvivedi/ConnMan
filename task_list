@@ -2,7 +2,7 @@ Immediate tasks
 1* server passes on its own server address and client address to its stream_handlers some how
 
 Testing of the new mods
-2* write new testcases for stream api
+2* test stream test cases with ssl
 3* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset
 4* test old api using serc and cashed
 5* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there

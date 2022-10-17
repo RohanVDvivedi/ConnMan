@@ -17,7 +17,7 @@ void intHandler(int dummy)
     }
 }
 
-void connection_handler(stream* conn_strm, void* additional_params);
+void connection_stream_handler(stream* conn_strm, void* additional_params);
 
 comm_address cgp;
 
@@ -59,7 +59,7 @@ int process(char* buffer)
 // for tcp
 void connection_stream_handler(stream* conn_strm, void* additional_params)
 {
-	printf("TCP Connection : %d\n", conn_fd);
+	printf("TCP Connection : %p\n", conn_strm);
 	char buffer[1000];
 
 	int buffreadlength = -1;

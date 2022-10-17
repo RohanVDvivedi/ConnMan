@@ -1,4 +1,5 @@
 #include<client.h>
+#include<ssl_ctx_helper.h>
 
 #include<string.h>
 #include<stdio.h>
@@ -14,6 +15,7 @@ int main()
 	cgp = new_comm_address_tcp_ipv6("::1", 6969);
 
 	SSL_CTX* ssl_ctx = NULL;
+	ssl_ctx = get_ssl_ctx_for_client();
 
 	stream strm;
 	int res = make_connection_stream(&strm, &cgp, NULL, ssl_ctx);
@@ -26,6 +28,9 @@ int main()
 	close_stream(&strm);
 
 	deinitialize_stream(&strm);
+
+	if(ssl_ctx != NULL)
+		destroy_ssl_ctx(ssl_ctx);
 
 	return 0;
 }

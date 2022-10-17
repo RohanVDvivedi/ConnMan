@@ -26,12 +26,15 @@ int main()
 {
 	signal(SIGINT, intHandler);
 
-	cgp = new_comm_address_tcp_ipv4("127.0.0.1", 6969);
-	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 6969);
+	//cgp = new_comm_address_tcp_ipv4("127.0.0.1", 6969);
 	//cgp = new_comm_address_tcp_ipv6("::1", 6969);
-	//cgp = new_comm_address_udp_ipv6("::1", 6969);
 
-	serve_using_handlers(&cgp, NULL, connection_handler, 10, &listen_fd);
+	//serve_using_handlers(&cgp, NULL, connection_handler, 10, &listen_fd);
+
+	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 6969);
+	cgp = new_comm_address_udp_ipv6(NULL, 6969);
+
+	serve_using_handlers(&cgp, NULL, datagram_handler, 10, &listen_fd);
 
 	return 0;
 }

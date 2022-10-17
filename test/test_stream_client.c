@@ -15,6 +15,9 @@ int main()
 	cgp = new_comm_address_tcp_ipv6("::1", 6969);
 
 	SSL_CTX* ssl_ctx = NULL;
+
+	// comment below 2 lines to not use ssl
+	ssl_lib_init();
 	ssl_ctx = get_ssl_ctx_for_client();
 
 	stream strm;

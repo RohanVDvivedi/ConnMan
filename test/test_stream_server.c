@@ -29,6 +29,9 @@ int main()
 	cgp = new_comm_address_tcp_ipv6(NULL, 6969);
 
 	SSL_CTX* ssl_ctx = NULL;
+
+	// comment below 2 lines to not use ssl
+	ssl_lib_init();
 	ssl_ctx = get_ssl_ctx_for_server("./cert.pem", "./key.pem");
 
 	serve_using_stream_handlers(&cgp, NULL, connection_stream_handler, 10, ssl_ctx, &listen_fd);

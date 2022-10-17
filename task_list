@@ -1,11 +1,11 @@
 Immediate tasks
-2* server passes on its own server address and client address to its stream_handlers some how
+1* server passes on its own server address and client address to its stream_handlers some how
 
 Testing of the new mods
-4* write new testcases for stream api
-5* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset
-6* test old api using serc and cashed
-3* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
+2* write new testcases for stream api
+3* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset
+4* test old api using serc and cashed
+5* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
 
 Future
 6* build write and read stream api for zlib compressors and decompressors

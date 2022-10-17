@@ -1,5 +1,6 @@
 Immediate tasks
 1* server passes on its own server address and client address to its stream_handlers some how
+2* implement readall_from_stream (into a dstring) and read_cache_size to cache a group of few kilo bytes while reading data
 
 Testing of the new mods
 2* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset

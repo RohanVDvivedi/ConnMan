@@ -3,7 +3,7 @@ Immediate tasks
 2* implement readall_from_stream (into a dstring) and read_cache_size to cache a group of few kilo bytes while reading data
 
 Testing of the new mods
-2* write a get https call to google.com to get the index page searching 5 things and show it in terminal, using clientset
+2* write a get https call to https://api.dictionaryapi.dev/api/v2/entries/en/<your-word> to print the meaning of 5 words on a thread pool of 3 threads having a client_set of size 2
 3* test old api using serc and cashed
 4* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
 

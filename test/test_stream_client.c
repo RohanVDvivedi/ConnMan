@@ -18,7 +18,7 @@ int main()
 
 	// comment below 2 lines to not use ssl
 	ssl_lib_init();
-	ssl_ctx = get_ssl_ctx_for_client();
+	ssl_ctx = get_ssl_ctx_for_client("./cert.pem", "./key.pem");
 
 	stream strm;
 	int res = make_connection_stream(&strm, &cgp, NULL, ssl_ctx);

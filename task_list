@@ -1,7 +1,6 @@
 Immediate tasks
 1* server passes on its own server address and client address to its stream_handlers some how
 2* implement readall_from_stream (into a dstring)
-3* implement cached read api if the read call is made with lesser than 128 bytes then read 1 KB into unread buffer, else read as usual
 
 Testing of the new mods
 3* write a get https call to https://api.dictionaryapi.dev/api/v2/entries/en/<your-word> to print the meaning of 5 words on a thread pool of 3 threads having a client_set of size 2

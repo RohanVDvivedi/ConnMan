@@ -1,6 +1,7 @@
 #include<stream.h>
 
 #include<stddef.h>
+#include<string.h>
 
 void initialize_stream(stream* strm, 
 						void* stream_context,
@@ -33,17 +34,45 @@ int get_error_stream(stream* strm)
 	return strm->error;
 }
 
+unsigned int min(unsigned int a, unsigned int b)
+{
+	return (a < b) ? a : b;
+}
+
 unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 {
 	if(strm->read_from_stream_context == NULL)
 		return 0;
 
-	unsigned int bytes_read = read_from_dpipe(&(strm->unread_data), data, data_size, PARTIAL_ALLOWED);
+	if(data_size >= 128)
+	{
+		unsigned int bytes_read = read_from_dpipe(&(strm->unread_data), data, data_size, PARTIAL_ALLOWED);
 
-	if(bytes_read < data_size)
-		bytes_read += strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, &(strm->error));
+		if(bytes_read < data_size)
+			bytes_read += strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, &(strm->error));
 
-	return bytes_read;
+		return bytes_read;
+	}
+	else
+	{
+		unsigned int bytes_read = read_from_dpipe(&(strm->unread_data), data, data_size, PARTIAL_ALLOWED);
+
+		if(bytes_read < data_size)
+		{
+			char data_cache_read[1024];
+			unsigned int data_cache_read_capacity = 1024;
+			unsigned int data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, &(strm->error));
+
+			unsigned int cache_bytes_to_move_to_output_buffer = min(data_size - bytes_read, data_cache_read_size);
+
+			memmove(data + bytes_read, data_cache_read, cache_bytes_to_move_to_output_buffer);
+			bytes_read += cache_bytes_to_move_to_output_buffer;
+
+			unread_from_stream(strm, data_cache_read + cache_bytes_to_move_to_output_buffer, data_cache_read_size - cache_bytes_to_move_to_output_buffer);
+		}
+
+		return bytes_read;
+	}
 }
 
 int unread_from_stream(stream* strm, const void* data, unsigned int data_size)

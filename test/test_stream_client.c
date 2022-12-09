@@ -23,7 +23,7 @@ int main()
 	stream strm;
 	int res = make_connection_stream(&strm, &cgp, NULL, ssl_ctx);
 
-	if(res == 0)
+	if(res < 0)
 		return -1;
 
 	connection_stream_handler(&strm);

@@ -122,6 +122,27 @@ stream* reserve_client(client_set* cls)
 
 void return_client(client_set* cls, stream* strm)
 {
+	int client_to_be_destroyed = 0;
+
+	pthread_mutex_lock(&(cls->client_set_lock));
+
+	// these are the conditions -> to destroy the client
+	if(strm->error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
+	{
+		cls->curr_client_count--;
+
+		// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
+		if(cls->shutdown_called && cls->curr_client_count == 0)
+			pthread_cond_signal(&(cls->client_count_reached_0_after_shutdown));
+
+		client_to_be_destroyed = 1;
+	}
+
+	pthread_mutex_unlock(&(cls->client_set_lock));
+
+	// if the client connection was suppossed to be destroyed, then we do it here, outside the lock
+	if(client_to_be_destroyed)
+		destroy_client_connection(cls, strm);
 }
 
 void shutdown_and_delete_client_set(client_set* cls)

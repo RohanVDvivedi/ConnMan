@@ -1,12 +1,9 @@
 #ifndef CLIENT_SET_H
 #define CLIENT_SET_H
 
-#include<sync_queue.h>
+#include<queue.h>
 
 #include<client.h>
-
-// you may never exceed this client_count, it is equivalent to killing your or someone else's system
-#define MAX_CLIENT_SET_CLIENT_COUNT 1024
 
 // wait for this many microseconds until a connection is available to you
 #define TIMEOUT_FOR_RESERVATION 100*1000
@@ -20,23 +17,26 @@ struct client_set
 	// ssl_ctx for all client connections
 	SSL_CTX* ssl_ctx;
 
-	// a queue of all the active client connection stream, excluding the reserved ones
-	sync_queue active_clients_queue;
-
-	// all the attributes of the client_set below the client_count_lock are thread-safed by this lock
-	pthread_mutex_t client_count_lock;
-
-	// it starts with a value of 0, and is set to 1 when a shutdown is called
-	int shutdown_called;
-
-	// a signal on this condition variable is called only when shutdown_called is set and the curr_client_count reaches 0
-	pthread_cond_t wait_for_all_clients_killed;
+	// the maximum client connection count that this client_set will hold
+	unsigned int max_client_count;
 
 	// this is the number of total active clients, (both reserved ones and the ones that are still in the queue)
 	unsigned int curr_client_count;
 
-	// the maximum client connection count that this client_set will hold
-	unsigned int max_client_count;
+	// a queue of all the active client connection stream, excluding the reserved ones
+	queue active_clients_queue;
+
+	// all the attributes of the client_set below the client_count_lock are thread-safed by this lock
+	pthread_mutex_t client_set_lock;
+
+	// a signal on this condition variable is called when a client_stream is returned or when max_client_count is increased
+	pthread_cond_t all_clients_in_use_at_max_clients;
+
+	// a signal on this condition variable is called only when shutdown_called is set and the curr_client_count reaches 0
+	pthread_cond_t client_count_reached_0_after_shutdown;
+
+	// it starts with a value of 0, and is set to 1 when a shutdown is called
+	int shutdown_called;
 };
 
 // construct a new client_set connecting to the server_addr_p, each of it will be a ssl stream if ssl_ctx is not NULL 

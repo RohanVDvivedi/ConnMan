@@ -149,7 +149,7 @@ stream* reserve_client(client_set* cls, unsigned long long int timeout_in_secs)
 		struct timespec wait_till = current_time;
 		wait_till.tv_sec += timeout_in_secs;
 
-		int timed_out = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
+		int timed_out = pthread_cond_timedwait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
 		if(timed_out)
 			break;
 	}

@@ -97,6 +97,13 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 			{
 				stream* strm = pop_from_stream_queue(cls);
 				destroy_client_connection(cls, strm);
+
+				// decrement the curr_client_count
+				cls->curr_client_count--;
+
+				// here since shutdown has not been called, we do not need to wake up thread that called shutdown
+				// we do not need to wake up any one waiting on the condition variable client_count_reached_0_after_shutdown
+
 				clients_to_destroy--;
 			}
 		}

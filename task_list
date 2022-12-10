@@ -1,7 +1,7 @@
 1* review and test client set api, and then write a get https call to https://api.dictionaryapi.dev/api/v2/entries/en/<your-word> to print the meaning of 5 words on a thread pool of T threads having a client_set of size N, and then merge with master
 2* test old api using serc and cashed, and discard transaction client interface from both of them and modify them to use client_set instead
 3* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
-4* build streams for (cutlery) pipes
+4* build write streams and read stream for cutlery dstring (read stream reads from a pipe while write stream writes to a dstring directly).
 
 
 Far Future

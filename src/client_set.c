@@ -131,7 +131,7 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 	return reset_max_clients_success;
 }
 
-stream* reserve_client(client_set* cls, unsigned long long int timeout_in_secs)
+stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 {
 	stream* strm = NULL;
 
@@ -143,15 +143,22 @@ stream* reserve_client(client_set* cls, unsigned long long int timeout_in_secs)
 	// wait until you are not allowed to create a client and the active client queue is empty
 	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_queue(&(cls->active_clients_queue)))
 	{
-		struct timespec current_time;
-		clock_gettime(CLOCK_REALTIME, &current_time);
+		// if a valid timeout is passed, then perform a timed wait
+		if(timeout_in_secs > 0)
+		{
+			struct timespec current_time;
+			clock_gettime(CLOCK_REALTIME, &current_time);
 
-		struct timespec wait_till = current_time;
-		wait_till.tv_sec += timeout_in_secs;
+			struct timespec wait_till = current_time;
+			wait_till.tv_sec += timeout_in_secs;
 
-		int timed_out = pthread_cond_timedwait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
-		if(timed_out)
-			break;
+			int timed_out = pthread_cond_timedwait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
+			if(timed_out)
+				break;
+		}
+		// else perform a conventional untimed wait
+		else
+			pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
 	}
 
 	// upon exit from the loop, we are in any of the following 3 states

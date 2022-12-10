@@ -126,6 +126,61 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 
 stream* reserve_client(client_set* cls)
 {
+	stream* strm = NULL;
+
+	int was_shutdown_called = 0;
+	int create_client_allowed = 0;
+
+	pthread_mutex_lock(&(cls->client_set_lock));
+	
+	if(cls->shutdown_called)
+		was_shutdown_called = 1;
+	else
+	{
+		// wait until you are not allowed to create a client and the active client queue is empty
+		while(cls->curr_client_count >= cls->max_client_count && is_empty_queue(&(cls->active_clients_queue)))
+		{
+			pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
+		}
+
+		// upon exit from the loop, we either have a client in the active_client queue OR we are now allowed to create a new client connection
+		if(is_empty_queue(&(cls->active_clients_queue)))
+			strm = pop_from_stream_queue(cls);
+		else if(cls->curr_client_count < cls->max_client_count)
+		{
+			cls->curr_client_count++;
+			create_client_allowed = 1;
+		}
+	}
+
+	pthread_mutex_unlock(&(cls->client_set_lock));
+
+	// we are done now if the shutdown was called, or if we already have a stream popped from the active client connections
+	if(was_shutdown_called || strm != NULL)
+		return strm;
+
+	// if we were allowed to create a client connection, then do it
+	if(create_client_allowed)
+		strm = create_client_connection(cls);
+
+	// if a stream was not created, then
+	// we decrement the curr_client_count, and wake up any thread that is waiting for shutting down the client set
+	if(strm == NULL)
+	{
+		pthread_mutex_lock(&(cls->client_set_lock));
+
+		// decrement the curr_client_count
+		cls->curr_client_count--;
+
+		// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
+		if(cls->shutdown_called && cls->curr_client_count == 0)
+			pthread_cond_signal(&(cls->client_count_reached_0_after_shutdown));
+
+		pthread_mutex_unlock(&(cls->client_set_lock));
+	}
+
+	// here we return the created stream OR NULL, if not created
+	return strm;
 }
 
 void return_client(client_set* cls, stream* strm)

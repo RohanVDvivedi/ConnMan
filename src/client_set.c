@@ -223,7 +223,12 @@ void return_client(client_set* cls, stream* strm)
 	}
 	// else push the ctream to active clients queue
 	else
+	{
 		push_to_stream_queue(cls, strm);
+
+		// signal a thread that are waiting for no clients in the active_clients_queue
+		pthread_cond_signal(&(cls->all_clients_in_use_at_max_clients));
+	}
 
 	pthread_mutex_unlock(&(cls->client_set_lock));
 
@@ -236,6 +241,10 @@ void shutdown_and_delete_client_set(client_set* cls)
 {
 	// shutdown logic
 	pthread_mutex_lock(&(cls->client_set_lock));
+
+	// signal all threads that are waiting for no clients in the active_clients_queue
+	// to let them know that a shutdown was called
+	pthread_cond_broadcast(&(cls->all_clients_in_use_at_max_clients));
 
 	// set shutdown_Called and wait until curr_cient_count > 0 
 	cls->shutdown_called = 1;

@@ -140,32 +140,33 @@ stream* reserve_client(client_set* cls, unsigned long long int timeout_in_secs)
 
 	pthread_mutex_lock(&(cls->client_set_lock));
 	
+	// wait until you are not allowed to create a client and the active client queue is empty
+	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_queue(&(cls->active_clients_queue)))
+	{
+		struct timespec current_time;
+		clock_gettime(CLOCK_REALTIME, &current_time);
+
+		struct timespec wait_till = current_time;
+		wait_till.tv_sec += timeout_in_secs;
+
+		int timed_out = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
+		if(timed_out)
+			break;
+	}
+
+	// upon exit from the loop, we are in any of the following 3 states
+	// 1. shutdown is called
+	// 2. a client in the active_client queue
+	// 3. we are allowed to create a new client connection
+	// 4. none of the above because we timed out and now we need to quit
 	if(cls->shutdown_called)
 		was_shutdown_called = 1;
-	else
+	else if(is_empty_queue(&(cls->active_clients_queue)))
+		strm = pop_from_stream_queue(cls);
+	else if(cls->curr_client_count < cls->max_client_count)
 	{
-		// wait until you are not allowed to create a client and the active client queue is empty
-		while(cls->curr_client_count >= cls->max_client_count && is_empty_queue(&(cls->active_clients_queue)))
-		{
-			struct timespec current_time;
-			clock_gettime(CLOCK_REALTIME, &current_time);
-
-			struct timespec wait_till = current_time;
-			wait_till.tv_sec += timeout_in_secs;
-
-			int timed_out = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
-			if(timed_out)
-				break;
-		}
-
-		// upon exit from the loop, we either have a client in the active_client queue OR we are now allowed to create a new client connection
-		if(is_empty_queue(&(cls->active_clients_queue)))
-			strm = pop_from_stream_queue(cls);
-		else if(cls->curr_client_count < cls->max_client_count)
-		{
-			cls->curr_client_count++;
-			create_client_allowed = 1;
-		}
+		cls->curr_client_count++;
+		create_client_allowed = 1;
 	}
 
 	pthread_mutex_unlock(&(cls->client_set_lock));

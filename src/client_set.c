@@ -201,6 +201,9 @@ void return_client(client_set* cls, stream* strm)
 
 		client_to_be_destroyed = 1;
 	}
+	// else push the ctream to active clients queue
+	else
+		push_to_stream_queue(cls, strm);
 
 	pthread_mutex_unlock(&(cls->client_set_lock));
 

@@ -1,5 +1,15 @@
 #include<client_set.h>
 
+static stream* create_client_connection(client_set* cls)
+{
+
+}
+
+static void destroy_client_connection(client_set* cls, stream* strm)
+{
+
+}
+
 static int push_to_stream_queue(client_set* cls, stream* strm)
 {
 	if(is_full_queue(&(cls->active_clients_queue)))
@@ -70,16 +80,35 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 	{
 		if(max_clients < cls->max_client_count)
 		{
+			// destroy additional clients from the queue
+			unsigned int clients_to_destroy = cls->max_client_count - max_clients;
 
-			// mark return value as success
-			reset_max_clients_success = 1;
+			// we can not destroy the clients that are still in use
+
+			while(clients_to_destroy > 0 && !is_empty_queue(&(cls->active_clients_queue)))
+			{
+				stream* strm = pop_from_stream_queue(cls);
+				destroy_client_connection(cls, strm);
+				clients_to_destroy--;
+			}
 		}
 		else if(max_clients > cls->max_client_count)
 		{
+			// wake only the additional number of threads that are waiting on all_clients_in_use_at_max_clients
+			unsigned int additional_clients_addable = max_clients - cls->max_client_count;
 
-			// mark return value as success
-			reset_max_clients_success = 1;
+			while(additional_clients_addable > 0)
+			{
+				pthread_cond_signal(&(cls->all_clients_in_use_at_max_clients));
+				additional_clients_addable--;
+			}
 		}
+
+		// reset value of max_client_count
+		cls->max_client_count = max_clients;
+
+		// mark return value as success
+		reset_max_clients_success = 1;
 	}
 
 	pthread_mutex_unlock(&(cls->client_set_lock));

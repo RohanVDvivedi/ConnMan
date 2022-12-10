@@ -1,5 +1,29 @@
 #include<client_set.h>
 
+static int push_to_stream_queue(client_set* cls, stream* strm)
+{
+	if(is_full_queue(&(cls->active_clients_queue)))
+		expand_queue(&(cls->active_clients_queue));
+
+	return push_to_queue(&(cls->active_clients_queue), strm);
+}
+
+static stream* pop_from_stream_queue(client_set* cls)
+{
+	stream* strm = NULL;
+
+	if(!is_empty_queue(&(cls->active_clients_queue)))
+	{
+		strm = (stream*) get_top_of_queue(&(cls->active_clients_queue));
+		pop_from_queue(&(cls->active_clients_queue));
+	}
+
+	if(get_element_count_queue(&(cls->active_clients_queue)) * 3 >= get_capacity_queue(&(cls->active_clients_queue)))
+		shrink_queue(&(cls->active_clients_queue));
+
+	return strm;
+}
+
 client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients)
 {
 	client_set* cls = malloc(sizeof(client_set));
@@ -46,7 +70,7 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 	{
 		if(max_clients < cls->max_client_count)
 		{
-			
+
 			// mark return value as success
 			reset_max_clients_success = 1;
 		}

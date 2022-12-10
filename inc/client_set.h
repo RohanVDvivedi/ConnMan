@@ -40,7 +40,7 @@ struct client_set
 };
 
 // construct a new client_set connecting to the server_addr_p, each of it will be a ssl stream if ssl_ctx is not NULL 
-client_set* new_client_set(comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients);
+client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients);
 
 // returns the max_clients count that is set on the client_set
 unsigned int get_max_clients(client_set* cls);

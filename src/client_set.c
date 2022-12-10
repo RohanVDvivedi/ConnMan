@@ -1,6 +1,6 @@
 #include<client_set.h>
 
-client_set* new_client_set(comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients)
+client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients)
 {
 	client_set* cls = malloc(sizeof(client_set));
 	cls->server_addr = *server_addr_p;

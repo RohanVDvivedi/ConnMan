@@ -5,6 +5,8 @@
 
 #include<client.h>
 
+#include<pthread.h>
+
 // wait for this many microseconds until a connection is available to you
 #define TIMEOUT_FOR_RESERVATION 100*1000
 

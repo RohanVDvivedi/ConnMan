@@ -131,6 +131,7 @@ void return_client(client_set* cls, stream* strm)
 	// these are the conditions -> to destroy the client
 	if(strm->error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
 	{
+		// decrement the curr_client_count
 		cls->curr_client_count--;
 
 		// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
@@ -149,4 +150,21 @@ void return_client(client_set* cls, stream* strm)
 
 void shutdown_and_delete_client_set(client_set* cls)
 {
+	// shutdown logic
+	pthread_mutex_lock(&(cls->client_set_lock));
+
+	// set shutdown_Called and wait until curr_cient_count > 0 
+	cls->shutdown_called = 1;
+	while(cls->curr_client_count > 0)
+		pthread_cond_wait(&(cls->client_count_reached_0_after_shutdown), &(cls->client_set_lock));
+
+	pthread_mutex_unlock(&(cls->client_set_lock));
+
+	// delete logic
+	cls->ssl_ctx = NULL;
+	deinitialize_queue(&(cls->active_clients_queue));
+	pthread_mutex_destroy(&(cls->client_set_lock));
+	pthread_cond_destroy(&(cls->all_clients_in_use_at_max_clients));
+	pthread_cond_destroy(&(cls->client_count_reached_0_after_shutdown));
+	free(cls);
 }

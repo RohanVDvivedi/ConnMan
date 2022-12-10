@@ -131,7 +131,7 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 	return reset_max_clients_success;
 }
 
-stream* reserve_client(client_set* cls)
+stream* reserve_client(client_set* cls, unsigned long long int timeout_in_secs)
 {
 	stream* strm = NULL;
 
@@ -147,7 +147,15 @@ stream* reserve_client(client_set* cls)
 		// wait until you are not allowed to create a client and the active client queue is empty
 		while(cls->curr_client_count >= cls->max_client_count && is_empty_queue(&(cls->active_clients_queue)))
 		{
-			pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
+			struct timespec current_time;
+			clock_gettime(CLOCK_REALTIME, &current_time);
+
+			struct timespec wait_till = current_time;
+			wait_till.tv_sec += timeout_in_secs;
+
+			int timed_out = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
+			if(timed_out)
+				break;
 		}
 
 		// upon exit from the loop, we either have a client in the active_client queue OR we are now allowed to create a new client connection
@@ -165,29 +173,33 @@ stream* reserve_client(client_set* cls)
 	// we are done now if the shutdown was called, or if we already have a stream popped from the active client connections
 	if(was_shutdown_called || strm != NULL)
 		return strm;
-
-	// if we were allowed to create a client connection, then do it
-	if(create_client_allowed)
+	// else if we were allowed to create a client connection, then do it
+	else if(create_client_allowed)
+	{
 		strm = create_client_connection(cls);
 
-	// if a stream was not created, then
-	// we decrement the curr_client_count, and wake up any thread that is waiting for shutting down the client set
-	if(strm == NULL)
-	{
-		pthread_mutex_lock(&(cls->client_set_lock));
+		// if a stream was not created, then
+		// we decrement the curr_client_count, and wake up any thread that is waiting for shutting down the client set
+		if(strm == NULL)
+		{
+			pthread_mutex_lock(&(cls->client_set_lock));
 
-		// decrement the curr_client_count
-		cls->curr_client_count--;
+			// decrement the curr_client_count
+			cls->curr_client_count--;
 
-		// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
-		if(cls->shutdown_called && cls->curr_client_count == 0)
-			pthread_cond_signal(&(cls->client_count_reached_0_after_shutdown));
+			// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
+			if(cls->shutdown_called && cls->curr_client_count == 0)
+				pthread_cond_signal(&(cls->client_count_reached_0_after_shutdown));
 
-		pthread_mutex_unlock(&(cls->client_set_lock));
+			pthread_mutex_unlock(&(cls->client_set_lock));
+		}
+
+		// here we return the created stream OR NULL, if not created
+		return strm;
 	}
-
-	// here we return the created stream OR NULL, if not created
-	return strm;
+	// return NULL, if it was just a plain simple timeout
+	else
+		return NULL;
 }
 
 void return_client(client_set* cls, stream* strm)

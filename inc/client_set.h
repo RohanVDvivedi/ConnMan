@@ -52,7 +52,7 @@ unsigned int get_max_clients(client_set* cls);
 int reset_max_clients(client_set* cls, unsigned int max_clients);
 
 // this function returns NULL, only when the shutdown is called for the client_set
-stream* reserve_client(client_set* cls);
+stream* reserve_client(client_set* cls, unsigned long long int timeout_in_secs);
 
 // return a reserved client, this function will close and destroy the client stream if it has errored
 void return_client(client_set* cls, stream* strm);

@@ -7,7 +7,9 @@ static stream* create_client_connection(client_set* cls)
 
 static void destroy_client_connection(client_set* cls, stream* strm)
 {
-
+	close_stream(strm);
+	deinitialize_stream(strm);
+	free(strm);
 }
 
 static int push_to_stream_queue(client_set* cls, stream* strm)

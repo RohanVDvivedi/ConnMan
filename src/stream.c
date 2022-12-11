@@ -13,6 +13,7 @@ void initialize_stream(stream* strm,
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
 	strm->read_from_stream_context = read_from_stream_context;
+	strm->EOF_received = 0;
 	strm->write_to_stream_context = write_to_stream_context;
 	strm->close_stream_context = close_stream_context;
 	strm->destroy_stream_context = destroy_stream_context;
@@ -48,8 +49,15 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 	{
 		unsigned int bytes_read = read_from_dpipe(&(strm->unread_data), data, data_size, PARTIAL_ALLOWED);
 
-		if(bytes_read < data_size)
-			bytes_read += strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, &(strm->error));
+		if(bytes_read < data_size && (!strm->EOF_received))
+		{
+			unsigned int bytes_newly_read = strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, &(strm->error));
+
+			if(bytes_newly_read == 0 && (!strm->error))
+				strm->EOF_received = 1;
+
+			bytes_read += bytes_newly_read
+		}
 
 		return bytes_read;
 	}
@@ -57,11 +65,14 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 	{
 		unsigned int bytes_read = read_from_dpipe(&(strm->unread_data), data, data_size, PARTIAL_ALLOWED);
 
-		if(bytes_read < data_size)
+		if(bytes_read < data_size && (!strm->EOF_received))
 		{
 			char data_cache_read[1024];
 			unsigned int data_cache_read_capacity = 1024;
 			unsigned int data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, &(strm->error));
+
+			if(data_cache_read_size == 0 && (!strm->error))
+				strm->EOF_received = 1;
 
 			unsigned int cache_bytes_to_move_to_output_buffer = min(data_size - bytes_read, data_cache_read_size);
 

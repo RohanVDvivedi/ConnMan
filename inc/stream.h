@@ -13,8 +13,14 @@ struct stream
 
 	// returns bytes read from data, (atmost data_size number of bytes will be touched)
 	// on error return 0 bytes read and set the value of (non-zero) error
-	// reading 0 bytes, when data_size > 0 and strm->error == 0, then this implies an end_of_stream
+	// reading 0 bytes, when data_size > 0 and strm->error == 0, then this implies an end_of_stream EOF
+	// no read calls will be made after an EOF is received
 	unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error);
+
+	// if this flag is set then, it implies that the last read call returned 0, i.e. EOF was received
+	// after this no read_from_stream_context calls will be made, only unread data will be returned
+	// this flag is for internal use only
+	int EOF_received;
 
 	// returns bytes written from data (that consists of data_size number of bytes to be written)
 	// on error return 0 bytes read and set the value of (non-zero) error
@@ -26,6 +32,8 @@ struct stream
 	// this function will be called to destroy the stream_context
 	void (*destroy_stream_context)(void* stream_context);
 
+	// any error can be visible here, a non zero value of error is when you must exit your read and write loop
+	// this flag is the only thing that a user of stream interface is allowed to access
 	int error;
 };
 
@@ -44,11 +52,14 @@ int is_writable_stream(stream* strm);
 
 int get_error_stream(stream* strm);
 
+// a return value of 0 from this function implies end of input/socket closed from the other end
+// after that no more calls shoudl be made and you must exit your read loop
 unsigned int read_from_stream(stream* rs, void* data, unsigned int data_size);
 
 // returns 1 on success else a 0
 int unread_from_stream(stream* rs, const void* data, unsigned int data_size);
 
+// you must exit your write loop upon a stream error
 unsigned int write_to_stream(stream* ws, const void* data, unsigned int data_size);
 
 void close_stream(stream* strm);

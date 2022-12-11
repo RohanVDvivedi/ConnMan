@@ -75,7 +75,7 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 	while(1)
 	{
 		buffreadlength = read_from_stream(conn_strm, buffer, 999);
-		if(conn_strm->error)
+		if(conn_strm->error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
 			break;
 
 		buffer[buffreadlength] = '\0';

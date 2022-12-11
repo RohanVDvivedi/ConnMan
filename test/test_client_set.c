@@ -10,6 +10,8 @@
 // client set that will be used by all the jobs
 client_set* cls = NULL;
 
+#define BUFFER_SIZE 64
+
 void* transact_with_server(void* param)
 {
 	char* input = param;
@@ -33,8 +35,8 @@ void* transact_with_server(void* param)
 	}
 
 	// read response
-	char output[1000];
-	int buffreadlength = read_from_stream(cli_strm, output, 999);
+	char output[BUFFER_SIZE + 1];
+	int buffreadlength = read_from_stream(cli_strm, output, BUFFER_SIZE);
 	if(cli_strm->error)
 	{
 		printf("error in reading from stream\n");

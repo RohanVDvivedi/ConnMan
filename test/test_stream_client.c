@@ -38,9 +38,11 @@ int main()
 	return 0;
 }
 
+#define BUFFER_SIZE 64
+
 void connection_stream_handler(stream* strm)
 {
-	char buffer[1000];
+	char buffer[BUFFER_SIZE + 1];
 
 	while(1)
 	{
@@ -50,7 +52,7 @@ void connection_stream_handler(stream* strm)
 		if(strm->error)
 			break;
 
-		int buffreadlength = read_from_stream(strm, buffer, 999);
+		int buffreadlength = read_from_stream(strm, buffer, BUFFER_SIZE);
 		if(strm->error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
 			break;
 		buffer[buffreadlength] = '\0';

@@ -63,18 +63,19 @@ int process(char* buffer)
 	return 0;
 }
 
-// for tcp
+#define BUFFER_SIZE 64
+
 void connection_stream_handler(stream* conn_strm, void* additional_params)
 {
 	printf("TCP Connection : %p\n", conn_strm);
-	char buffer[1000];
+	char buffer[BUFFER_SIZE + 1];
 
 	int buffreadlength = -1;
 	int buffsentlength = -1;
 
 	while(1)
 	{
-		buffreadlength = read_from_stream(conn_strm, buffer, 999);
+		buffreadlength = read_from_stream(conn_strm, buffer, BUFFER_SIZE);
 		if(conn_strm->error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
 			break;
 

@@ -19,18 +19,27 @@ void* transact_with_server(void* param)
 	stream* cli_strm = reserve_client(cls, 0);
 
 	if(cli_strm == NULL)
+	{
 		printf("error reserving stream\n");
+		return NULL;
+	}
 
 	// write input to the client stream
 	int buffsentlength = write_to_stream(cli_strm, input, input_len);
 	if(cli_strm->error)
+	{
 		printf("error in writing to stream\n");
+		return NULL;
+	}
 
 	// read response
 	char output[1000];
 	int buffreadlength = read_from_stream(cli_strm, output, 999);
 	if(cli_strm->error)
+	{
 		printf("error in reading from stream\n");
+		return NULL;
+	}
 	output[buffreadlength] = '\0';
 
 	// write input and output to the stdout
@@ -59,7 +68,7 @@ int main()
 	ssl_ctx = get_ssl_ctx_for_client("./cert.pem", "./key.pem");
 
 	// create a client set
-	client_set* cls = new_client_set(&cgp, ssl_ctx, 2);
+	cls = new_client_set(&cgp, ssl_ctx, 2);
 
 	// intialize parameter to all the jobs
 	char* inputs[] = {

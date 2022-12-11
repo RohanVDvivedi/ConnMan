@@ -72,12 +72,12 @@ int main()
 
 	// intialize parameter to all the jobs
 	char* inputs[] = {
-		"Hi\n",
-		"ping\n",
-		"pong\n",
-		"Hello\n",
-		"bye\n",
-		"lol\n"
+		"Hi",
+		"ping",
+		"pong",
+		"Hello",
+		"bye",
+		"lol"
 	};
 
 	// enqueue all the jobs

@@ -48,16 +48,16 @@ int process(char* buffer)
 
 	if(strcmp(buffer, "exit\r\n") == 0 || strcmp(buffer, "exit\n") == 0 || strcmp(buffer, "exit") == 0)
 	{
-		strcpy(buffer, "xit\r\n");
+		strcpy(buffer, "xit\n");
 		return -1;
 	}
 	else if(strcmp(buffer, "ping\r\n") == 0 || strcmp(buffer, "ping\n") == 0 || strcmp(buffer, "ping") == 0)
 	{
-		strcpy(buffer, "pong\r\n");
+		strcpy(buffer, "pong\n");
 	}
 	else if(strcmp(buffer, "pong\r\n") == 0 || strcmp(buffer, "pong\n") == 0 || strcmp(buffer, "pong") == 0)
 	{
-		strcpy(buffer, "ping\r\n");
+		strcpy(buffer, "ping\n");
 	}
 
 	return 0;

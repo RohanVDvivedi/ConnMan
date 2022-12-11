@@ -47,16 +47,12 @@ void connection_stream_handler(stream* strm)
 		printf("self : ");
 		scanf("%s", buffer);
 		int buffsentlength = write_to_stream(strm, buffer, strlen(buffer));
-		if(buffsentlength == -1 || buffsentlength == 0)
-		{
+		if(strm->error)
 			break;
-		}
 
 		int buffreadlength = read_from_stream(strm, buffer, 999);
-		if(buffreadlength == -1 || buffreadlength == 0)
-		{
+		if(strm->error)
 			break;
-		}
 		buffer[buffreadlength] = '\0';
 
 		printf("server : %s\n", buffer);

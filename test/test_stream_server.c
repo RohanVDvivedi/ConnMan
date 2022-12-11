@@ -75,10 +75,8 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 	while(1)
 	{
 		buffreadlength = read_from_stream(conn_strm, buffer, 999);
-		if(buffreadlength == -1 || buffreadlength == 0)
-		{
+		if(conn_strm->error)
 			break;
-		}
 
 		buffer[buffreadlength] = '\0';
 
@@ -87,10 +85,8 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 
 		buffreadlength = strlen(buffer);
 		buffsentlength = write_to_stream(conn_strm, buffer, buffreadlength);
-		if(buffsentlength == -1 || buffsentlength == 0)
-		{
+		if(conn_strm->error)
 			break;
-		}
 
 		if(process_result != 0)
 		{

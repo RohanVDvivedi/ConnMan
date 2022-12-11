@@ -56,7 +56,7 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 			if(bytes_newly_read == 0 && (!strm->error))
 				strm->EOF_received = 1;
 
-			bytes_read += bytes_newly_read
+			bytes_read += bytes_newly_read;
 		}
 
 		return bytes_read;

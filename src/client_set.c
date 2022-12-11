@@ -168,7 +168,7 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 	// 4. none of the above because we timed out and now we need to quit
 	if(cls->shutdown_called)
 		was_shutdown_called = 1;
-	else if(is_empty_queue(&(cls->active_clients_queue)))
+	else if(!is_empty_queue(&(cls->active_clients_queue)))
 		strm = pop_from_stream_queue(cls);
 	else if(cls->curr_client_count < cls->max_client_count)
 	{

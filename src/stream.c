@@ -75,7 +75,7 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 
 		// move the front of cached bytes to output buffer
 		// these many bytes from the cached data can be moved to the output buffer
-		unsigned int bytes_read = min(data_size, data_cache_read_size);
+		bytes_read = min(data_size, data_cache_read_size);
 		memmove(data, data_cache_read, bytes_read);
 
 		// if there are still bytes left in the cached buffer, then move those bytes to the unread buffer

@@ -253,8 +253,23 @@ void shutdown_and_delete_client_set(client_set* cls)
 	// to let them know that a shutdown was called
 	pthread_cond_broadcast(&(cls->all_clients_in_use_at_max_clients));
 
-	// set shutdown_Called and wait until curr_cient_count > 0 
+	// set shutdown_called
 	cls->shutdown_called = 1;
+
+	// destroy all clients that are queued in the active_clients_queue
+	while(!is_empty_queue(&(cls->active_clients_queue)))
+	{
+		// here we do not use the "pop_from_stream_queue" inorder to avoid unnecessary calls to shrink the active_clients_queue
+		stream* strm = (stream*) get_top_of_queue(&(cls->active_clients_queue));
+		pop_from_queue(&(cls->active_clients_queue));
+
+		destroy_client_connection(cls, strm);
+
+		// decrement the curr_client_count
+		cls->curr_client_count--;
+	}
+
+	// and wait until curr_client_count > 0 
 	while(cls->curr_client_count > 0)
 		pthread_cond_wait(&(cls->client_count_reached_0_after_shutdown), &(cls->client_set_lock));
 

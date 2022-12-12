@@ -19,7 +19,7 @@ static unsigned int write_to_streamed_sync_pipe(void* stream_context, const void
 
 static void close_stream_context_sync_pipe(void* stream_context, int* error)
 {
-	// yet to implement close in sync_pipe
+	close_sync_pipe(stream_context);
 }
 
 static void destroy_stream_context_sync_pipe(void* stream_context)

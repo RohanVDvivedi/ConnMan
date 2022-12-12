@@ -9,7 +9,12 @@ static unsigned int read_from_streamed_sync_pipe(void* stream_context, void* dat
 
 static unsigned int write_to_streamed_sync_pipe(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
-	return write_to_sync_pipe(((sync_pipe*)stream_context), data, data_size);
+	unsigned int bytes_written = write_to_sync_pipe(((sync_pipe*)stream_context), data, data_size);
+
+	if(bytes_written == 0)
+		*error = ERROR_PIPED_STREAM_CLOSED;
+
+	return bytes_written;
 }
 
 static void close_stream_context_sync_pipe(void* stream_context, int* error)

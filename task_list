@@ -1,7 +1,6 @@
 1.1* shrinking of unread_data in stream
-1.3* dstring_stream
-1.4* test cases for piped_stream and writable_dstring_stream
-1.5* merge with master
+1.2* test cases for piped_stream and writable_dstring_stream
+1.3* merge with master
 
 2* test old api using serc and cashed, and discard transaction client interface from both of them and modify them to use client_set instead
 3* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there

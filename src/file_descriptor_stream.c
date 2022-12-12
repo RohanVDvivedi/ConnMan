@@ -26,7 +26,7 @@ static unsigned int write_to_fd(void* stream_context, const void* data, unsigned
 	return ret;
 }
 
-void close_stream_context_fd(void* stream_context, int* error)
+static void close_stream_context_fd(void* stream_context, int* error)
 {
 	if(close(*((int*)stream_context)) == -1)
 		*error = errno;

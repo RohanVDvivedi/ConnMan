@@ -30,13 +30,19 @@ void* producer(void* param)
 
 	for(int i = 0; i < sizeof(input[id])/sizeof(input[id][0]); i++)
 	{
+		if(i == sizeof(input[id])/sizeof(input[id][0]) - 1)
+			close_stream(&pyp_strm);
+
 		unsigned int data_size = strlen(input[id][i]);
 
 		unsigned int bytes_written = write_to_stream(&pyp_strm, input[id][i], data_size);
 		if(pyp_strm.error)
+		{
+			printf("producer(%d) : STREAM_ERROR(%d)\n", id, pyp_strm.error);
 			break;
+		}
 
-		printf("producer(%d) : <%s>\n", id, input[id][i]);
+		printf("producer(%d) : <%s>(%u)\n", id, input[id][i], bytes_written);
 	}
 
 	// close stream once all the data has been written
@@ -58,8 +64,13 @@ void* consumer(void* param)
 	while(1)
 	{
 		unsigned int bytes_read = read_from_stream(&pyp_strm, read_buffer, CONSUMER_READ_BUFFER_SIZE);
+
 		if(bytes_read == 0 || pyp_strm.error)
+		{
+			printf("consumer(%d) : STREAM_ERROR(%d) OR EOF(%d)\n", id, pyp_strm.error, (bytes_read == 0));
 			break;
+		}
+
 		printf("consumer(%d) : <%.*s>\n", id, bytes_read, read_buffer);
 	}
 

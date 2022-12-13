@@ -1,4 +1,4 @@
-1.1* test cases for piped_stream (read from one end and write from another, call close at some time to test) and writable_dstring_stream (just write to stream and read the dstring at the end)
+1.1* test cases for writable_dstring_stream (just write to stream and read the dstring at the end)
 1.2* merge with master
 
 2* test old api using serc and cashed, and discard transaction client interface from both of them and modify them to use client_set instead

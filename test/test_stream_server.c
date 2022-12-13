@@ -70,13 +70,15 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 	printf("TCP Connection : %p\n", conn_strm);
 	char buffer[BUFFER_SIZE + 1];
 
+	int error;
+
 	int buffreadlength = -1;
 	int buffsentlength = -1;
 
 	while(1)
 	{
-		buffreadlength = read_from_stream(conn_strm, buffer, BUFFER_SIZE);
-		if(conn_strm->error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
+		buffreadlength = read_from_stream(conn_strm, buffer, BUFFER_SIZE, &error);
+		if(error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
 			break;
 
 		buffer[buffreadlength] = '\0';
@@ -85,8 +87,8 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 		int process_result = process(buffer);
 
 		buffreadlength = strlen(buffer);
-		buffsentlength = write_to_stream(conn_strm, buffer, buffreadlength);
-		if(conn_strm->error)
+		buffsentlength = write_to_stream(conn_strm, buffer, buffreadlength, &error);
+		if(error)
 			break;
 
 		if(process_result != 0)

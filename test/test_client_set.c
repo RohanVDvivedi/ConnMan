@@ -17,6 +17,8 @@ void* transact_with_server(void* param)
 	char* input = param;
 	int input_len = strlen(input);
 
+	int error;
+
 	// acquire a client stream from the client set cls
 	stream* cli_strm = reserve_client(cls, 0);
 
@@ -27,8 +29,8 @@ void* transact_with_server(void* param)
 	}
 
 	// write input to the client stream
-	int buffsentlength = write_to_stream(cli_strm, input, input_len);
-	if(cli_strm->error)
+	int buffsentlength = write_to_stream(cli_strm, input, input_len, &error);
+	if(error)
 	{
 		printf("error in writing to stream\n");
 		return NULL;
@@ -36,8 +38,8 @@ void* transact_with_server(void* param)
 
 	// read response
 	char output[BUFFER_SIZE + 1];
-	int buffreadlength = read_from_stream(cli_strm, output, BUFFER_SIZE);
-	if(cli_strm->error)
+	int buffreadlength = read_from_stream(cli_strm, output, BUFFER_SIZE, &error);
+	if(error)
 	{
 		printf("error in reading from stream\n");
 		return NULL;

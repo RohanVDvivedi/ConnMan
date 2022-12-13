@@ -28,7 +28,8 @@ int main()
 
 	connection_stream_handler(&strm);
 
-	close_stream(&strm);
+	int close_error;
+	close_stream(&strm, &close_error);
 
 	deinitialize_stream(&strm);
 
@@ -43,17 +44,18 @@ int main()
 void connection_stream_handler(stream* strm)
 {
 	char buffer[BUFFER_SIZE + 1];
+	int error;
 
 	while(1)
 	{
 		printf("self : ");
 		scanf("%s", buffer);
-		int buffsentlength = write_to_stream(strm, buffer, strlen(buffer));
-		if(strm->error)
+		int buffsentlength = write_to_stream(strm, buffer, strlen(buffer), &error);
+		if(error)
 			break;
 
-		int buffreadlength = read_from_stream(strm, buffer, BUFFER_SIZE);
-		if(strm->error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
+		int buffreadlength = read_from_stream(strm, buffer, BUFFER_SIZE, &error);
+		if(error || buffreadlength == 0) // buffreadlength = 0, implies the connection is closed
 			break;
 		buffer[buffreadlength] = '\0';
 

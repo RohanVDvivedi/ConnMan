@@ -56,7 +56,8 @@ int make_connection_stream(stream* strm, comm_address* server_addr_p, comm_addre
 	{
 		if(!initialize_stream_for_ssl_client(strm, ssl_ctx, fd))
 		{
-			close_stream(strm); // this will close the file descriptor aswell
+			int close_error;
+			close_stream(strm, &close_error); // this will close the file descriptor aswell
 			deinitialize_stream(strm);
 			return -1;
 		}

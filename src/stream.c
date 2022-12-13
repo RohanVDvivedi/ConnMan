@@ -17,7 +17,7 @@ void initialize_stream(stream* strm,
 	strm->write_to_stream_context = write_to_stream_context;
 	strm->close_stream_context = close_stream_context;
 	strm->destroy_stream_context = destroy_stream_context;
-	strm->error = 0;
+	strm->last_error = 0;
 }
 
 int is_readable_stream(stream* strm)
@@ -30,18 +30,16 @@ int is_writable_stream(stream* strm)
 	return strm->write_to_stream_context != NULL;
 }
 
-int get_error_stream(stream* strm)
-{
-	return strm->error;
-}
-
 unsigned int min(unsigned int a, unsigned int b)
 {
 	return (a < b) ? a : b;
 }
 
-unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
+unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, int* error)
 {
+	// intialize error to 0
+	*error = 0;
+
 	if(strm->read_from_stream_context == NULL)
 		return 0;
 
@@ -59,10 +57,10 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 	// else make a read call to the stream context
 	else if(data_size >= 128 && !strm->EOF_received)
 	{
-		bytes_read = strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, &(strm->error));
+		bytes_read = strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, error);
 
 		// if it is EOF, then set the EOF_received flag
-		if(bytes_read == 0 && (!strm->error))
+		if(bytes_read == 0 && (!(*error)))
 			strm->EOF_received = 1;
 	}
 	// if data_size to be read is lesser than 128 bytes then, we attempt to make a read for a kilo byte from the stream context and then cache remaining bytes
@@ -71,10 +69,10 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 		// read a kilo byte worth of data, from the stream context and cache it
 		char data_cache_read[1024];
 		unsigned int data_cache_read_capacity = 1024;
-		unsigned int data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, &(strm->error));
+		unsigned int data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, error);
 
 		// if it is EOF, then set the EOF_received flag
-		if(data_cache_read_size == 0 && (!strm->error))
+		if(data_cache_read_size == 0 && (!(*error)))
 			strm->EOF_received = 1;
 
 		// move the front of cached bytes to output buffer
@@ -99,6 +97,10 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size)
 		}
 	}
 
+	// if an error occurred, then register it as the last one
+	if(!(*error))
+		strm->last_error = (*error);
+
 	return bytes_read;
 }
 
@@ -118,25 +120,37 @@ int unread_from_stream(stream* strm, const void* data, unsigned int data_size)
 	return bytes_unread == data_size;
 }
 
-unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_size)
+unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_size, int* error)
 {
+	// intialize error to 0
+	*error = 0;
+
 	if(strm->write_to_stream_context == NULL)
 		return 0;
 
 	unsigned int bytes_written = 0;
 	while(bytes_written < data_size)
 	{
-		bytes_written += strm->write_to_stream_context(strm->stream_context, data + bytes_written, data_size - bytes_written, &(strm->error));
+		bytes_written += strm->write_to_stream_context(strm->stream_context, data + bytes_written, data_size - bytes_written, error);
 
-		if(strm->error)
+		if(*error)
 			break;
 	}
+
+	// if an error occurred, then register it as the last one
+	if(!(*error))
+		strm->last_error = (*error);
+
 	return bytes_written;
 }
 
-void close_stream(stream* strm)
+void close_stream(stream* strm, int* error)
 {
-	strm->close_stream_context(strm->stream_context, &strm->error);
+	strm->close_stream_context(strm->stream_context, error);
+
+	// if an error occurred, then register it as the last one
+	if(!(*error))
+		strm->last_error = (*error);
 }
 
 void deinitialize_stream(stream* strm)

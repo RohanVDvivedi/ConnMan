@@ -32,9 +32,8 @@ struct stream
 	// this function will be called to destroy the stream_context
 	void (*destroy_stream_context)(void* stream_context);
 
-	// any error can be visible here, a non zero value of error is when you must exit your read and write loop
-	// this flag is the only thing that a user of stream interface is allowed to access
-	int error;
+	// the error that was returned after the last call to read/write or close stream functions
+	int last_error;
 };
 
 void initialize_stream(
@@ -50,19 +49,17 @@ int is_readable_stream(stream* strm);
 
 int is_writable_stream(stream* strm);
 
-int get_error_stream(stream* strm);
-
 // a return value of 0 from this function implies end of input/socket closed from the other end
 // after that no more calls shoudl be made and you must exit your read loop
-unsigned int read_from_stream(stream* rs, void* data, unsigned int data_size);
+unsigned int read_from_stream(stream* rs, void* data, unsigned int data_size, int* error);
 
 // returns 1 on success else a 0
 int unread_from_stream(stream* rs, const void* data, unsigned int data_size);
 
 // you must exit your write loop upon a stream error
-unsigned int write_to_stream(stream* ws, const void* data, unsigned int data_size);
+unsigned int write_to_stream(stream* ws, const void* data, unsigned int data_size, int* error);
 
-void close_stream(stream* strm);
+void close_stream(stream* strm, int* error);
 
 void deinitialize_stream(stream* strm);
 

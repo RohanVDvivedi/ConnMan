@@ -32,7 +32,8 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 
 	// phase 5
 	// close the stream, and the underlying filedescriptor
-	close_stream(&strm);
+	int close_error;
+	close_stream(&strm, &close_error);
 
 	// deinitializing stream
 	deinitialize_stream(&strm);

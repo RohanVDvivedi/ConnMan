@@ -13,7 +13,8 @@ static stream* create_client_connection(client_set* cls)
 
 static void destroy_client_connection(client_set* cls, stream* strm)
 {
-	close_stream(strm);
+	int close_error;
+	close_stream(strm, &close_error);
 	deinitialize_stream(strm);
 	free(strm);
 }
@@ -217,7 +218,7 @@ void return_client(client_set* cls, stream* strm)
 	pthread_mutex_lock(&(cls->client_set_lock));
 
 	// these are the conditions -> to destroy the client
-	if(strm->error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
+	if(strm->last_error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
 	{
 		// decrement the curr_client_count
 		cls->curr_client_count--;

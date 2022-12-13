@@ -28,6 +28,11 @@ It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ip
    * `#include<client_set.h>`
    * `#include<comm_address.h>`
    * `#include<ssl_ctx_helper.h>`
+      Additionally the library also provides the following stream apis, to create appropriate streams as per use.
+   * `#include<file_descriptor_stream.h>`
+   * `#include<piped_stream.h>`
+   * `#include<ssl_stream.h>`
+   * `#include<writable_dstring_stream.h>`
 
 ## Instructions for uninstalling library
 

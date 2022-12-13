@@ -146,6 +146,9 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 
 void close_stream(stream* strm, int* error)
 {
+	// intialize error to 0
+	*error = 0;
+
 	strm->close_stream_context(strm->stream_context, error);
 
 	// if an error occurred, then register it as the last one

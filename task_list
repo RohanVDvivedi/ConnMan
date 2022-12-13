@@ -1,4 +1,5 @@
 1.1* shrinking of unread_data in stream
+1.2* make stream's access to error thread safe, and make it accessible per call instead of being global
 1.2* test cases for piped_stream (read from one end and write from another, call close at some time to test) and writable_dstring_stream (just write to stream and read the dstring at the end)
 1.3* merge with master
 

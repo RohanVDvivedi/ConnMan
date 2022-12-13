@@ -12,7 +12,7 @@ stream pyp_strm;
 #define PRODUCERS_COUNT 1
 #define CONSUMERS_COUNT 1
 
-char* input[PRODUCERS_COUNT][7] = {
+char* input[PRODUCERS_COUNT][10] = {
 	{
 		"Hello, Rohan !!",
 		"How are you?",
@@ -20,7 +20,10 @@ char* input[PRODUCERS_COUNT][7] = {
 		"Get well soon, son.",
 		"Thank you so much, Ms. Rupa.",
 		"You are always welcomed here.",
-		"I know that Ms. Rupa."
+		"I know that Ms. Rupa.",
+		"I am so glad that you are here now.",
+		"Yeah, its now or never.",
+		"Praise the lord."
 	}
 };
 
@@ -32,7 +35,7 @@ void* producer(void* param)
 
 	for(int i = 0; i < sizeof(input[id])/sizeof(input[id][0]); i++)
 	{
-		if(i == sizeof(input[id])/sizeof(input[id][0]) - 1)
+		if(i == 8)
 			close_stream(&pyp_strm, &error);
 
 		unsigned int data_size = strlen(input[id][i]);

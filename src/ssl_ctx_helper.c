@@ -8,7 +8,7 @@ void ssl_lib_init()
 
 SSL_CTX* get_ssl_ctx_for_server(char* cert_file, char* key_file)
 {
-	SSL_CTX* ctx = SSL_CTX_new(TLSv1_2_server_method());
+	SSL_CTX* ctx = SSL_CTX_new(TLS_server_method());
 
 	if(SSL_CTX_use_certificate_file(ctx, cert_file, SSL_FILETYPE_PEM) <= 0)
 		goto ERR_EXIT;
@@ -28,7 +28,7 @@ SSL_CTX* get_ssl_ctx_for_server(char* cert_file, char* key_file)
 
 SSL_CTX* get_ssl_ctx_for_client(char* cert_file, char* key_file)
 {
-	SSL_CTX* ctx = SSL_CTX_new(TLSv1_2_client_method());
+	SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
 
 	if(SSL_CTX_use_certificate_file(ctx, cert_file, SSL_FILETYPE_PEM) <= 0)
 		goto ERR_EXIT;

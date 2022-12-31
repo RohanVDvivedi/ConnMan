@@ -1,5 +1,5 @@
-2* test old api using serc and cashed, and discard transaction client interface from both of them and modify them to use client_set instead
-3* propogate the connection_stream based api to dependent libraries, serc, cashed, and test the new stream api there
+
+3* propogate stream and client_set api to serc, cashed.
 
 
 Far Future

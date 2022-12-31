@@ -3,7 +3,9 @@
 2* implement stream util with following functions
    * write_unsigned_int_to_stream write_int_to_stream write_dstring_to_stream and write_string_to_stream
    * parse_unsigned_int parse_int parse_dstring_until -> reads into dstring until maximum characters read or until a dstring is encountered, use cutlery KMP prefix suffix same functionality for parsing, returns MAX_BYTES_ENCOUNTERED, LIMIT_STRING_ENCOUNTERED
+   * use uint64_t and int64_t for the above functions
    * parse_keywords takes in a array of dstring that are to be read, it returns the longest keyword matched, or an error
+   * parse_whitespaces and return the number of white spaces encountered, you can also pass in max white spaces count
 
 Far Future
 4* server passes on its own server address and client address to its stream_handlers some how

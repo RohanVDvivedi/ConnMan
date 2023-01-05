@@ -33,7 +33,7 @@ unsigned int read_uint64_from_stream(stream* rs, uint64_t* data, int* error)
 		char byte;
 		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(bytes_read == 0)
+		if(byte_read == 0)
 			break;
 
 		if(bytes_read <= 20 && '0' <= byte && byte <= '9')

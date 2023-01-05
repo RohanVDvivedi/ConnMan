@@ -1,7 +1,7 @@
 
 1* propogate stream and client_set api to serc, cashed.
 2* implement stream util with following functions
-   * parse_unsigned_int parse_int parse_dstring_until -> reads into dstring until maximum characters read or until a dstring is encountered, use cutlery KMP prefix suffix same functionality for parsing, returns MAX_BYTES_ENCOUNTERED, LIMIT_STRING_ENCOUNTERED
+   * read_dstring_from_stream_until -> reads into dstring until maximum characters read or until a dstring is encountered, use cutlery KMP prefix suffix same functionality for parsing, returns MAX_BYTES_ENCOUNTERED, LIMIT_STRING_ENCOUNTERED
    * parse_keywords takes in a array of dstring that are to be read, it returns the longest keyword matched, or an error
    * parse_whitespaces and return the number of white spaces encountered, you can also pass in max white spaces count
 

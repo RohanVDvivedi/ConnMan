@@ -22,3 +22,32 @@ unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, int*
 
 	return bytes_written;
 }
+
+unsigned int read_uint64_from_stream(stream* rs, uint64_t* data, int* error)
+{
+	(*data) = 0;
+
+	unsigned int bytes_read = 0;
+	while(1)
+	{
+		char byte;
+		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+
+		if(bytes_read == 0)
+			break;
+
+		if(bytes_read <= 20 && '0' <= byte && byte <= '9')
+		{
+			bytes_read++;
+			(*data) *= 10;
+			(*data) += (byte - '0');
+		}
+		else
+		{
+			unread_from_stream(rs, &byte, 1);
+			break;
+		}
+	}
+
+	return bytes_read;
+}

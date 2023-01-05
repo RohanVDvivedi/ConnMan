@@ -5,6 +5,6 @@
 
 #include<stream.h>
 
-unsigned int write_to_stream_formatted(stream* ws, );
+unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, int* error, ...);
 
 #endif

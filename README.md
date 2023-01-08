@@ -33,6 +33,8 @@ It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ip
    * `#include<piped_stream.h>`
    * `#include<ssl_stream.h>`
    * `#include<writable_dstring_stream.h>`
+      Below is the list of headers that contain utility functions that can be used with the created streams
+   * `#include<stream_util.h>`
 
 ## Instructions for uninstalling library
 

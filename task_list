@@ -1,7 +1,5 @@
 
 1* propogate stream and client_set api to serc, cashed.
-2* implement stream util with following functions
-   * parse_whitespaces and return the number of white spaces encountered, you can also pass in max white spaces count
 
 Far Future
 4* server passes on its own server address and client address to its stream_handlers some how

@@ -33,7 +33,7 @@ unsigned int read_uint64_from_stream(stream* rs, uint64_t* data, int* error)
 		char byte;
 		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(byte_read == 0)
+		if(byte_read == 0 || error)
 			break;
 
 		if('0' <= byte && byte <= '9')
@@ -60,7 +60,7 @@ unsigned int skip_whitespaces_from_stream(stream* rs, unsigned int max_whitespac
 		char byte;
 		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(byte_read == 0)
+		if(byte_read == 0 || error)
 			break;
 
 		if(is_whitespace(byte))

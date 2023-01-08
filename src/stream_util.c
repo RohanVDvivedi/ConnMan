@@ -63,7 +63,7 @@ unsigned int skip_whitespaces_from_stream(stream* rs, unsigned int max_whitespac
 		if(byte_read == 0 || error)
 			break;
 
-		if(is_whitespace(byte))
+		if(is_whitespace_char(byte))
 			bytes_read++;
 		else
 		{

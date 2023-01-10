@@ -1,5 +1,8 @@
 
 1* propogate stream and client_set api to serc, cashed.
+2* stream_util
+   * skip_static_cstring
+   * parse_string_until use KMP like 
 
 Far Future
 4* server passes on its own server address and client address to its stream_handlers some how

@@ -23,6 +23,7 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 // a direct failure results if the max_bytes_to_read is lesser than the size of until_str
 // in any case, no more than max_bytes_to_read bytes will be read
 // user is expected to call deinit_dstring on the returned dstring
-dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, unsigned int max_bytes_to_read, int* error);
+// NOTE: suffix_prefix_match_lengths is the one computed by cutlery
+dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, unsigned int* suffix_prefix_match_lengths, unsigned int max_bytes_to_read, int* error);
 
 #endif

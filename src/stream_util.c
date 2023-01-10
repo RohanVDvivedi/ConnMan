@@ -74,3 +74,32 @@ unsigned int skip_whitespaces_from_stream(stream* rs, unsigned int max_whitespac
 
 	return bytes_read;
 }
+
+unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* error)
+{
+	const char* str_data = get_byte_array_dstring(str_to_skip);
+	const unsigned int str_size = get_char_count_dstring(str_to_skip);
+
+	unsigned int match_size = 0;
+
+	for(; match_size < str_size; match_size++)
+	{
+		char byte;
+		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+
+		if(byte_read == 0 || (*error))
+			break;
+
+		if(byte != str_data[match_size])
+			break;
+	}
+
+	// upon mismatch unread all
+	if(match_size < str_size)
+	{
+		unread_from_stream(rs, str_data, match_size);
+		return 0;
+	}
+
+	return str_size; // same as match_size
+}

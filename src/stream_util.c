@@ -103,3 +103,15 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 
 	return str_size; // same as match_size
 }
+
+dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, unsigned int* suffix_prefix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error)
+{
+	dstring res = new_dstring(NULL, 0);
+
+	// TODO
+
+	if(is_empty_dstring(&res))
+		shrink_dstring(&res);
+
+	return res;
+}

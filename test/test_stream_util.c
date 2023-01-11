@@ -40,6 +40,37 @@ int main()
 	}
 	printf("%"PRIu64 " number was read\n", num);
 
+	printf("now enter the string 'ABCDABCDABCD' to continue\n");
+
+	spaces_skipped = skip_whitespaces_from_stream(&rs, 16, &error);
+	if(error)
+	{
+		printf("error skipping whitespaces\n");
+		return 0;
+	}
+	printf("%u whitespaces were skipped\n", spaces_skipped);
+
+	unsigned int skip_string_read = skip_dstring_from_stream(&rs, &get_literal_cstring("ABCDABCDABCD"), &error);
+	if(error)
+	{
+		printf("error skipping 'ABCDABCDABCD'\n");
+		return 0;
+	}
+	if(skip_string_read)
+		printf("'ABCDABCDABCD' was skipped\n");
+	else
+	{
+		printf("'ABCDABCDABCD' was not skipped\n");
+		return 0;
+	}
+
+	spaces_skipped = skip_whitespaces_from_stream(&rs, 16, &error);
+	if(error)
+	{
+		printf("error skipping whitespaces\n");
+		return 0;
+	}
+	printf("%u whitespaces were skipped\n", spaces_skipped);
 
 	deinitialize_stream(&rs);
 	deinitialize_stream(&ws);

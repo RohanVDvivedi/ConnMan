@@ -91,7 +91,10 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 			break;
 
 		if(byte != str_data[match_size])
+		{
+			unread_from_stream(rs, &byte, 1);
 			break;
+		}
 	}
 
 	// upon mismatch unread all

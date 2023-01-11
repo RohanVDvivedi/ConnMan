@@ -72,6 +72,22 @@ int main()
 	}
 	printf("%u whitespaces were skipped\n", spaces_skipped);
 
+	dstring until_str = get_literal_cstring("ABCDABCDABCD")
+	unsigned int prefix_suffix_match_lengths_for_until_str[128];
+	get_prefix_suffix_match_lengths(&until_str, prefix_suffix_match_lengths_for_until_str);
+	dstring dstring_read = read_dstring_until_from_stream(&rs, &until_str, prefix_suffix_match_lengths_for_until_str, 50, &error);
+	if(error)
+	{
+		printf("error reading until 'ABCDABCDABCD'\n");
+		return 0;
+	}
+	if(is_empty_dstring(&dstring_read))
+		printf("max byte limit encountered before until_str")
+	else
+		printf("we read : <"printf_dstring_format ">\n", printf_dstring_params(&dstring_read));
+	deinit_dstring(&dstring_read);
+
+
 	deinitialize_stream(&rs);
 	deinitialize_stream(&ws);
 

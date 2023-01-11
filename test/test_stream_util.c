@@ -2,7 +2,17 @@
 #include<file_descriptor_stream.h>
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<inttypes.h>
+
+void print_unread_bytes(stream* rs)
+{
+	unsigned int bytes_to_read = get_bytes_readable_in_dpipe(&(rs->unread_data));
+	char* unread_bytes = malloc(bytes_to_read);
+	read_from_dpipe(&(rs->unread_data), unread_bytes, bytes_to_read, ALL_OR_NONE);
+	printf("unread <%.*s>\n", bytes_to_read, unread_bytes);
+	free(unread_bytes);
+}
 
 int main()
 {
@@ -61,6 +71,7 @@ int main()
 	else
 	{
 		printf("'ABCDABCDABCD' was not skipped\n");
+		print_unread_bytes(&rs);
 		return 0;
 	}
 
@@ -82,7 +93,10 @@ int main()
 		return 0;
 	}
 	if(is_empty_dstring(&dstring_read))
-		printf("max byte limit encountered before until_str");
+	{
+		printf("max byte limit encountered OR until_str not found\n");
+		print_unread_bytes(&rs);
+	}
 	else
 		printf("we read : <"printf_dstring_format ">\n", printf_dstring_params(&dstring_read));
 	deinit_dstring(&dstring_read);

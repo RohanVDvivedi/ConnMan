@@ -106,12 +106,50 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 
 dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, unsigned int* prefix_suffix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error)
 {
+	const char* until_str_data = get_byte_array_dstring(until_str);
+	const unsigned int until_str_size = get_char_count_dstring(until_str);
+
 	dstring res = new_dstring(NULL, 0);
 
-	// TODO
+	// how many characters of until_str matches with suffix of res
+	unsigned int match_length = 0;
 
-	if(is_empty_dstring(&res))
+	while(match_length < until_str_size && get_char_count_dstring(&res) < max_bytes_to_read)
+	{
+		char byte;
+		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+
+		if(byte_read == 0 || (*error))
+			break;
+
+		// append the character we just read to the res
+		concatenate_char(&res, byte);
+
+		// evaluate the new match length
+		while(1)
+		{
+			if(byte == until_str_data[match_length])
+			{
+				match_length++;
+				break;
+			}
+			else
+			{
+				if(match_length == 0)
+					break;
+				else
+					match_length = prefix_suffix_match_lengths_for_until_str[match_length];
+			}
+		}
+	}
+
+	// if we couldn't match with until_str
+	if(match_length < until_str_size)
+	{
+		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res));
+		make_dstring_empty(&res);
 		shrink_dstring(&res);
+	}
 
 	return res;
 }

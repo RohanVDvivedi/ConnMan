@@ -114,6 +114,10 @@ dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, uns
 
 	dstring res = new_dstring(NULL, 0);
 
+	// the limit set too low to even include until_str_size
+	if(until_str_size > max_bytes_to_read)
+		return res;
+
 	// how many characters of until_str matches with suffix of res
 	unsigned int match_length = 0;
 

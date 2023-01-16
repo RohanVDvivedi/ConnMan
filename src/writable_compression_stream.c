@@ -2,15 +2,17 @@
 
 #include<stdlib.h>
 
+#define OUT_CHUNK_SIZE 4096
+
 static unsigned int write_to_stream_compressed(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
 	zlib_stream_context* stream_context_p = stream_context;
 
 	// intialize available in
-	stream_context_p->zlib_context.next_in = data;
+	stream_context_p->zlib_context.next_in = (z_const Bytef *) data;
 	stream_context_p->zlib_context.avail_in = data_size;
 
-	unsigned int data_out_size = data_size * 2;
+	unsigned int data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
 	(*error) = 0;
@@ -19,11 +21,16 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 	while(!(*error))
 	{
 		// initialize available out
-		stream_context_p->zlib_context.next_out = data_out;
+		stream_context_p->zlib_context.next_out = (Bytef *) data_out;
 		stream_context_p->zlib_context.avail_out = data_out_size;
 
 		// compress
-		ret = deflate(&(stream_context_p->zlib_context), Z_NO_FLUSH);
+		int ret = deflate(&(stream_context_p->zlib_context), Z_NO_FLUSH);
+		if(ret < 0)
+		{
+			(*error) = ret;
+			break;
+		}
 
 		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
 		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
@@ -44,8 +51,44 @@ static void close_stream_context(void* stream_context, int* error)
 {
 	zlib_stream_context* stream_context_p = stream_context;
 
-	// flush everything to the underlying stream
+	// flush all bytes from zlib_context to the the underlying stream
 
+	// intialize available in to hold 0 bytes
+	stream_context_p->zlib_context.next_in = Z_NULL;
+	stream_context_p->zlib_context.avail_in = 0;
+
+	unsigned int data_out_size = OUT_CHUNK_SIZE;
+	char* data_out = malloc(sizeof(char) * data_out_size);
+
+	(*error) = 0;
+
+	// loop while no error
+	while(!(*error))
+	{
+		// initialize available out
+		stream_context_p->zlib_context.next_out = (Bytef *) data_out;
+		stream_context_p->zlib_context.avail_out = data_out_size;
+
+		// compress
+		int ret = deflate(&(stream_context_p->zlib_context), Z_FINISH);
+		if(ret < 0)
+		{
+			(*error) = ret;
+			break;
+		}
+
+		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
+		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
+		if(bytes_to_write_to_underlying_strm > 0)
+			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, error);
+		else
+			break;
+	}
+
+	// release data_out buffer
+	free(data_out);
+
+	// actual closing of the zlib stream
 	deflateEnd(&(stream_context_p->zlib_context));
 }
 

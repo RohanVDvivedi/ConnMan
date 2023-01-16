@@ -6,7 +6,35 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 {
 	zlib_stream_context* stream_context_p = stream_context;
 
-	// compress and then write to underlying stream
+	// intialize available in
+	stream_context_p->zlib_context.next_in = data;
+	stream_context_p->zlib_context.avail_in = data_size;
+
+	unsigned int data_out_size = data_size * 2;
+	char* data_out = malloc(sizeof(char) * data_out_size);
+
+	(*error) = 0;
+
+	// loop while no error
+	while(!(*error))
+	{
+		// initialize available out
+		stream_context_p->zlib_context.next_out = data_out;
+		stream_context_p->zlib_context.avail_out = data_out_size;
+
+		// compress
+		ret = deflate(&(stream_context_p->zlib_context), Z_NO_FLUSH);
+
+		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
+		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
+		if(bytes_to_write_to_underlying_strm > 0)
+			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, error);
+		else
+			break;
+	}
+
+	// return number of bytes we consumed from data
+	return data_size - stream_context_p->zlib_context.avail_in;
 }
 
 static void close_stream_context(void* stream_context, int* error)

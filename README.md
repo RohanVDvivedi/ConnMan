@@ -9,6 +9,7 @@ Additionally, it porvides a stream interface to work with tcp sockets, along wit
  * [Cutlery](https://github.com/RohanVDvivedi/Cutlery)
  * [BoomPar](https://github.com/RohanVDvivedi/BoomPar)
  * [openssl](https://github.com/openssl/openssl)  ($ sudo apt install libssl-dev)
+ * [zlib](https://github.com/madler/zlib)      ($ sudo apt install zlib1g-dev)
 
 **Download source code :**
  * `git clone https://github.com/RohanVDvivedi/ConnMan.git`

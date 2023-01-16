@@ -27,6 +27,9 @@ int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
 	stream_context->underlying_strm = underlying_strm;
+	stream_context->zlib_context.zalloc = Z_NULL;
+	stream_context->zlib_context.zfree = Z_NULL;
+	stream_context->zlib_context.opaque = Z_NULL;
 
 	if(Z_OK != deflateInit(&(stream_context->zlib_context), level))
 	{
@@ -43,6 +46,9 @@ int initialize_stream_for_zlib_compression2(stream* strm, stream* underlying_str
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
 	stream_context->underlying_strm = underlying_strm;
+	stream_context->zlib_context.zalloc = Z_NULL;
+	stream_context->zlib_context.zfree = Z_NULL;
+	stream_context->zlib_context.opaque = Z_NULL;
 
 	if(Z_OK != deflateInit2(&(stream_context->zlib_context), level, method, windowBits, memLevel, strategy))
 	{

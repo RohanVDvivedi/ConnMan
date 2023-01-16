@@ -1,5 +1,5 @@
 
-1* propogate stream and client_set api to serc, cashed.
+1* propogate stream and client_set api to cashed.
 
 Far Future
 4* server passes on its own server address and client address to its stream_handlers some how

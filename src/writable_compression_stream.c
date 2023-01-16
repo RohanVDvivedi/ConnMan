@@ -4,14 +4,23 @@
 
 static unsigned int write_to_stream_compressed(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
+	zlib_stream_context* stream_context_p = stream_context;
+
+	// compress and then write to underlying stream
 }
 
 static void close_stream_context(void* stream_context, int* error)
 {
+	zlib_stream_context* stream_context_p = stream_context;
+
+	// flush everything to the underlying stream
+
+	deflateEnd(&(stream_context_p->zlib_context));
 }
 
 static void destroy_stream_context(void* stream_context)
 {
+	free(stream_context);
 }
 
 int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm, int level)

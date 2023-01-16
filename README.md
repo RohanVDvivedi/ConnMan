@@ -2,6 +2,7 @@
 This is a C library, for developing multithreaded networking applications.
 It is essentially an abstraction layer over the POSIX sockets library, providing a handler-callback based network agnostic API.
 It allows you to change the underlying protocol layers (tcp to udp or ipv4 to ipv6) without any change in application logic.
+Additionally, it porvides a stream interface to work with tcp sockets, along with ssl and compression support.
 
 ## Setup instructions
 **Install dependencies :**

@@ -33,6 +33,9 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 			break;
 	}
 
+	// release data_out buffer
+	free(data_out);
+
 	// return number of bytes we consumed from data
 	return data_size - stream_context_p->zlib_context.avail_in;
 }

@@ -3,7 +3,7 @@
 #include<stdlib.h>
 
 #define OUT_CHUNK_SIZE 4096
-
+#include<stdio.h>
 static unsigned int write_to_stream_compressed(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
 	zlib_stream_context* stream_context_p = stream_context;
@@ -18,7 +18,7 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 	(*error) = 0;
 
 	// loop while no error
-	while(!(*error))
+	while(!(*error) && stream_context_p->zlib_context.avail_in > 0)
 	{
 		// initialize available out
 		stream_context_p->zlib_context.next_out = (Bytef *) data_out;

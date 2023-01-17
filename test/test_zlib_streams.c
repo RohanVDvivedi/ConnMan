@@ -58,7 +58,7 @@ void* producer(void* param)
 	return NULL;
 }
 
-#define CONSUMER_READ_BUFFER_SIZE 512
+#define CONSUMER_READ_BUFFER_SIZE 8192
 
 void* consumer(void* param)
 {

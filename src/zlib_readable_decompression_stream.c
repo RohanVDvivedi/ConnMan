@@ -15,8 +15,6 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 	unsigned int data_in_size = IN_CHUNK_SIZE;
 	char* data_in = malloc(sizeof(char) * data_in_size);
 
-	unsigned int bytes_read = 0;
-
 	(*error) = 0;
 
 	while(!(*error))
@@ -42,8 +40,7 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 			break;
 		}
 
-		bytes_read = data_size - stream_context_p->zlib_context.avail_out;
-		if(bytes_read > 0 || ret == Z_STREAM_END)
+		if(stream_context_p->zlib_context.avail_out == 0 || ret == Z_STREAM_END)
 		{
 			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in);
 			break;
@@ -52,7 +49,7 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 
 	free(data_in);
 
-	return bytes_read;
+	return data_size - stream_context_p->zlib_context.avail_out;
 }
 
 static void close_stream_context(void* stream_context, int* error)

@@ -14,5 +14,7 @@ gcc test_stream_util.c -o stream_util.out -lconnman -lboompar -lpthread -lcutler
 # test stream util using
 # printf "  123 ABCDABCDABCD rohanvipuldvivediqqABCDABCDABCD" | ./stream_util.out
 
+gcc test_zlib_streams.c -o zlib_stream.out -lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto -lz
+
 # use below command to generate a self signed certificate
 #openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365

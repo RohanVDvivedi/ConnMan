@@ -35,6 +35,8 @@ Additionally, it porvides a stream interface to work with tcp sockets, along wit
    * `#include<piped_stream.h>`
    * `#include<ssl_stream.h>`
    * `#include<writable_dstring_stream.h>`
+   * `#include<zlib_readable_decompression_stream.h>`
+   * `#include<zlib_writable_compression_stream.h>`
       Below is the list of headers that contain utility functions that can be used with the created streams
    * `#include<stream_util.h>`
 

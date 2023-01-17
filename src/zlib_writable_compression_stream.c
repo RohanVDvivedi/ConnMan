@@ -3,7 +3,7 @@
 #include<stdlib.h>
 
 #define OUT_CHUNK_SIZE 4096
-#include<stdio.h>
+
 static unsigned int write_to_stream_compressed(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
 	zlib_stream_context* stream_context_p = stream_context;

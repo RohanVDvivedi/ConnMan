@@ -36,8 +36,6 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
 			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, error);
-		else
-			break;
 	}
 
 	// release data_out buffer

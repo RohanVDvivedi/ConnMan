@@ -23,7 +23,7 @@ Additionally, it porvides a stream interface to work with tcp sockets, along wit
  * ***Once you have installed from source, you may discard the build by*** `make clean`
 
 ## Using The library
- * add `-lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto` linker flag, while compiling your application
+ * add `-lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto -lz` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
    * `#include<server.h>`
    * `#include<client.h>`

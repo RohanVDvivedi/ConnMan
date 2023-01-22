@@ -41,14 +41,15 @@ int main()
 	printf("%u whitespaces were skipped\n", spaces_skipped);
 
 	uint64_t num = 0;
-	unsigned int bytes_read = read_uint64_from_stream(&rs, &num, &error);
+	#define RADIX 8
+	unsigned int bytes_read = read_uint64_from_stream(&rs, RADIX, &num, &error);
 	printf("%u bytes read trying to read a number\n", bytes_read);
 	if(error)
 	{
 		printf("error reading uint64_t number\n");
 		return 0;
 	}
-	printf("%"PRIu64 " number was read\n", num);
+	printf("%" PRIo64 " %" PRIu64 " %" PRIx64 " number was read\n", num, num, num);
 
 	printf("now enter the string 'ABCDABCDABCD' to continue\n");
 

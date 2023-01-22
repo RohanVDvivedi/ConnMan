@@ -3,6 +3,6 @@
 
 #include<stream.h>
 
-void initialize_stream_for_fd(stream* strm, int fd);
+int initialize_stream_for_fd(stream* strm, int fd);
 
 #endif

@@ -18,25 +18,26 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 	int streams_initialized = 0;
 
 	if(handler_data->ssl_ctx == NULL)
-	{
-		initialize_stream_for_fd(&strm, handler_data->fd);
-		streams_initialized = 1;
-	}
+		streams_initialized = initialize_stream_for_fd(&strm, handler_data->fd);
 	else // SSL_accept the connection 
 		streams_initialized = initialize_stream_for_ssl_server(&strm, handler_data->ssl_ctx, handler_data->fd);
 
 	// only if the streams were successfully initialized
 	// then we may call the handler
 	if(streams_initialized)
+	{
 		handler_data->stream_handler(&strm, handler_data->additional_params);
 
-	// phase 5
-	// close the stream, and the underlying filedescriptor
-	int close_error;
-	close_stream(&strm, &close_error);
+		// phase 5
+		// close the stream, and the underlying filedescriptor
+		int close_error;
+		close_stream(&strm, &close_error);
 
-	// deinitializing stream
-	deinitialize_stream(&strm);
+		// deinitializing stream
+		deinitialize_stream(&strm);
+	}
+	else
+		close(handler_data->fd);
 
 	free(handler_data);
 	return NULL;

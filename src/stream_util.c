@@ -23,12 +23,71 @@ unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, int*
 	return bytes_written;
 }
 
-unsigned int read_uint64_from_stream(stream* rs, uint64_t* data, int* error)
+static int supported_radix(int radix)
 {
+	return (radix == BINARY) || (radix == OCTAL) || (radix == DECIMAL) || (radix == HEXADECIMAL);
+}
+
+// upon error it returns -1
+int get_digit_from_char(char c, int radix)
+{
+	switch(radix)
+	{
+		case BINARY :
+		{
+			if('0' <= c && c <= '1')
+				return c - '0';
+			break;
+		}
+		case OCTAL :
+		{
+			if('0' <= c && c <= '7')
+				return c - '0';
+			break;
+		}
+		case DECIMAL :
+		{
+			if('0' <= c && c <= '9')
+				return c - '0';
+			break;
+		}
+		case HEXADECIMAL :
+		{
+			if('0' <= c && c <= '9')
+				return c - '0';
+			else if('A' <= c && c <= 'F')
+				return c - 'A' + 10;
+			else if('a' <= c && c <= 'f')
+				return c - 'a' + 10;
+			break;
+		}
+		default :{}
+	}
+	return -1;
+}
+
+unsigned int read_uint64_from_stream(stream* rs, int radix, uint64_t* data, int* error)
+{
+	if(!supported_radix(radix))
+	{
+		(*error) = -1;
+		return 0;
+	}
+
+	int max_bytes_to_read = 0;
+	if(radix == BINARY)
+		max_bytes_to_read = 64;
+	else if(radix == OCTAL)
+		max_bytes_to_read = 22;
+	else if(radix == DECIMAL)
+		max_bytes_to_read = 20;
+	else if(radix == HEXADECIMAL)
+		max_bytes_to_read = 16;
+
 	(*data) = 0;
 
 	unsigned int bytes_read = 0;
-	while(bytes_read < 20)
+	while(bytes_read < max_bytes_to_read)
 	{
 		char byte;
 		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
@@ -36,11 +95,13 @@ unsigned int read_uint64_from_stream(stream* rs, uint64_t* data, int* error)
 		if(byte_read == 0 || (*error))
 			break;
 
-		if('0' <= byte && byte <= '9')
+		int digit = get_digit_from_char(byte, radix);
+
+		if(digit != -1)
 		{
 			bytes_read++;
-			(*data) *= 10;
-			(*data) += (byte - '0');
+			(*data) *= radix;
+			(*data) += digit;
 		}
 		else
 		{

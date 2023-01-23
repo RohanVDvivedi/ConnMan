@@ -22,18 +22,20 @@ char* input[10] = {
 int main()
 {
 	stream strm;
-	initialize_writable_dstring_stream(&strm);
+	dstring str; init_empty_dstring(&str, 0);
+	initialize_writable_dstring_stream(&strm, &str);
 
 	int error;
 
 	for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
 		write_to_stream(&strm, input[i], strlen(input[i]), &error);
 
-	printf(printf_dstring_format, printf_dstring_params(strm.stream_context));
+	printf(printf_dstring_format, printf_dstring_params(&str));
 
 	close_stream(&strm, &error);
 
 	deinitialize_stream(&strm);
+	deinit_dstring(&str);
 
 	return 0;
 }

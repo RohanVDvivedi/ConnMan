@@ -1,7 +1,6 @@
 
 1* propogate stream and client_set api to cashed.
 
-4* move certain static functions to Cutlery like get_digit_from_char
 5* writable_dstring takes pointer to dstring to append to a dstring, making underlying dstring just as if it was an underlying stream
 
 Far Future

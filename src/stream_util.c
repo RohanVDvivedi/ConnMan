@@ -2,6 +2,7 @@
 
 #include<stddef.h>
 #include<dstring.h>
+#include<cutlery_stds.h>
 
 unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, int* error, ...)
 {
@@ -23,58 +24,15 @@ unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, int*
 	return bytes_written;
 }
 
-static int supported_radix(int radix)
-{
-	return (radix == BINARY) || (radix == OCTAL) || (radix == DECIMAL) || (radix == HEXADECIMAL);
-}
-
-// upon error it returns -1
-int get_digit_from_char(char c, int radix)
-{
-	switch(radix)
-	{
-		case BINARY :
-		{
-			if('0' <= c && c <= '1')
-				return c - '0';
-			break;
-		}
-		case OCTAL :
-		{
-			if('0' <= c && c <= '7')
-				return c - '0';
-			break;
-		}
-		case DECIMAL :
-		{
-			if('0' <= c && c <= '9')
-				return c - '0';
-			break;
-		}
-		case HEXADECIMAL :
-		{
-			if('0' <= c && c <= '9')
-				return c - '0';
-			else if('A' <= c && c <= 'F')
-				return c - 'A' + 10;
-			else if('a' <= c && c <= 'f')
-				return c - 'a' + 10;
-			break;
-		}
-		default :{}
-	}
-	return -1;
-}
-
 unsigned int read_uint64_from_stream(stream* rs, int radix, uint64_t* data, int* error)
 {
-	if(!supported_radix(radix))
+	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
 	{
 		(*error) = -1;
 		return 0;
 	}
 
-	int max_bytes_to_read = 0;
+	unsigned int max_bytes_to_read = 0;
 	if(radix == BINARY)
 		max_bytes_to_read = 64;
 	else if(radix == OCTAL)
@@ -95,9 +53,9 @@ unsigned int read_uint64_from_stream(stream* rs, int radix, uint64_t* data, int*
 		if(byte_read == 0 || (*error))
 			break;
 
-		int digit = get_digit_from_char(byte, radix);
+		unsigned int digit = get_digit_from_char(byte, radix);
 
-		if(digit != -1)
+		if(digit != INVALID_INDEX)
 		{
 			bytes_read++;
 			(*data) *= radix;

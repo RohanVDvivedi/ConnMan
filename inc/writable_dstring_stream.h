@@ -3,6 +3,6 @@
 
 #include<stream.h>
 
-void initialize_writable_dstring_stream(stream* strm);
+int initialize_writable_dstring_stream(stream* strm, dstring* write_to);
 
 #endif

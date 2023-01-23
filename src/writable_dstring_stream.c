@@ -19,13 +19,14 @@ static void close_stream_context_writable_dstring_stream(void* stream_context, i
 
 static void destroy_stream_context_writable_dstring_stream(void* stream_context)
 {
-	deinit_dstring((dstring*)stream_context);
-	free(stream_context);
+	// destroy is a NOP
+	// you need to manually destroy the dstring
 }
 
-void initialize_writable_dstring_stream(stream* strm)
+int initialize_writable_dstring_stream(stream* strm, dstring* write_to)
 {
-	dstring* stream_context = malloc(sizeof(dstring));
-	init_empty_dstring(stream_context, 0);
-	initialize_stream(strm, stream_context, NULL, write_to_writable_dstring_stream, close_stream_context_writable_dstring_stream, destroy_stream_context_writable_dstring_stream);
+	if(write_to == NULL || get_dstring_type(write_to) == POINT_DSTR)
+		return 0;
+	initialize_stream(strm, write_to, NULL, write_to_writable_dstring_stream, close_stream_context_writable_dstring_stream, destroy_stream_context_writable_dstring_stream);
+	return 1;
 }

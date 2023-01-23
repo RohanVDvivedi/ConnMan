@@ -1,8 +1,6 @@
 #include<writable_dstring_stream.h>
 
-#include<dstring.h>
-
-#include<stdlib.h>
+#include<stddef.h>
 
 static unsigned int write_to_writable_dstring_stream(void* stream_context, const void* data, unsigned int data_size, int* error)
 {

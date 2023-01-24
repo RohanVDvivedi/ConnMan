@@ -1,6 +1,8 @@
 
 1* propogate stream and client_set api to cashed.
 
+4* stream_util skip_all_until_end_of_stream, rename all instances of end_of_file variable in stream to end_of_stream
+
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 3* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

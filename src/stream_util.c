@@ -24,7 +24,7 @@ unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, int*
 	return bytes_written;
 }
 
-unsigned int read_uint64_from_stream(stream* rs, int radix, uint64_t* data, int* error)
+unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error)
 {
 	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
 	{

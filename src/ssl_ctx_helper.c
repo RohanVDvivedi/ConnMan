@@ -30,6 +30,9 @@ SSL_CTX* get_ssl_ctx_for_client(char* cert_file, char* key_file)
 {
 	SSL_CTX* ctx = SSL_CTX_new(TLS_client_method());
 
+	if(cert_file == NULL && key_file == NULL)
+		return ctx;
+
 	if(SSL_CTX_use_certificate_file(ctx, cert_file, SSL_FILETYPE_PEM) <= 0)
 		goto ERR_EXIT;
 	

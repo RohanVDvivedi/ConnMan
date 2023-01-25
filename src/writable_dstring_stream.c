@@ -4,8 +4,7 @@
 
 static unsigned int write_to_writable_dstring_stream(void* stream_context, const void* data, unsigned int data_size, int* error)
 {
-	const dstring append_str = get_literal_dstring(data, data_size);
-	if(concatenate_dstring((dstring*)stream_context, &append_str))
+	if(concatenate_dstring((dstring*)stream_context, &get_dstring_pointing_to(data, data_size)))
 		return data_size;
 	return 0;
 }

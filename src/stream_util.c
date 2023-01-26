@@ -126,7 +126,7 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 	return str_size; // same as match_size
 }
 
-dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, unsigned int* prefix_suffix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error)
+dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, const unsigned int* prefix_suffix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error)
 {
 	const char* until_str_data = get_byte_array_dstring(until_str);
 	const unsigned int until_str_size = get_char_count_dstring(until_str);

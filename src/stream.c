@@ -13,7 +13,7 @@ void initialize_stream(stream* strm,
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
 	strm->read_from_stream_context = read_from_stream_context;
-	strm->EOF_received = 0;
+	strm->end_of_stream_received = 0;
 	strm->write_to_stream_context = write_to_stream_context;
 	strm->close_stream_context = close_stream_context;
 	strm->destroy_stream_context = destroy_stream_context;
@@ -55,25 +55,25 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 			resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data)));
 	}
 	// else make a read call to the stream context
-	else if(data_size >= 128 && !strm->EOF_received)
+	else if(data_size >= 128 && !strm->end_of_stream_received)
 	{
 		bytes_read = strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, error);
 
-		// if it is EOF, then set the EOF_received flag
+		// if it is EOF, then set the end_of_stream_received flag
 		if(bytes_read == 0 && (!(*error)))
-			strm->EOF_received = 1;
+			strm->end_of_stream_received = 1;
 	}
 	// if data_size to be read is lesser than 128 bytes then, we attempt to make a read for a kilo byte from the stream context and then cache remaining bytes
-	else if(!strm->EOF_received)
+	else if(!strm->end_of_stream_received)
 	{
 		// read a kilo byte worth of data, from the stream context and cache it
 		char data_cache_read[1024];
 		unsigned int data_cache_read_capacity = 1024;
 		unsigned int data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, error);
 
-		// if it is EOF, then set the EOF_received flag
+		// if it is EOF, then set the end_of_stream_received flag
 		if(data_cache_read_size == 0 && (!(*error)))
-			strm->EOF_received = 1;
+			strm->end_of_stream_received = 1;
 
 		// move the front of cached bytes to output buffer
 		// these many bytes from the cached data can be moved to the output buffer

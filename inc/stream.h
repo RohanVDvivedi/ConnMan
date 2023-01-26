@@ -17,10 +17,10 @@ struct stream
 	// no read calls will be made after an EOF is received
 	unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error);
 
-	// if this flag is set then, it implies that the last read call returned 0, i.e. EOF was received
+	// if this flag is set then, it implies that the last read call returned 0, i.e. EOF was received we call it end of stream
 	// after this no read_from_stream_context calls will be made, only unread data will be returned
 	// this flag is for internal use only
-	int EOF_received;
+	int end_of_stream_received;
 
 	// returns bytes written from data (that consists of data_size number of bytes to be written)
 	// on error return 0 bytes read and set the value of (non-zero) error

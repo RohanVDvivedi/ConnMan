@@ -2,6 +2,7 @@
 1* propogate stream and client_set api to cashed.
 
 4* look for locking in stream, how it might benefit implementing something like http 2, and if this problem can be circumvented using external locks
+5* look for stream api to buffer every call to write, and perform write only when a write_flush is called on the stream
 
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how

@@ -2,7 +2,12 @@
 1* propogate stream and client_set api to cashed.
 
 4* look for locking in stream, how it might benefit implementing something like http 2, and if this problem can be circumvented using external locks
-5* look for stream api to buffer every call to write, and perform write only when a write_flush is called on the stream
+
+5* look for stream api to buffer every call to write, and perform write only when a write_flush is called on the stream, OR an alternative will be to call write with parameter BUFFER, FLUSH buffer will just push the writes to a dpipe and only upon a call to FLUSH an actual write is performed onto the stream context, now the writes can be called with 0 bytes as parameter. call this parameter buffer_until (buffer until dpipe reaches this capacity), with macros defining FLUSH = 0 and BUFFER = UINT_MAX.
+
+6* look for stream api to have a locking behaviour, when writing to disk, where lock can be external and can be invoked using lock_stream and unlock_stream, so that now the api is completely in control of the user to whether lock the stream or not
+
+7* streams must have 2 locks one for writing to it and another to reead from it
 
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how

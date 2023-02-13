@@ -35,7 +35,7 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
 		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
-			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, error);
+			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm);
 	}
 
 	// release data_out buffer
@@ -78,7 +78,7 @@ static void close_stream_context(void* stream_context, int* error)
 		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
 		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
-			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, error);
+			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm);
 		else
 			break;
 	}

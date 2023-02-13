@@ -12,6 +12,7 @@ void initialize_stream(stream* strm,
 {
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
+	initialize_dpipe(&(strm->unflushed_data), 0);
 	strm->read_from_stream_context = read_from_stream_context;
 	strm->end_of_stream_received = 0;
 	strm->write_to_stream_context = write_to_stream_context;
@@ -118,6 +119,23 @@ int unread_from_stream(stream* strm, const void* data, unsigned int data_size)
 	}
 
 	return bytes_unread == data_size;
+}
+
+int write_to_stream(stream* strm, const void* data, unsigned int data_size)
+{
+	if(strm->write_to_stream_context == NULL)
+		return 0;
+
+	unsigned int bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
+
+	if(bytes_written == 0)
+	{
+		unsigned int additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
+		resize_dpipe(&(strm->unflushed_data), get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2);
+		bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
+	}
+
+	return bytes_written == data_size;
 }
 
 unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_size, int* error)

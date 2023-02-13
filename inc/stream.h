@@ -65,7 +65,7 @@ int write_to_stream(stream* ws, const void* data, unsigned int data_size);
 
 // flushes all the written data using the write_to_stream_context function call on the underlying stream context
 // it will return the bytes that were in unflushed dpipe, that gets written to underlying stream context
-unsigned int write_to_stream(stream* ws, int* error);
+unsigned int flush_all_from_stream(stream* ws, int* error);
 
 void close_stream(stream* strm, int* error);
 

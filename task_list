@@ -1,11 +1,6 @@
 
 1* propogate stream and client_set api to cashed.
 
-4* write to stream pushes data to the un_written dpipe only and does not perform the actual write
-5* write_flush_stream, performs the actual write by reading internal reference of un_written dpipe and discards the bytes written to the underlying stream
-6* thus above 2 tasks provide buffering to streams (this depends on the cutlery dpipe api additions)
-
-
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 3* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

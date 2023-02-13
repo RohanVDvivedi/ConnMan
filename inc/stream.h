@@ -11,7 +11,11 @@ struct stream
 	// this pipe stores data that was unread_to_stream
 	dpipe unread_data;
 
-	// returns bytes read from data, (atmost data_size number of bytes will be touched)
+	// this pipe stores all data that has been written to the stream
+	// but has not been flushed yet, using the write_to_stream_context function call
+	dpipe unflushed_data;
+
+	// returns bytes read from data, (atmost data_size number of bytes will be touched i.e. returned)
 	// on error return 0 bytes read and set the value of (non-zero) error
 	// reading 0 bytes, when data_size > 0 and strm->error == 0, then this implies an end_of_stream EOF
 	// no read calls will be made after an EOF is received
@@ -56,8 +60,12 @@ unsigned int read_from_stream(stream* rs, void* data, unsigned int data_size, in
 // returns 1 on success else a 0
 int unread_from_stream(stream* rs, const void* data, unsigned int data_size);
 
-// you must exit your write loop upon a stream error
-unsigned int write_to_stream(stream* ws, const void* data, unsigned int data_size, int* error);
+// returns 1 on success else a 0
+int write_to_stream(stream* ws, const void* data, unsigned int data_size);
+
+// flushes all the written data using the write_to_stream_context function call on the underlying stream context
+// it will return the bytes that were in unflushed dpipe, that gets written to underlying stream context
+unsigned int write_to_stream(stream* ws, int* error);
 
 void close_stream(stream* strm, int* error);
 

@@ -99,7 +99,7 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 	}
 
 	// if an error occurred, then register it as the last one
-	if(!(*error))
+	if(*error)
 		strm->last_error = (*error);
 
 	return bytes_read;
@@ -138,28 +138,33 @@ int write_to_stream(stream* strm, const void* data, unsigned int data_size)
 	return bytes_written == data_size;
 }
 
-unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_size, int* error)
+unsigned int flush_all_from_stream(stream* strm, int* error)
 {
 	// intialize error to 0
 	*error = 0;
 
-	if(strm->write_to_stream_context == NULL)
-		return 0;
+	unsigned int total_bytes_flushed = 0;
 
-	unsigned int bytes_written = 0;
-	while(bytes_written < data_size)
+	while(get_bytes_readable_in_dpipe(&(strm->unflushed_data)) > 0)
 	{
-		bytes_written += strm->write_to_stream_context(strm->stream_context, data + bytes_written, data_size - bytes_written, error);
+		unsigned int data_size;
+		const void* data = peek_max_consecutive_from_dpipe(&(strm->unflushed_data), &data_size);
+
+		unsigned bytes_flushed = strm->write_to_stream_context(strm->stream_context, data, data_size, error);
+
+		discard_from_dpipe(&(strm->unflushed_data), bytes_flushed);
+		total_bytes_flushed += bytes_flushed;
 
 		if(*error)
 			break;
 	}
 
-	// if an error occurred, then register it as the last one
-	if(!(*error))
+	resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data)));
+
+	if(*error)
 		strm->last_error = (*error);
 
-	return bytes_written;
+	return total_bytes_flushed;
 }
 
 void close_stream(stream* strm, int* error)
@@ -170,13 +175,14 @@ void close_stream(stream* strm, int* error)
 	strm->close_stream_context(strm->stream_context, error);
 
 	// if an error occurred, then register it as the last one
-	if(!(*error))
+	if(*error)
 		strm->last_error = (*error);
 }
 
 void deinitialize_stream(stream* strm)
 {
 	deinitialize_dpipe(&(strm->unread_data));
+	deinitialize_dpipe(&(strm->unflushed_data));
 	strm->destroy_stream_context(strm->stream_context);
 	*strm = (stream){};
 }

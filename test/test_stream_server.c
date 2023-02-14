@@ -87,7 +87,8 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 		int process_result = process(buffer);
 
 		buffreadlength = strlen(buffer);
-		buffsentlength = write_to_stream(conn_strm, buffer, buffreadlength, &error);
+		write_to_stream(conn_strm, buffer, buffreadlength);
+		buffsentlength = flush_all_from_stream(conn_strm, &error);
 		if(error)
 			break;
 

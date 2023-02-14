@@ -50,7 +50,8 @@ void connection_stream_handler(stream* strm)
 	{
 		printf("self : ");
 		scanf("%s", buffer);
-		int buffsentlength = write_to_stream(strm, buffer, strlen(buffer), &error);
+		write_to_stream(strm, buffer, strlen(buffer));
+		int buffsentlength = flush_all_from_stream(strm, &error);
 		if(error)
 			break;
 

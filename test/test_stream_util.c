@@ -22,7 +22,7 @@ int main()
 
 	int error = 0;
 
-	write_to_stream_formatted(&ws, "%s %d %c %u %f\n", &error, "Rohan", 123, 'X', 123.123);
+	write_to_stream_formatted(&ws, "%s %d %c %u %f\n", "Rohan", 123, 'X', 123.123);
 
 	if(error)
 	{
@@ -61,7 +61,7 @@ int main()
 	}
 	printf("%u whitespaces were skipped\n", spaces_skipped);
 
-	unsigned int skip_string_read = skip_dstring_from_stream(&rs, &get_literal_cstring("ABCDABCDABCD"), &error);
+	unsigned int skip_string_read = skip_dstring_from_stream(&rs, &get_dstring_pointing_to_literal_cstring("ABCDABCDABCD"), &error);
 	if(error)
 	{
 		printf("error skipping 'ABCDABCDABCD'\n");
@@ -84,7 +84,7 @@ int main()
 	}
 	printf("%u whitespaces were skipped\n", spaces_skipped);
 
-	dstring until_str = get_literal_cstring("ABCDABCDABCD");
+	dstring until_str = get_dstring_pointing_to_literal_cstring("ABCDABCDABCD");
 	unsigned int prefix_suffix_match_lengths_for_until_str[128];
 	get_prefix_suffix_match_lengths(&until_str, prefix_suffix_match_lengths_for_until_str);
 	dstring dstring_read = read_dstring_until_from_stream(&rs, &until_str, prefix_suffix_match_lengths_for_until_str, 50, &error);

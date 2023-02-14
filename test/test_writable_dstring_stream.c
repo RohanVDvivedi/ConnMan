@@ -28,7 +28,10 @@ int main()
 	int error;
 
 	for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
-		write_to_stream(&strm, input[i], strlen(input[i]), &error);
+	{
+		write_to_stream(&strm, input[i], strlen(input[i]));
+		flush_all_from_stream(&strm, &error);
+	}
 
 	printf(printf_dstring_format, printf_dstring_params(&str));
 

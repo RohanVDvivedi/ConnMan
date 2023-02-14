@@ -40,7 +40,8 @@ void* producer(void* param)
 
 		unsigned int data_size = strlen(input[id][i]);
 
-		unsigned int bytes_written = write_to_stream(&pyp_strm, input[id][i], data_size, &error);
+		write_to_stream(&pyp_strm, input[id][i], data_size);
+		unsigned int bytes_written = flush_all_from_stream(&pyp_strm, &error);
 		if(error)
 		{
 			printf("producer(%d) : STREAM_ERROR(%d)\n", id, error);

@@ -1,6 +1,9 @@
 
 1* propogate stream and client_set api to cashed.
 
+4* added a UNDERLYING_STREAM_ERROR as an error (with a very high negative value, so that it ensures no collision) when a stream is designed to write to underlying stream and there a write to underlying stream fails (mostly because of failure to allocae memory), use this error in zlib writable stream, writable_dstring_stream, piped_stream
+
+
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 3* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

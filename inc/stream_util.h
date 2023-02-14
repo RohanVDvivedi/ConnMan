@@ -7,7 +7,7 @@
 
 #include<stdint.h>
 
-unsigned int write_to_stream_formatted(stream* ws, const char* cstr_format, ...);
+int write_to_stream_formatted(stream* ws, const char* cstr_format, ...);
 
 // supported radix for below functions are only
 #define BINARY 		2
@@ -35,6 +35,6 @@ dstring read_dstring_until_from_stream(stream* rs, const dstring* until_str, con
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream
 int unread_dstring_from_stream(stream* rs, const dstring* str);
-unsigned int write_dstring_to_stream(stream* ws, const dstring* str);
+int write_dstring_to_stream(stream* ws, const dstring* str);
 
 #endif

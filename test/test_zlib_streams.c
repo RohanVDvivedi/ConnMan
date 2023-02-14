@@ -38,7 +38,7 @@ void* producer(void* param)
 
 		write_to_stream(&zlib_comp, input[i], data_size);
 		unsigned int bytes_written = flush_all_from_stream(&zlib_comp, &error);
-		bytes_written = flush_all_from_stream(&pyp_strm, &error);
+		flush_all_from_stream(&pyp_strm, &error);
 		if(error)
 		{
 			printf("producer : STREAM_ERROR(%d)\n", error);

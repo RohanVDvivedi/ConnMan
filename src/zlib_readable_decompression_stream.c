@@ -45,6 +45,9 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in);
 			break;
 		}
+
+		if(flush == Z_FINISH)
+			break;
 	}
 
 	free(data_in);

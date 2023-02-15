@@ -71,4 +71,8 @@ void close_stream(stream* strm, int* error);
 
 void deinitialize_stream(stream* strm);
 
+// use UNDERLYING_STREAM_ERROR as error code when write_to_stream_context has failed,
+// due to failure to write to an underlying stream (probably because of memory allocation failure)
+#define UNDERLYING_STREAM_ERROR ((-1)<<15)
+
 #endif

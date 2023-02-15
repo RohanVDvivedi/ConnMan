@@ -6,6 +6,7 @@ static unsigned int write_to_writable_dstring_stream(void* stream_context, const
 {
 	if(concatenate_dstring((dstring*)stream_context, &get_dstring_pointing_to(data, data_size)))
 		return data_size;
+	(*error) = UNDERLYING_STREAM_ERROR;
 	return 0;
 }
 

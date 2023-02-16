@@ -38,7 +38,6 @@ void* producer(void* param)
 
 		write_to_stream(&zlib_comp, input[i], data_size);
 		unsigned int bytes_written = flush_all_from_stream(&zlib_comp, &error);
-		flush_all_from_stream(&pyp_strm, &error);
 		if(error)
 		{
 			printf("producer : STREAM_ERROR(%d)\n", error);
@@ -53,7 +52,6 @@ void* producer(void* param)
 	// close stream once all the data has been written
 	printf("closing producer side streams\n");
 	close_stream(&zlib_comp, &error);
-	flush_all_from_stream(&pyp_strm, &error);
 	close_stream(&pyp_strm, &error);
 
 	printf("producer : EXIT after writing %u bytes\n", total_bytes_written);

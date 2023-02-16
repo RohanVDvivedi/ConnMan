@@ -36,6 +36,9 @@ struct stream
 	// this function will be called to destroy the stream_context
 	void (*destroy_stream_context)(void* stream_context);
 
+	// An optional callback function, that gets called after a flush is performed on the stream
+	void (*post_flush_callback_stream_context)(void* stream_context, int* error);
+
 	// the error that was returned after the last call to read/write or close stream functions
 	int last_error;
 };
@@ -46,7 +49,8 @@ void initialize_stream(
 						unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error),
 						unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error),
 						void (*close_stream_context)(void* stream_context, int* error),
-						void (*destroy_stream_context)(void* stream_context)
+						void (*destroy_stream_context)(void* stream_context),
+						void (*post_flush_callback_stream_context)(void* stream_context, int* error)
 					);
 
 int is_readable_stream(stream* strm);

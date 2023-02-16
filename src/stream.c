@@ -8,7 +8,8 @@ void initialize_stream(stream* strm,
 						unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error),
 						unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error),
 						void (*close_stream_context)(void* stream_context, int* error),
-						void (*destroy_stream_context)(void* stream_context))
+						void (*destroy_stream_context)(void* stream_context),
+						void (*post_flush_callback_stream_context)(void* stream_context, int* error))
 {
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
@@ -162,7 +163,17 @@ unsigned int flush_all_from_stream(stream* strm, int* error)
 	resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data)));
 
 	if(*error)
+	{
 		strm->last_error = (*error);
+		return total_bytes_flushed;
+	}
+
+	if(strm->post_flush_callback_stream_context != NULL)
+	{
+		strm->post_flush_callback_stream_context(strm->stream_context, error);
+		if(*error)
+			strm->last_error = (*error);
+	}
 
 	return total_bytes_flushed;
 }

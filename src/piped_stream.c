@@ -30,5 +30,5 @@ static void destroy_stream_context_sync_pipe(void* stream_context)
 void initialize_piped_stream(stream* strm, unsigned int max_capacity)
 {
 	sync_pipe* stream_context = new_sync_pipe(max_capacity);
-	initialize_stream(strm, stream_context, read_from_streamed_sync_pipe, write_to_streamed_sync_pipe, close_stream_context_sync_pipe, destroy_stream_context_sync_pipe);
+	initialize_stream(strm, stream_context, read_from_streamed_sync_pipe, write_to_streamed_sync_pipe, close_stream_context_sync_pipe, destroy_stream_context_sync_pipe, NULL);
 }

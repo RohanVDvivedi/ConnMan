@@ -25,6 +25,6 @@ int initialize_writable_dstring_stream(stream* strm, dstring* write_to)
 {
 	if(write_to == NULL || get_dstring_type(write_to) == POINT_DSTR)
 		return 0;
-	initialize_stream(strm, write_to, NULL, write_to_writable_dstring_stream, close_stream_context_writable_dstring_stream, destroy_stream_context_writable_dstring_stream);
+	initialize_stream(strm, write_to, NULL, write_to_writable_dstring_stream, close_stream_context_writable_dstring_stream, destroy_stream_context_writable_dstring_stream, NULL);
 	return 1;
 }

@@ -94,6 +94,10 @@ static void close_stream_context(void* stream_context, int* error)
 
 	// actual closing of the zlib stream
 	deflateEnd(&(stream_context_p->zlib_context));
+
+	// now call flush on underlying stream
+	if(!(*error))
+		flush_all_from_stream(stream_context_p->underlying_strm, error);
 }
 
 static void destroy_stream_context(void* stream_context)
@@ -116,7 +120,7 @@ int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context);
+	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context, post_flush_calling_underlying_stream_context_flush);
 	return 1;
 }
 
@@ -135,6 +139,6 @@ int initialize_stream_for_zlib_compression2(stream* strm, stream* underlying_str
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context);
+	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context, post_flush_calling_underlying_stream_context_flush);
 	return 1;
 }

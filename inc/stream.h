@@ -79,4 +79,8 @@ void deinitialize_stream(stream* strm);
 // due to failure to write to an underlying stream (probably because of memory allocation failure)
 #define UNDERLYING_STREAM_ERROR ((-1)<<15)
 
+// this is the post_flush_callback you may want to use when the stream_context of a stream is itself a stream
+// and when you would want you flush the underlying stream on flush call to this stream
+void post_flush_calling_underlying_stream_context_flush(void* stream_context, int* error);
+
 #endif

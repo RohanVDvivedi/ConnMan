@@ -1,6 +1,6 @@
 1* propogate stream and client_set api to cashed.
 
-5* implement a stream to function like read_until, this will help further implement multipart/form-data parser
+4* implement a stream to function like read_until, this will help further implement multipart/form-data parser
 
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how

@@ -32,6 +32,9 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 // NOTE: suffix_prefix_match_lengths is the one computed by cutlery
 dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const unsigned int* prefix_suffix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error);
 
+// this function returns a dstring from stream rs, until any of an end char is encountered
+// unless max_bytes_to_read are encountered first, then an empty streing is returned
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(char c, const void* cntxt), const void* cntxt, unsigned int max_bytes_to_read, int* error);
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream
 int unread_dstring_from_stream(stream* rs, const dstring* str);

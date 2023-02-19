@@ -180,6 +180,38 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	return res;
 }
 
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(char c, const void* cntxt), const void* cntxt, unsigned int max_bytes_to_read, int* error)
+{
+	dstring res = new_dstring(NULL, 0);
+
+	int end_encountered = 0;
+
+	while(get_char_count_dstring(&res) < max_bytes_to_read && !end_encountered)
+	{
+		char byte;
+		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+
+		if(byte_read == 0 || (*error))
+			break;
+
+		// append the character we just read to the res
+		concatenate_char(&res, byte);
+
+		// if the current byte read is an end character, then set end_encountered
+		if(is_end_char(byte, cntxt))
+			end_encountered = 1;
+	}
+
+	if(!end_encountered)
+	{
+		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res));
+		make_dstring_empty(&res);
+		shrink_dstring(&res);
+	}
+
+	return res;
+}
+
 int unread_dstring_from_stream(stream* rs, const dstring* str)
 {
 	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str));

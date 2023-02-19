@@ -87,7 +87,7 @@ int main()
 	dstring until_str = get_dstring_pointing_to_literal_cstring("ABCDABCDABCD");
 	unsigned int prefix_suffix_match_lengths_for_until_str[128];
 	get_prefix_suffix_match_lengths(&until_str, prefix_suffix_match_lengths_for_until_str);
-	dstring dstring_read = read_dstring_until_from_stream(&rs, &until_str, prefix_suffix_match_lengths_for_until_str, 50, &error);
+	dstring dstring_read = read_until_dstring_from_stream(&rs, &until_str, prefix_suffix_match_lengths_for_until_str, 50, &error);
 	if(error)
 	{
 		printf("error reading until 'ABCDABCDABCD'\n");

@@ -14,9 +14,9 @@ void print_unread_bytes(stream* rs)
 	free(unread_bytes);
 }
 
-int is_end_char(char c, const void* cntxt)
+int is_end_char(int is_end_of_stream, char c, const void* cntxt)
 {
-	return (c == ' ') || (c == '\n');
+	return is_end_of_stream || (c == ' ') || (c == '\n');
 }
 
 int main()
@@ -108,7 +108,8 @@ int main()
 	deinit_dstring(&dstring_read);
 
 	printf("reading until space or new line\n");
-	dstring_read = read_until_any_end_chars_from_stream(&rs, is_end_char, NULL, 50, &error);
+	int last_byte;
+	dstring_read = read_until_any_end_chars_from_stream(&rs, is_end_char, NULL, &last_byte, 10, &error);
 	if(error)
 	{
 		printf("error reading until space or newline");

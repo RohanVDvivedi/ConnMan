@@ -14,6 +14,11 @@ void print_unread_bytes(stream* rs)
 	free(unread_bytes);
 }
 
+int is_end_char(char c, const void* cntxt)
+{
+	return (c == ' ') || (c == '\n');
+}
+
 int main()
 {
 	stream rs, ws;
@@ -23,10 +28,10 @@ int main()
 	int error = 0;
 
 	write_to_stream_formatted(&ws, "%s %d %c %u %f\n", "Rohan", 123, 'X', 123.123);
-
+	flush_all_from_stream(&ws, &error);
 	if(error)
 	{
-		printf("error encountered white writing to output stream\n");
+		printf("error encountered white flushing to output stream\n");
 		return 0;
 	}
 
@@ -102,6 +107,21 @@ int main()
 		printf("we read : <"printf_dstring_format ">\n", printf_dstring_params(&dstring_read));
 	deinit_dstring(&dstring_read);
 
+	printf("reading until space or new line\n");
+	dstring_read = read_until_any_end_chars_from_stream(&rs, is_end_char, NULL, 50, &error);
+	if(error)
+	{
+		printf("error reading until space or newline");
+		return 0;
+	}
+	if(is_empty_dstring(&dstring_read))
+	{
+		printf("max byte limit encountered OR space o new line not found\n");
+		print_unread_bytes(&rs);
+	}
+	else
+		printf("we read : <"printf_dstring_format ">\n", printf_dstring_params(&dstring_read));
+	deinit_dstring(&dstring_read);
 
 	deinitialize_stream(&rs);
 	deinitialize_stream(&ws);

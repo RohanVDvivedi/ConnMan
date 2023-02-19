@@ -186,6 +186,8 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 	int end_encountered = 0;
 
+	(*last_byte) = 257;
+
 	while(get_char_count_dstring(&res) < max_bytes_to_read && !end_encountered)
 	{
 		char byte;
@@ -236,6 +238,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res));
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
+		(*last_byte) = 257;
 	}
 
 	return res;

@@ -34,7 +34,8 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 
 // this function returns a dstring from stream rs, until any of an end char is encountered
 // unless max_bytes_to_read are encountered first, then an empty streing is returned
-dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(char c, const void* cntxt), const void* cntxt, unsigned int max_bytes_to_read, int* error);
+// last_byte will be set to the last byte read, and 256 for end of stream
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, unsigned int max_bytes_to_read, int* error);
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream
 int unread_dstring_from_stream(stream* rs, const dstring* str);

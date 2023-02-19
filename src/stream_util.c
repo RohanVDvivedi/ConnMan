@@ -180,7 +180,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	return res;
 }
 
-dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(char c, const void* cntxt), const void* cntxt, unsigned int max_bytes_to_read, int* error)
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, unsigned int max_bytes_to_read, int* error)
 {
 	dstring res = new_dstring(NULL, 0);
 
@@ -191,15 +191,44 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(char
 		char byte;
 		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
 
+		// if not an error, then set last_byte
+		if(!(*error))
+		{
+			if(byte_read == 0)
+				(*last_byte) = 256;
+			else
+				(*last_byte) = byte;
+		}
+
+		// if the current byte read is an end character, then set end_encountered
+		if((!(*error)) && is_end_char(byte_read == 0, byte, cntxt))
+			end_encountered = 1;
+
 		if(byte_read == 0 || (*error))
 			break;
 
 		// append the character we just read to the res
 		concatenate_char(&res, byte);
+	}
 
-		// if the current byte read is an end character, then set end_encountered
-		if(is_end_char(byte, cntxt))
-			end_encountered = 1;
+	// in case when maximum bytes are already read, test to see if the next byte is not end of file,
+	// we need to make this test, if end of stream is in the end characters set
+	if(get_char_count_dstring(&res) == max_bytes_to_read && !end_encountered && is_end_char(1, 0, cntxt))
+	{
+		char byte;
+		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+
+		// if not an error, then set last_byte
+		if(!(*error))
+		{
+			if(byte_read == 0)
+			{
+				(*last_byte) = 256;
+				end_encountered = 1;
+			}
+			else
+				unread_from_stream(rs, &byte, 1);
+		}
 	}
 
 	if(!end_encountered)

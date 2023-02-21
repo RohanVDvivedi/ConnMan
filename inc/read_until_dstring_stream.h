@@ -24,6 +24,7 @@ struct read_until_dstring_stream_context
 int initialize_stream_for_reading_until_dstring(stream* strm, stream* underlying_strm, const dstring* read_until_dstr);
 
 // same as above function but with precalculated suffix prefic match lengths
+// this should be produced as per (and by) Cutlery library api
 int initialize_stream_for_reading_until_dstring2(stream* strm, stream* underlying_strm, const dstring* read_until_dstr, const unsigned int* read_until_dst_spml);
 
 #endif

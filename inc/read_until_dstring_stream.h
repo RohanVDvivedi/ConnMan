@@ -4,6 +4,10 @@
 #include<stream.h>
 #include<dstring.h>
 
+// this stream produces everything from the underlying_strm until a given dstring is encountered
+// after which it remains in closed state
+// the given read_until_dstr is consumed from the underlying stream, but it does not get produced
+
 typedef struct read_until_dstring_stream_context read_until_dstring_stream_context;
 struct read_until_dstring_stream_context
 {

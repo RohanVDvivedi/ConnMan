@@ -16,6 +16,7 @@ gcc test_stream_util.c -o stream_util.out -lconnman -lboompar -lpthread -lcutler
 
 gcc test_read_until_dstring_stream.c -o ruds.out -lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto
 # printf "  123 ABCDABCDABCD rohanvipuldvivediqqABCDABCDABCD1234 --XLAMMXLA-- Rohan" | ./ruds.out
+# cat test_read_until_stream.txt | ./ruds.out
 
 gcc test_zlib_streams.c -o zlib_stream.out -lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto -lz
 

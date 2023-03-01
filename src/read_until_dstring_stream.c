@@ -25,7 +25,8 @@ static read_until_dstring_stream_context*  new_reading_until_dstring_stream_cont
 {
 	read_until_dstring_stream_context* sc = malloc(sizeof(read_until_dstring_stream_context));
 	sc->underlying_strm = underlying_strm;
-	initialize_dpipe(&(sc->matched_bytes), get_char_count_dstring(read_until_dstr) + 1);
+	sc->matched_length = 0;
+	initialize_dpipe(&(sc->cached_bytes), get_char_count_dstring(read_until_dstr));
 	sc->read_until_dstr = new_copy_dstring(read_until_dstr);
 	sc->read_until_dstr_spml = read_until_dstr_spml;
 	return sc;

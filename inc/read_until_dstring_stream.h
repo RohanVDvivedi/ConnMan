@@ -14,7 +14,9 @@ struct read_until_dstring_stream_context
 {
 	stream* underlying_strm;
 
-	dpipe matched_bytes;
+	unsigned int matched_length;
+
+	dpipe cached_bytes;
 
 	dstring read_until_dstr;
 

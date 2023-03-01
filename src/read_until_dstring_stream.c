@@ -4,7 +4,55 @@
 
 static unsigned int read_from_stream_context(void* stream_context, void* data, unsigned int data_size, int* error)
 {
-	// TODO
+	read_until_dstring_stream_context* sc = stream_context;
+
+	unsigned int data_size_res = 0;
+
+	const char* read_until_dstr_data = get_byte_array_dstring(&(sc->read_until_dstr));
+	const unsigned int read_until_dstr_size = get_char_count_dstring(&(sc->read_until_dstr));
+
+	while(sc->matched_length < read_until_dstr_size)
+	{
+		while(get_bytes_readable_in_dpipe(&(sc->cached_bytes)) > sc->matched_length && data_size_res < data_size)
+		{
+			read_from_dpipe(&(sc->cached_bytes), data + data_size_res, 1, PARTIAL_ALLOWED);
+			data_size_res++;
+		}
+
+		if(data_size_res == data_size)
+			break;
+
+		char c;
+		int uerror = 0;
+		unsigned int byte_read = read_from_stream(sc->underlying_strm, &c, 1, &uerror);
+		if(uerror)
+		{
+			(*error) = UNDERLYING_STREAM_ERROR;
+			break;
+		}
+		if(byte_read == 0)
+		{
+			(*error) = UNDERLYING_STREAM_FINISHED_BEFORE_READ_UNTIL_DSTRING;
+			break;
+		}
+
+		write_to_dpipe(&(sc->cached_bytes), &c, 1, PARTIAL_ALLOWED);
+
+		while(1)
+		{
+			if(c == read_until_dstr_data[sc->matched_length])
+			{
+				sc->matched_length++;
+				break;
+			}
+			else if(sc->matched_length == 0)
+				break;
+			else
+				sc->matched_length = sc->read_until_dstr_spml[sc->matched_length];
+		}
+	}
+
+	return data_size_res;
 }
 
 static void close_stream_context(void* stream_context, int* error)
@@ -17,7 +65,7 @@ static void destroy_stream_context(void* stream_context)
 	read_until_dstring_stream_context* sc = stream_context;
 	free(sc->read_until_dstr_spml);
 	deinit_dstring(&(sc->read_until_dstr));
-	deinitialize_dpipe(&(sc->matched_bytes));
+	deinitialize_dpipe(&(sc->cached_bytes));
 	free(sc);
 }
 

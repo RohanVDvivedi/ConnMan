@@ -30,4 +30,6 @@ int initialize_stream_for_reading_until_dstring(stream* strm, stream* underlying
 // this should be produced as per (and by) Cutlery library api
 int initialize_stream_for_reading_until_dstring2(stream* strm, stream* underlying_strm, const dstring* read_until_dstr, const unsigned int* read_until_dstr_spml);
 
+#define UNDERLYING_STREAM_FINISHED_BEFORE_READ_UNTIL_DSTRING -1
+
 #endif

@@ -1,7 +1,6 @@
 1* propogate stream and client_set api to cashed.
 
-4* implement a stream to function like read_until, this will help further implement multipart/form-data parser
-5* add reader and writer streams to compress and decompress brotli compression
+4* add reader and writer streams to compress and decompress brotli compression
 
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how

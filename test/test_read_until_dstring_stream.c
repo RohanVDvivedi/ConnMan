@@ -22,6 +22,8 @@ int main()
 	char buffer[BUFFER_SIZE];
 	unsigned int buffer_size = BUFFER_SIZE;
 
+	printf("reading with buffer size %u\n", BUFFER_SIZE);
+
 	while(1)
 	{
 		buffer_size = BUFFER_SIZE;
@@ -29,7 +31,7 @@ int main()
 
 		if(error)
 		{
-			printf("%d error occured\n", error);
+			printf("%d error occured at <%.*s>\n", error, buffer_size, buffer);
 			break;
 		}
 		if(buffer_size == 0)

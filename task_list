@@ -13,7 +13,7 @@
   pop will pop 1 stream from the stack
 
 * modifications to other modules
-  all init_stream functions have counterparts to push the newly created stream onto the stream_stack, the return values of these functions specify number of 
+  all init_stream functions have counterparts to push the newly created stream onto the stream_stack, the return values of these functions specify number of streams pushed
 
 6* unwritten_bytes_limit: a write call will flush the stream if there are more than unwritten_bytes_limit number of bytes in unwritten dpipe
 

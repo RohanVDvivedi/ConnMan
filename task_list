@@ -2,6 +2,21 @@
 
 4* add reader and writer streams to compress and decompress brotli compression
 
+5* implement stream_stack, a stack of streams
+* stream like functionality
+  read, unread, write, flush from stream stack performs those operations on the top stream of the stream_stack
+
+* stack like functionality, but with auto resize
+  push can push an already initialized stream on to the stack
+  top can be used to peek the top of the stack
+  top n can be used to peek nth stream from stack
+  pop will pop 1 stream from the stack
+
+* modifications to other modules
+  all init_stream functions have counterparts to push the newly created stream onto the stream_stack, the return values of these functions specify number of 
+
+6* unwritten_bytes_limit: a write call will flush the stream if there are more than unwritten_bytes_limit number of bytes in unwritten dpipe
+
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 3* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

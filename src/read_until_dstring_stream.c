@@ -90,7 +90,7 @@ int initialize_stream_for_reading_until_dstring(stream* strm, stream* underlying
 	read_until_dstring_stream_context* sc = new_reading_until_dstring_stream_context(underlying_strm, read_until_dstr, read_until_dstr_spml);
 
 	// initialize stream
-	initialize_stream(strm, sc, read_from_stream_context, NULL, close_stream_context, destroy_stream_context, NULL);
+	initialize_stream(strm, sc, read_from_stream_context, NULL, close_stream_context, destroy_stream_context, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
 
 	return 1;
 }
@@ -106,7 +106,7 @@ int initialize_stream_for_reading_until_dstring2(stream* strm, stream* underlyin
 	read_until_dstring_stream_context* sc = new_reading_until_dstring_stream_context(underlying_strm, read_until_dstr, read_until_dstr_spml_l);
 
 	// initialize stream
-	initialize_stream(strm, sc, read_from_stream_context, NULL, close_stream_context, destroy_stream_context, NULL);
+	initialize_stream(strm, sc, read_from_stream_context, NULL, close_stream_context, destroy_stream_context, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
 
 	return 1;
 }

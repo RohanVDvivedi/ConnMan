@@ -19,6 +19,9 @@ char* input[10] = {
 	"Praise the lord.\n"
 };
 
+// uncomment below line to flush only at the end
+//#define FLUSH_ALL_AT_END
+
 int main()
 {
 	stream strm;
@@ -29,11 +32,19 @@ int main()
 
 	for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
 	{
-		write_to_stream(&strm, input[i], strlen(input[i]));
-		flush_all_from_stream(&strm, &error);
+		write_to_stream(&strm, input[i], strlen(input[i]), &error);
+		#ifndef FLUSH_ALL_AT_END
+			flush_all_from_stream(&strm, &error);
+		#endif
 	}
 
-	printf(printf_dstring_format, printf_dstring_params(&str));
+	printf("before flushing : <" printf_dstring_format "> \n", printf_dstring_params(&str));
+
+#ifdef FLUSH_ALL_AT_END
+	flush_all_from_stream(&strm, &error);
+#endif
+
+	printf("after flushing : <" printf_dstring_format "> \n", printf_dstring_params(&str));
 
 	close_stream(&strm, &error);
 

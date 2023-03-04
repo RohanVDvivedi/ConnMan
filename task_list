@@ -1,6 +1,8 @@
 1* propogate stream and client_set api to cashed.
 
-4* implement stacked_stream, a stack of streams
+4* propogate new api to HTTPparser
+
+5* implement stacked_stream, a stack of streams
 * struct stacked_stream
   {
       stack read_streams_stack;
@@ -26,8 +28,6 @@
   all init_stream functions have counterparts to push the newly created stream onto the stream_stack, with underlying stream being the top of the stream stack, the return values of these functions specify number of streams pushed
 
 * server api provides stacked_stream already initialized, to its handlers
-
-5* propogate new api to HTTPparser
 
 6* add reader and writer streams to compress and decompress brotli compression
 

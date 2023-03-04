@@ -36,11 +36,17 @@ void* producer(void* param)
 	{
 		unsigned int data_size = strlen(input[i]);
 
-		write_to_stream(&zlib_comp, input[i], data_size);
-		unsigned int bytes_written = flush_all_from_stream(&zlib_comp, &error);
+		unsigned int bytes_written = write_to_stream(&zlib_comp, input[i], data_size, &error);
 		if(error)
 		{
-			printf("producer : STREAM_ERROR(%d)\n", error);
+			printf("producer : STREAM_ERROR(%d) on write\n", error);
+			break;
+		}
+
+		flush_all_from_stream(&zlib_comp, &error);
+		if(error)
+		{
+			printf("producer : STREAM_ERROR(%d) on flush\n", error);
 			break;
 		}
 

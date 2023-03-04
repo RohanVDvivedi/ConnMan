@@ -111,6 +111,12 @@ static void destroy_stream_context(void* stream_context)
 	free(stream_context);
 }
 
+static void post_flush_calling_underlying_stream_flush_zlib(void* stream_context, int* error)
+{
+	zlib_stream_context* stream_context_p = stream_context;
+	flush_all_from_stream(stream_context_p->underlying_strm, error);
+}
+
 int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm, int level)
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
@@ -126,7 +132,7 @@ int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context, post_flush_calling_underlying_stream_context_flush, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context, post_flush_calling_underlying_stream_flush_zlib, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
 	return 1;
 }
 
@@ -145,6 +151,6 @@ int initialize_stream_for_zlib_compression2(stream* strm, stream* underlying_str
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context, post_flush_calling_underlying_stream_context_flush, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	initialize_stream(strm, stream_context, NULL, write_to_stream_compressed, close_stream_context, destroy_stream_context, post_flush_calling_underlying_stream_flush_zlib, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
 	return 1;
 }

@@ -254,8 +254,3 @@ void deinitialize_stream(stream* strm)
 	strm->destroy_stream_context(strm->stream_context);
 	*strm = (stream){};
 }
-
-void post_flush_calling_underlying_stream_context_flush(void* stream_context, int* error)
-{
-	flush_all_from_stream(stream_context, error);
-}

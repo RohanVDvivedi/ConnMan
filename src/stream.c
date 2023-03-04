@@ -114,6 +114,7 @@ int unread_from_stream(stream* strm, const void* data, unsigned int data_size)
 	if(strm->read_from_stream_context == NULL)
 		return 0;
 
+	// just push the data to unread_data pipe
 	unsigned int bytes_unread = unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
 
 	if(bytes_unread == 0)
@@ -126,7 +127,7 @@ int unread_from_stream(stream* strm, const void* data, unsigned int data_size)
 }
 
 // INTERNAL FUNCTION ONLY - to be only used by write and flush_all functions
-// this function will be used to write unflushed bytes to flush them, i.e. to perfrom actual write to stream context
+// this function will be used to write unflushed bytes, i.e. to flush them, i.e. to perfrom actual write to stream context
 // return value suggests the number of bytes flushed, regardless of the error
 static unsigned int write_flushable_bytes(stream* strm, const void* data, unsigned int data_size, int* error)
 {
@@ -183,6 +184,7 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 	}
 	else // we fallback to flush not just the unflushed_data, but also the new data that has arrived
 	{
+		// flush the unflushed_data first
 		flush_all_unflushed_data(strm, error);
 
 		if(*error)
@@ -191,6 +193,7 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 			return 0; // no bytes from data written, hence we write a 0 here
 		}
 
+		// then flush the new arriving data
 		unsigned int bytes_written = write_flushable_bytes(strm, data, data_size, error);
 
 		if(*error)
@@ -216,6 +219,7 @@ void flush_all_from_stream(stream* strm, int* error)
 	// intialize error to 0
 	(*error) = 0;
 
+	// flush all of the unflushed_data
 	flush_all_unflushed_data(strm, error);
 
 	resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data)));

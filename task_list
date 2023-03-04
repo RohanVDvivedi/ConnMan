@@ -27,7 +27,7 @@
 
 * server api provides stacked_stream already initialized, to its handlers
 
-5* propogate new api to serc and HTTPparser
+5* propogate new api to HTTPparser
 
 6* add reader and writer streams to compress and decompress brotli compression
 

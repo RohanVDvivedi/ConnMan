@@ -3,31 +3,25 @@
 4* propogate new api to HTTPparser
 
 5* implement stacked_stream, a stack of streams
+* it will only be a holder for reader and writer streams, and to club multiple types of streams
 * struct stacked_stream
   {
       stack read_streams_stack;
       stack write_streams_stack;
   }
 * intialize_stacked_stream intializes both the stacks
-* deintialize_stacked_stream destroys all the streams in the stack, and frees them, if both the top match, then only one destroy and free call is made, this happens only if these both streams have the same index from the bottom of the stack
+* deintialize_stacked_stream deinitialized and frees both the stacks
 
 * some functions may take flags READ_STREAMS | WRITE_STREAMS as parameter
 
 * stream like functionality
   read, unread -> happens to the stacked_stream->read_streams_stack->top
   write, flush -> happens to the stacked_stream->write_streams_stack->top
-  close, destroy -> call will close, destroy => (pop, destroy and free) n streams from the respective stack
 
 * stack like functionality, but with auto resize, taking flags to work only on a specific stream
-  push can push an already initialized stream on to the stack -> owner ship is transferred to the stacked_stream(closing, destroying and freeing it is stacked_stream's responsibility)
+  push can push an already initialized stream on to the stack
   top can be used to peek the top of the stack
-  top n can be used to peek nth stream from top of the stack
-  pop will pop 1 stream from the stack -> ownership of the top of the stream is renunciated from stacked_stream (closing, destroying and freeing it is now your responsibility)
-
-* modifications to other modules
-  all init_stream functions have counterparts to push the newly created stream onto the stream_stack, with underlying stream being the top of the stream stack, the return values of these functions specify number of streams pushed
-
-* server api provides stacked_stream already initialized, to its handlers
+  pop will pop 1 stream from the stack
 
 6* add reader and writer streams to compress and decompress brotli compression
 

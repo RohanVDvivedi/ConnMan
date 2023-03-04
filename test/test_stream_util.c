@@ -27,7 +27,12 @@ int main()
 
 	int error = 0;
 
-	write_to_stream_formatted(&ws, "%s %d %c %u %f\n", "Rohan", 123, 'X', 123.123);
+	write_to_stream_formatted(&ws, &error, "%s %d %c %u %f\n", "Rohan", 123, 'X', 123.123);
+	if(error)
+	{
+		printf("error encountered white writing to output stream\n");
+		return 0;
+	}
 	flush_all_from_stream(&ws, &error);
 	if(error)
 	{

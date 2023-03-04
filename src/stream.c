@@ -160,21 +160,55 @@ static void flush_all_unflushed_data(stream* strm, int* error)
 	}
 }
 
-int write_to_stream(stream* strm, const void* data, unsigned int data_size)
+unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_size, int* error)
 {
 	if(strm->write_to_stream_context == NULL)
 		return 0;
 
-	unsigned int bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
+	(*error) = 0;
 
-	if(bytes_written == 0)
+	// if the total unflushed_data_bytes count is lesser than max_unflushed_bytes_count, then just push these new data to unflushed_data pipe
+	if(data_size + get_bytes_readable_in_dpipe(&(strm->unflushed_data)) <= strm->max_unflushed_bytes_count)
 	{
-		unsigned int additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
-		resize_dpipe(&(strm->unflushed_data), get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2);
-		bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
-	}
+		unsigned int bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
 
-	return bytes_written == data_size;
+		if(bytes_written == 0)
+		{
+			unsigned int additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
+			resize_dpipe(&(strm->unflushed_data), get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2);
+			bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
+		}
+
+		return bytes_written;
+	}
+	else // we fallback to flush not just the unflushed_data, but also the new data that has arrived
+	{
+		flush_all_unflushed_data(strm, error);
+
+		if(*error)
+		{
+			strm->last_error = (*error);
+			return 0; // no bytes from data written, hence we write a 0 here
+		}
+
+		unsigned int bytes_written = write_flushable_bytes(strm, data, data_size, error);
+
+		if(*error)
+		{
+			strm->last_error = (*error);
+			return bytes_written;
+		}
+
+		// no error, only then we may call post_flush_callback_stream_context
+		if(strm->post_flush_callback_stream_context != NULL)
+		{
+			strm->post_flush_callback_stream_context(strm->stream_context, error);
+			if(*error)
+				strm->last_error = (*error);
+		}
+
+		return bytes_written;
+	}
 }
 
 void flush_all_from_stream(stream* strm, int* error)

@@ -63,14 +63,15 @@ int is_readable_stream(stream* strm);
 int is_writable_stream(stream* strm);
 
 // a return value of 0 from this function implies end of input/socket closed from the other end
-// after that no more calls shoudl be made and you must exit your read loop
+// after that no more calls should be made and you must exit your read loop
 unsigned int read_from_stream(stream* rs, void* data, unsigned int data_size, int* error);
 
 // returns 1 on success else a 0
 int unread_from_stream(stream* rs, const void* data, unsigned int data_size);
 
-// returns 1 on success else a 0
-int write_to_stream(stream* ws, const void* data, unsigned int data_size);
+// return value of this function suggests, the number of bytes from data_size, that were either
+// pushed to unflushed_data pipe, or actually wrriten to the stream_context (this happens if the incomming bytes and the unflushed_data bytes sum to more than max_unflushed_bytes_count)
+unsigned int write_to_stream(stream* ws, const void* data, unsigned int data_size, int* error);
 
 // flushes all the written data using the write_to_stream_context function call on the underlying stream context
 void flush_all_from_stream(stream* ws, int* error);

@@ -29,11 +29,17 @@ void* transact_with_server(void* param)
 	}
 
 	// write input to the client stream
-	write_to_stream(cli_strm, input, input_len);
-	int buffsentlength = flush_all_from_stream(cli_strm, &error);
+	write_to_stream(cli_strm, input, input_len, &error);
 	if(error)
 	{
 		printf("error in writing to stream\n");
+		return NULL;
+	}
+
+	flush_all_from_stream(cli_strm, &error);
+	if(error)
+	{
+		printf("error in flushing to stream\n");
 		return NULL;
 	}
 

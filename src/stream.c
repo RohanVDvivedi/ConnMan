@@ -43,7 +43,7 @@ static unsigned int min(unsigned int a, unsigned int b)
 unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, int* error)
 {
 	// intialize error to 0
-	*error = 0;
+	(*error) = 0;
 
 	if(strm->read_from_stream_context == NULL)
 		return 0;
@@ -125,6 +125,41 @@ int unread_from_stream(stream* strm, const void* data, unsigned int data_size)
 	return bytes_unread == data_size;
 }
 
+// INTERNAL FUNCTION ONLY - to be only used by write and flush_all functions
+// this function will be used to write unflushed bytes to flush them, i.e. to perfrom actual write to stream context
+// return value suggests the number of bytes flushed, regardless of the error
+static unsigned int write_flushable_bytes(stream* strm, const void* data, unsigned int data_size, int* error)
+{
+	// return value
+	unsigned int bytes_written = 0;
+	
+	// clear error
+	(*error) = 0;
+
+	while(data_size > 0 && (*error) == 0)
+		bytes_written += strm->write_to_stream_context(strm->stream_context, data + bytes_written, data_size - bytes_written, error);
+
+	return bytes_written;
+}
+
+// INTERNAL FUNCTION ONLY - to be only used by write and flush_all functions
+// it only flushes all unflushed bytes from stream unflushed_data pipe of the stream
+// it may fail on an error, in which case it will return 0 with (*error) being set to respective value
+static void flush_all_unflushed_data(stream* strm, int* error)
+{
+	(*error) = 0;
+
+	while(get_bytes_readable_in_dpipe(&(strm->unflushed_data)) > 0 && (*error) == 0)
+	{
+		unsigned int data_size;
+		const void* data = peek_max_consecutive_from_dpipe(&(strm->unflushed_data), &data_size);
+
+		unsigned bytes_flushed = write_flushable_bytes(strm, data, data_size, error);
+
+		discard_from_dpipe(&(strm->unflushed_data), bytes_flushed);
+	}
+}
+
 int write_to_stream(stream* strm, const void* data, unsigned int data_size)
 {
 	if(strm->write_to_stream_context == NULL)
@@ -142,49 +177,34 @@ int write_to_stream(stream* strm, const void* data, unsigned int data_size)
 	return bytes_written == data_size;
 }
 
-unsigned int flush_all_from_stream(stream* strm, int* error)
+void flush_all_from_stream(stream* strm, int* error)
 {
 	// intialize error to 0
-	*error = 0;
+	(*error) = 0;
 
-	unsigned int total_bytes_flushed = 0;
-
-	while(get_bytes_readable_in_dpipe(&(strm->unflushed_data)) > 0)
-	{
-		unsigned int data_size;
-		const void* data = peek_max_consecutive_from_dpipe(&(strm->unflushed_data), &data_size);
-
-		unsigned bytes_flushed = strm->write_to_stream_context(strm->stream_context, data, data_size, error);
-
-		discard_from_dpipe(&(strm->unflushed_data), bytes_flushed);
-		total_bytes_flushed += bytes_flushed;
-
-		if(*error)
-			break;
-	}
+	flush_all_unflushed_data(strm, error);
 
 	resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data)));
 
 	if(*error)
 	{
 		strm->last_error = (*error);
-		return total_bytes_flushed;
+		return;
 	}
 
+	// no error, only then we may call post_flush_callback_stream_context
 	if(strm->post_flush_callback_stream_context != NULL)
 	{
 		strm->post_flush_callback_stream_context(strm->stream_context, error);
 		if(*error)
 			strm->last_error = (*error);
 	}
-
-	return total_bytes_flushed;
 }
 
 void close_stream(stream* strm, int* error)
 {
 	// intialize error to 0
-	*error = 0;
+	(*error) = 0;
 
 	strm->close_stream_context(strm->stream_context, error);
 

@@ -249,7 +249,7 @@ int unread_dstring_from_stream(stream* rs, const dstring* str)
 	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str));
 }
 
-int write_dstring_to_stream(stream* ws, const dstring* str)
+unsigned int write_dstring_to_stream(stream* ws, const dstring* str, int* error)
 {
-	return write_to_stream(ws, get_byte_array_dstring(str), get_char_count_dstring(str));
+	return write_to_stream(ws, get_byte_array_dstring(str), get_char_count_dstring(str), error);
 }

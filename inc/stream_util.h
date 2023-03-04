@@ -39,6 +39,6 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream
 int unread_dstring_from_stream(stream* rs, const dstring* str);
-int write_dstring_to_stream(stream* ws, const dstring* str);
+unsigned int write_dstring_to_stream(stream* ws, const dstring* str, int* error);
 
 #endif

@@ -36,7 +36,10 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
 		{
-			if(!write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm))
+			int u_error = 0;
+			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, &u_error);
+
+			if(u_error)
 				(*error) = UNDERLYING_STREAM_ERROR;
 		}
 	}
@@ -82,7 +85,10 @@ static void close_stream_context(void* stream_context, int* error)
 		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
 		{
-			if(!write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm))
+			int u_error = 0;
+			write_to_stream(stream_context_p->underlying_strm, data_out, bytes_to_write_to_underlying_strm, &u_error);
+
+			if(u_error)
 				(*error) = UNDERLYING_STREAM_ERROR;
 		}
 		else

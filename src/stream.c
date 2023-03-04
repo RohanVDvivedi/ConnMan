@@ -35,7 +35,7 @@ int is_writable_stream(stream* strm)
 	return strm->write_to_stream_context != NULL;
 }
 
-unsigned int min(unsigned int a, unsigned int b)
+static unsigned int min(unsigned int a, unsigned int b)
 {
 	return (a < b) ? a : b;
 }

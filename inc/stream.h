@@ -15,6 +15,10 @@ struct stream
 	// but has not been flushed yet, using the write_to_stream_context function call
 	dpipe unflushed_data;
 
+	// this is the threshold of maximum unflushed_data that can exist in the unflushed_data pipe
+	// beyond which a flush will be called, from the write call
+	unsigned int max_unflushed_data;
+
 	// returns bytes read from data, (atmost data_size number of bytes will be touched i.e. returned)
 	// on error return 0 bytes read and set the value of (non-zero) error
 	// reading 0 bytes, when data_size > 0 and strm->error == 0, then this implies an end_of_stream EOF
@@ -50,7 +54,8 @@ void initialize_stream(
 						unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error),
 						void (*close_stream_context)(void* stream_context, int* error),
 						void (*destroy_stream_context)(void* stream_context),
-						void (*post_flush_callback_stream_context)(void* stream_context, int* error)
+						void (*post_flush_callback_stream_context)(void* stream_context, int* error),
+						unsigned int max_unflushed_data
 					);
 
 int is_readable_stream(stream* strm);

@@ -9,11 +9,13 @@ void initialize_stream(stream* strm,
 						unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error),
 						void (*close_stream_context)(void* stream_context, int* error),
 						void (*destroy_stream_context)(void* stream_context),
-						void (*post_flush_callback_stream_context)(void* stream_context, int* error))
+						void (*post_flush_callback_stream_context)(void* stream_context, int* error),
+						unsigned int max_unflushed_data)
 {
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
 	initialize_dpipe(&(strm->unflushed_data), 0);
+	strm->max_unflushed_data = max;
 	strm->read_from_stream_context = read_from_stream_context;
 	strm->end_of_stream_received = 0;
 	strm->write_to_stream_context = write_to_stream_context;

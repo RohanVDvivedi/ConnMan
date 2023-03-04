@@ -29,8 +29,6 @@
 
 * server api provides stacked_stream already initialized, to its handlers
 
-6* unwritten_bytes_limit: a write call will flush the stream if there are more than unwritten_bytes_limit number of bytes in unwritten dpipe
-
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 3* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

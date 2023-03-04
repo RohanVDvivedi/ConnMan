@@ -21,6 +21,7 @@ void initialize_stream(stream* strm,
 	strm->write_to_stream_context = write_to_stream_context;
 	strm->close_stream_context = close_stream_context;
 	strm->destroy_stream_context = destroy_stream_context;
+	strm->post_flush_callback_stream_context = post_flush_callback_stream_context;
 	strm->last_error = 0;
 }
 

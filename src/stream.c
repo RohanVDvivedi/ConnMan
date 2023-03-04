@@ -10,12 +10,12 @@ void initialize_stream(stream* strm,
 						void (*close_stream_context)(void* stream_context, int* error),
 						void (*destroy_stream_context)(void* stream_context),
 						void (*post_flush_callback_stream_context)(void* stream_context, int* error),
-						unsigned int max_unflushed_data)
+						unsigned int max_unflushed_bytes_count)
 {
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);
 	initialize_dpipe(&(strm->unflushed_data), 0);
-	strm->max_unflushed_data = max;
+	strm->max_unflushed_bytes_count = max_unflushed_bytes_count;
 	strm->read_from_stream_context = read_from_stream_context;
 	strm->end_of_stream_received = 0;
 	strm->write_to_stream_context = write_to_stream_context;

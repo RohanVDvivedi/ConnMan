@@ -17,7 +17,7 @@ struct stream
 
 	// this is the threshold of maximum unflushed_data that can exist in the unflushed_data pipe
 	// beyond which a flush will be called, from the write call
-	unsigned int max_unflushed_data;
+	unsigned int max_unflushed_bytes_count;
 
 	// returns bytes read from data, (atmost data_size number of bytes will be touched i.e. returned)
 	// on error return 0 bytes read and set the value of (non-zero) error
@@ -55,7 +55,7 @@ void initialize_stream(
 						void (*close_stream_context)(void* stream_context, int* error),
 						void (*destroy_stream_context)(void* stream_context),
 						void (*post_flush_callback_stream_context)(void* stream_context, int* error),
-						unsigned int max_unflushed_data
+						unsigned int max_unflushed_bytes_count
 					);
 
 int is_readable_stream(stream* strm);

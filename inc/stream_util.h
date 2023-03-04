@@ -7,7 +7,7 @@
 
 #include<stdint.h>
 
-int write_to_stream_formatted(stream* ws, const char* cstr_format, ...);
+unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...);
 
 // supported radix for below functions are only
 #define BINARY 		2

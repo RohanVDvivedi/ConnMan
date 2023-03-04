@@ -4,7 +4,7 @@
 #include<dstring.h>
 #include<cutlery_stds.h>
 
-int write_to_stream_formatted(stream* ws, const char* cstr_format, ...)
+unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...)
 {
 	dstring str = new_dstring(NULL, 0);
 
@@ -15,13 +15,13 @@ int write_to_stream_formatted(stream* ws, const char* cstr_format, ...)
 
 	va_end(var_args);
 
-	int written = 0;
+	unsigned int bytes_written = 0;
 	if(dstringify_success)
-		written = write_to_stream(ws, get_byte_array_dstring(&str), get_char_count_dstring(&str));
+		bytes_written = write_dstring_to_stream(ws, &str, error);
 
 	deinit_dstring(&str);
 
-	return written;
+	return bytes_written;
 }
 
 unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error)

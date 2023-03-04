@@ -72,8 +72,8 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 
 	int error;
 
-	int buffreadlength = -1;
-	int buffsentlength = -1;
+	unsigned int buffreadlength = 0;
+	unsigned int buffsentlength = 0;
 
 	while(1)
 	{
@@ -86,9 +86,12 @@ void connection_stream_handler(stream* conn_strm, void* additional_params)
 		// process the buffer here
 		int process_result = process(buffer);
 
-		buffreadlength = strlen(buffer);
-		write_to_stream(conn_strm, buffer, buffreadlength);
-		buffsentlength = flush_all_from_stream(conn_strm, &error);
+		buffsentlength = strlen(buffer);
+		write_to_stream(conn_strm, buffer, buffsentlength, &error);
+		if(error)
+			break;
+
+		flush_all_from_stream(conn_strm, &error);
 		if(error)
 			break;
 

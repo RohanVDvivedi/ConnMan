@@ -136,7 +136,7 @@ static unsigned int write_flushable_bytes(stream* strm, const void* data, unsign
 	// clear error
 	(*error) = 0;
 
-	while(data_size > 0 && (*error) == 0)
+	while(bytes_written < data_size && (*error) == 0)
 		bytes_written += strm->write_to_stream_context(strm->stream_context, data + bytes_written, data_size - bytes_written, error);
 
 	return bytes_written;

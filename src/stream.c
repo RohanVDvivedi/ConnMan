@@ -175,7 +175,7 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 		if(bytes_written == 0)
 		{
 			unsigned int additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
-			resize_dpipe(&(strm->unflushed_data), get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2);
+			resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count));
 			bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
 		}
 

@@ -1,8 +1,6 @@
 1* propogate stream and client_set api to cashed.
 
-4* propogate new api to HTTPparser
-
-5* implement stacked_stream, a stack of streams
+4* implement stacked_stream, a stack of streams
 * it will only be a holder for reader and writer streams, and to club multiple types of streams
 * struct stacked_stream
   {
@@ -23,7 +21,7 @@
   top can be used to peek the top of the stack
   pop will pop 1 stream from the stack
 
-6* add reader and writer streams to compress and decompress brotli compression
+5* add reader and writer streams to compress and decompress brotli compression
 
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how

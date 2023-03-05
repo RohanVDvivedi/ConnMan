@@ -87,7 +87,7 @@ int initialize_stream_for_zlib_decompression(stream* strm, stream* underlying_st
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, 0);
 	return 1;
 }
 
@@ -106,6 +106,6 @@ int initialize_stream_for_zlib_decompression2(stream* strm, stream* underlying_s
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, 0);
 	return 1;
 }

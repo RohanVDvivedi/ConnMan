@@ -20,9 +20,13 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 	while(!(*error))
 	{
 		// perform read from underlying stream
-		unsigned int data_in_bytes_read = read_from_stream(stream_context_p->underlying_strm, data_in, data_in_size, error);
-		if((*error))
+		int uerror = 0;
+		unsigned int data_in_bytes_read = read_from_stream(stream_context_p->underlying_strm, data_in, data_in_size, &uerror);
+		if(uerror)
+		{
+			uerror = UNDERLYING_STREAM_ERROR;
 			break;
+		}
 
 		// intialize available in
 		stream_context_p->zlib_context.next_in = (z_const Bytef *) data_in;

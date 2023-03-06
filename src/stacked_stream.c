@@ -15,6 +15,19 @@ void deinitialize_stacked_stream(stacked_stream* sstrm)
 	deinitialize_stack(&(sstrm->write_streams));
 }
 
+int is_empty_stacked_stream(stacked_stream* sstrm, int operate_on)
+{
+	switch(operate_on)
+	{
+		case READ_STREAMS :
+			return is_empty_stack(&(sstrm->read_streams));
+		case WRITE_STREAMS :
+			return is_empty_stack(&(sstrm->write_streams));
+		default :
+			return 1;
+	}
+}
+
 unsigned int get_stream_count_stacked_stream(stacked_stream* sstrm, int operate_on)
 {
 	switch(operate_on)

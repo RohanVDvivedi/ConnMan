@@ -31,6 +31,7 @@ void deinitialize_stacked_stream(stacked_stream* sstrm);
 // below functions work just like the cutlery stack works
 
 // below functions only take READ_STREAMS or WRITE_STREAMS in their operate_on parameter
+int is_empty_stacked_stream(stacked_stream* sstrm, int operate_on);
 unsigned int get_stream_count_stacked_stream(stacked_stream* sstrm, int operate_on);
 // push function may fail, if the strm is NULL or if the operate_on is READ_STREAMS while the stream is not readable,
 // similarly it may also fail if the operate on is WRITE_STREAMS and the stream is not writable

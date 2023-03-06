@@ -51,6 +51,16 @@ int push_to_stacked_stream(stacked_stream* sstrm, stream* strm, int operate_on)
 				return 0;
 			return push_to_stack(&(sstrm->write_streams), strm);
 		}
+		case BOTH_STREAMS :
+		{
+			if(!is_writable_stream(strm) || !is_readable_stream(strm))
+				return 0;
+			if(is_full_stack(&sstrm->read_streams) && !expand_stack(&sstrm->read_streams))
+				return 0;
+			if(is_full_stack(&sstrm->write_streams) && !expand_stack(&sstrm->write_streams))
+				return 0;
+			return push_to_stack(&(sstrm->read_streams), strm) && push_to_stack(&(sstrm->write_streams), strm);
+		}
 		default :
 			return 0;
 	}
@@ -90,6 +100,12 @@ int pop_from_stacked_stream(stacked_stream* sstrm, int operate_on)
 			return pop_from_stack(&(sstrm->read_streams));
 		case WRITE_STREAMS :
 			return pop_from_stack(&(sstrm->write_streams));
+		case BOTH_STREAMS :
+		{
+			if(get_element_count_stack(&sstrm->read_streams) == 0 || get_element_count_stack(&sstrm->write_streams) == 0)
+				return 0;
+			return pop_from_stack(&(sstrm->read_streams)) && pop_from_stack(&(sstrm->write_streams));
+		}
 		default :
 			return 0;
 	}

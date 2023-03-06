@@ -1,26 +1,5 @@
 1* propogate stream and client_set api to cashed.
 
-4* implement stacked_stream, a stack of streams
-* it will only be a holder for reader and writer streams, and to club multiple types of streams
-* struct stacked_stream
-  {
-      stack read_streams_stack;
-      stack write_streams_stack;
-  }
-* intialize_stacked_stream intializes both the stacks
-* deintialize_stacked_stream deinitialized and frees both the stacks
-
-* some functions may take flags READ_STREAMS | WRITE_STREAMS as parameter
-
-* stream like functionality
-  read, unread -> happens to the stacked_stream->read_streams_stack->top
-  write, flush -> happens to the stacked_stream->write_streams_stack->top
-
-* stack like functionality, but with auto resize, taking flags to work only on a specific stream
-  push can push an already initialized stream on to the stack
-  top can be used to peek the top of the stack
-  pop will pop 1 stream from the stack
-
 5* add reader and writer streams to compress and decompress brotli compression
 
 Far Future

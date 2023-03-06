@@ -15,5 +15,82 @@ void deinitialize_stacked_stream(stacked_stream* sstrm)
 	deinitialize_stack(&(sstrm->write_streams));
 }
 
-// all the bits that must be 0 for the operate_on parameter
-#define NOT_OPERATE_ON_MASK (~BOTH_STREAMS)
+unsigned int get_stream_count_stacked_stream(stacked_stream* sstrm, int operate_on)
+{
+	switch(operate_on)
+	{
+		case READ_STREAMS :
+			return get_element_count_stack(&(sstrm->read_streams));
+		case WRITE_STREAMS :
+			return get_element_count_stack(&(sstrm->write_streams));
+		default :
+			return 0;
+	}
+}
+
+int push_to_stacked_stream(stacked_stream* sstrm, stream* strm, int operate_on)
+{
+	if(strm == NULL)
+		return 0;
+
+	switch(operate_on)
+	{
+		case READ_STREAMS :
+		{
+			if(!is_readable_stream(strm))
+				return 0;
+			if(is_full_stack(&sstrm->read_streams) && !expand_stack(&sstrm->read_streams))
+				return 0;
+			return push_to_stack(&(sstrm->read_streams), strm);
+		}
+		case WRITE_STREAMS :
+		{
+			if(!is_writable_stream(strm))
+				return 0;
+			if(is_full_stack(&sstrm->write_streams) && !expand_stack(&sstrm->write_streams))
+				return 0;
+			return push_to_stack(&(sstrm->write_streams), strm);
+		}
+		default :
+			return 0;
+	}
+}
+
+stream* get_top_of_stacked_stream(stacked_stream* sstrm, int operate_on)
+{
+	switch(operate_on)
+	{
+		case READ_STREAMS :
+			return (stream*) get_top_of_stack(&(sstrm->read_streams));
+		case WRITE_STREAMS :
+			return (stream*) get_top_of_stack(&(sstrm->write_streams));
+		default :
+			return NULL;
+	}
+}
+
+stream* get_nth_from_top_of_stacked_stream(stacked_stream* sstrm, unsigned int n, int operate_on)
+{
+	switch(operate_on)
+	{
+		case READ_STREAMS :
+			return (stream*) get_nth_from_top_of_stack(&(sstrm->read_streams), n);
+		case WRITE_STREAMS :
+			return (stream*) get_nth_from_top_of_stack(&(sstrm->write_streams), n);
+		default :
+			return NULL;
+	}
+}
+
+int pop_from_stacked_stream(stacked_stream* sstrm, int operate_on)
+{
+	switch(operate_on)
+	{
+		case READ_STREAMS :
+			return pop_from_stack(&(sstrm->read_streams));
+		case WRITE_STREAMS :
+			return pop_from_stack(&(sstrm->write_streams));
+		default :
+			return 0;
+	}
+}

@@ -4,8 +4,6 @@
 #include<stream.h>
 #include<zlib.h>
 
-#include<zlib_stream_context.h>
-
 // 0 indicates failute, 1 implies success
 int initialize_stream_for_zlib_decompression(stream* strm, stream* underlying_strm);
 

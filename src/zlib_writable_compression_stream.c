@@ -1,5 +1,7 @@
 #include<zlib_writable_compression_stream.h>
 
+#include<zlib_stream_context.h>
+
 #include<stdlib.h>
 
 #define OUT_CHUNK_SIZE 4096

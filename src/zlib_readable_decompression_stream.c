@@ -1,5 +1,7 @@
 #include<zlib_readable_decompression_stream.h>
 
+#include<zlib_stream_context.h>
+
 #include<stdlib.h>
 
 #define IN_CHUNK_SIZE 4096

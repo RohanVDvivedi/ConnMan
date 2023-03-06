@@ -110,3 +110,23 @@ int pop_from_stacked_stream(stacked_stream* sstrm, int operate_on)
 			return 0;
 	}
 }
+
+unsigned int read_from_stacked_stream(stacked_stream* sstrm, void* data, unsigned int data_size, int* error)
+{
+	return read_from_stream(get_top_of_stacked_stream(sstrm, READ_STREAMS), data, data_size, error);
+}
+
+int unread_from_stacked_stream(stacked_stream* sstrm, const void* data, unsigned int data_size)
+{
+	return unread_from_stream(get_top_of_stacked_stream(sstrm, READ_STREAMS), data, data_size);
+}
+
+unsigned int write_to_stacked_stream(stacked_stream* sstrm, const void* data, unsigned int data_size, int* error)
+{
+	return write_to_stream(get_top_of_stacked_stream(sstrm, WRITE_STREAMS), data, data_size, error);
+}
+
+void flush_all_from_stacked_stream(stacked_stream* sstrm, int* error)
+{
+	flush_all_from_stream(get_top_of_stacked_stream(sstrm, WRITE_STREAMS), error);
+}

@@ -1,7 +1,6 @@
 1* propogate stream and client_set api to cashed.
 
-5* add reader and writer streams to compress and decompress brotli compression
-
 Far Future
 2* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 3* look into building a framework for select, poll and epoll based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc
+4* add reader and writer streams to compress and decompress brotli compression

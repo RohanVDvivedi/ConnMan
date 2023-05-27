@@ -55,7 +55,7 @@ unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* d
 
 		unsigned int digit = get_digit_from_char(byte, radix);
 
-		if(digit != INVALID_INDEX)
+		if(digit != -1)
 		{
 			bytes_read++;
 			(*data) *= radix;

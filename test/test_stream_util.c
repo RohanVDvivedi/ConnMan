@@ -95,7 +95,7 @@ int main()
 	printf("%u whitespaces were skipped\n", spaces_skipped);
 
 	dstring until_str = get_dstring_pointing_to_literal_cstring("ABCDABCDABCD");
-	unsigned int prefix_suffix_match_lengths_for_until_str[128];
+	cy_uint prefix_suffix_match_lengths_for_until_str[128];
 	get_prefix_suffix_match_lengths(&until_str, prefix_suffix_match_lengths_for_until_str);
 	dstring dstring_read = read_until_dstring_from_stream(&rs, &until_str, prefix_suffix_match_lengths_for_until_str, 50, &error);
 	if(error)

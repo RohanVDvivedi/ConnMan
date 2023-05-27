@@ -9,7 +9,7 @@ static unsigned int read_from_stream_context(void* stream_context, void* data, u
 	unsigned int data_size_res = 0;
 
 	const char* read_until_dstr_data = get_byte_array_dstring(&(sc->read_until_dstr));
-	const unsigned int read_until_dstr_size = get_char_count_dstring(&(sc->read_until_dstr));
+	const cy_uint read_until_dstr_size = get_char_count_dstring(&(sc->read_until_dstr));
 
 	while(sc->matched_length < read_until_dstr_size)
 	{
@@ -69,7 +69,7 @@ static void destroy_stream_context(void* stream_context)
 	free(sc);
 }
 
-static read_until_dstring_stream_context*  new_reading_until_dstring_stream_context(stream* underlying_strm, const dstring* read_until_dstr, unsigned int* read_until_dstr_spml)
+static read_until_dstring_stream_context*  new_reading_until_dstring_stream_context(stream* underlying_strm, const dstring* read_until_dstr, cy_uint* read_until_dstr_spml)
 {
 	read_until_dstring_stream_context* sc = malloc(sizeof(read_until_dstring_stream_context));
 	sc->underlying_strm = underlying_strm;
@@ -83,7 +83,7 @@ static read_until_dstring_stream_context*  new_reading_until_dstring_stream_cont
 int initialize_stream_for_reading_until_dstring(stream* strm, stream* underlying_strm, const dstring* read_until_dstr)
 {
 	// create suffix prefix match lengths for read_until_dtr
-	unsigned int* read_until_dstr_spml = malloc(sizeof(unsigned int) * (get_char_count_dstring(read_until_dstr) + 1));
+	cy_uint* read_until_dstr_spml = malloc(sizeof(cy_uint) * (get_char_count_dstring(read_until_dstr) + 1));
 	get_prefix_suffix_match_lengths(read_until_dstr, read_until_dstr_spml);
 
 	// create stream context
@@ -95,11 +95,11 @@ int initialize_stream_for_reading_until_dstring(stream* strm, stream* underlying
 	return 1;
 }
 
-int initialize_stream_for_reading_until_dstring2(stream* strm, stream* underlying_strm, const dstring* read_until_dstr, const unsigned int* read_until_dstr_spml)
+int initialize_stream_for_reading_until_dstring2(stream* strm, stream* underlying_strm, const dstring* read_until_dstr, const cy_uint* read_until_dstr_spml)
 {
 	// create a copy suffix prefix match lengths (read_until_dst_spml)
-	unsigned int* read_until_dstr_spml_l = malloc(sizeof(unsigned int) * (get_char_count_dstring(read_until_dstr) + 1));
-	for(unsigned int i = 0; i <= get_char_count_dstring(read_until_dstr); i++)
+	cy_uint* read_until_dstr_spml_l = malloc(sizeof(cy_uint) * (get_char_count_dstring(read_until_dstr) + 1));
+	for(cy_uint i = 0; i <= get_char_count_dstring(read_until_dstr); i++)
 		read_until_dstr_spml_l[i] = read_until_dstr_spml[i];
 
 	// create stream context

@@ -152,7 +152,7 @@ static void flush_all_unflushed_data(stream* strm, int* error)
 
 	while(get_bytes_readable_in_dpipe(&(strm->unflushed_data)) > 0 && (*error) == 0)
 	{
-		unsigned int data_size;
+		cy_uint data_size;
 		const void* data = peek_max_consecutive_from_dpipe(&(strm->unflushed_data), &data_size);
 
 		unsigned bytes_flushed = write_flushable_bytes(strm, data, data_size, error);

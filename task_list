@@ -1,3 +1,4 @@
+0* use size_t for data_size and return vaues of stream and stacked stream functions, for all the streams not taking size_t as inputs, write special logic to handle that, for portablity
 1* propogate stream and client_set api to cashed.
 
 Far Future

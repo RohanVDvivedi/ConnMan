@@ -7,7 +7,7 @@
 
 #include<stdint.h>
 
-unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...);
+size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...);
 
 // supported radix for below functions are only
 #define BINARY 		2
@@ -15,12 +15,12 @@ unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_
 #define DECIMAL 	10
 #define HEXADECIMAL 16
 
-unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error);
+size_t read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error);
 
-unsigned int skip_whitespaces_from_stream(stream* rs, unsigned int max_whitespaces_to_skip, int* error);
+size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, int* error);
 
 // if return is non zero then an instance of str_to_skip was encountered
-unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* error);
+size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* error);
 
 // bytes will be read until the until_str dstring is encountered in the stream
 // all bytes read from the stream will be retunred in the return dstring
@@ -30,15 +30,15 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 // in any case, no more than max_bytes_to_read bytes will be read
 // user is expected to call deinit_dstring on the returned dstring
 // NOTE: suffix_prefix_match_lengths is the one computed by cutlery
-dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error);
+dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, size_t max_bytes_to_read, int* error);
 
 // this function returns a dstring from stream rs, until any of an end char is encountered
 // unless max_bytes_to_read are encountered first, then an empty streing is returned
 // last_byte will be set to the last byte read, and 256 for end of stream
-dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, unsigned int max_bytes_to_read, int* error);
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error);
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream
 int unread_dstring_from_stream(stream* rs, const dstring* str);
-unsigned int write_dstring_to_stream(stream* ws, const dstring* str, int* error);
+size_t write_dstring_to_stream(stream* ws, const dstring* str, int* error);
 
 #endif

@@ -4,7 +4,7 @@
 #include<dstring.h>
 #include<cutlery_stds.h>
 
-unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...)
+size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...)
 {
 	dstring str = new_dstring(NULL, 0);
 
@@ -15,7 +15,7 @@ unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_
 
 	va_end(var_args);
 
-	unsigned int bytes_written = 0;
+	size_t bytes_written = 0;
 	if(dstringify_success)
 		bytes_written = write_dstring_to_stream(ws, &str, error);
 
@@ -24,7 +24,7 @@ unsigned int write_to_stream_formatted(stream* ws, int* error, const char* cstr_
 	return bytes_written;
 }
 
-unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error)
+size_t read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error)
 {
 	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
 	{
@@ -32,7 +32,7 @@ unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* d
 		return 0;
 	}
 
-	unsigned int max_bytes_to_read = 0;
+	size_t max_bytes_to_read = 0;
 	if(radix == BINARY)
 		max_bytes_to_read = 64;
 	else if(radix == OCTAL)
@@ -44,11 +44,11 @@ unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* d
 
 	(*data) = 0;
 
-	unsigned int bytes_read = 0;
+	size_t bytes_read = 0;
 	while(bytes_read < max_bytes_to_read)
 	{
 		char byte;
-		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
 		if(byte_read == 0 || (*error))
 			break;
@@ -71,13 +71,13 @@ unsigned int read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* d
 	return bytes_read;
 }
 
-unsigned int skip_whitespaces_from_stream(stream* rs, unsigned int max_whitespaces_to_skip, int* error)
+size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, int* error)
 {
-	unsigned int bytes_read = 0;
+	size_t bytes_read = 0;
 	while(bytes_read < max_whitespaces_to_skip)
 	{
 		char byte;
-		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
 		if(byte_read == 0 || (*error))
 			break;
@@ -94,17 +94,17 @@ unsigned int skip_whitespaces_from_stream(stream* rs, unsigned int max_whitespac
 	return bytes_read;
 }
 
-unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* error)
+size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* error)
 {
 	const char* str_data = get_byte_array_dstring(str_to_skip);
-	const unsigned int str_size = get_char_count_dstring(str_to_skip);
+	const cy_uint str_size = get_char_count_dstring(str_to_skip);
 
-	unsigned int match_size = 0;
+	cy_uint match_size = 0;
 
 	for(; match_size < str_size; match_size++)
 	{
 		char byte;
-		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
 		if(byte_read == 0 || (*error))
 			break;
@@ -126,7 +126,7 @@ unsigned int skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, in
 	return str_size; // same as match_size
 }
 
-dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, unsigned int max_bytes_to_read, int* error)
+dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, size_t max_bytes_to_read, int* error)
 {
 	const char* until_str_data = get_byte_array_dstring(until_str);
 	const cy_uint until_str_size = get_char_count_dstring(until_str);
@@ -138,12 +138,12 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 		return res;
 
 	// how many characters of until_str matches with suffix of res
-	unsigned int match_length = 0;
+	size_t match_length = 0;
 
 	while(match_length < until_str_size && get_char_count_dstring(&res) < max_bytes_to_read)
 	{
 		char byte;
-		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
 		if(byte_read == 0 || (*error))
 			break;
@@ -180,7 +180,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	return res;
 }
 
-dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, unsigned int max_bytes_to_read, int* error)
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error)
 {
 	dstring res = new_dstring(NULL, 0);
 
@@ -191,7 +191,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 	while(get_char_count_dstring(&res) < max_bytes_to_read && !end_encountered)
 	{
 		char byte;
-		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
 		// if not an error, then set last_byte
 		if(!(*error))
@@ -218,7 +218,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 	if(get_char_count_dstring(&res) == max_bytes_to_read && !end_encountered && is_end_char(1, 0, cntxt))
 	{
 		char byte;
-		unsigned int byte_read = read_from_stream(rs, &byte, 1, error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
 		// if not an error, then set last_byte
 		if(!(*error))
@@ -249,7 +249,7 @@ int unread_dstring_from_stream(stream* rs, const dstring* str)
 	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str));
 }
 
-unsigned int write_dstring_to_stream(stream* ws, const dstring* str, int* error)
+size_t write_dstring_to_stream(stream* ws, const dstring* str, int* error)
 {
 	return write_to_stream(ws, get_byte_array_dstring(str), get_char_count_dstring(str), error);
 }

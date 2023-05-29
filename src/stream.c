@@ -5,12 +5,12 @@
 
 void initialize_stream(stream* strm, 
 						void* stream_context,
-						unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error),
-						unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error),
+						size_t (*read_from_stream_context)(void* stream_context, void* data, size_t data_size, int* error),
+						size_t (*write_to_stream_context)(void* stream_context, const void* data, size_t data_size, int* error),
 						void (*close_stream_context)(void* stream_context, int* error),
 						void (*destroy_stream_context)(void* stream_context),
 						void (*post_flush_callback_stream_context)(void* stream_context, int* error),
-						unsigned int max_unflushed_bytes_count)
+						size_t max_unflushed_bytes_count)
 {
 	strm->stream_context = stream_context;
 	initialize_dpipe(&(strm->unread_data), 0);

@@ -1,6 +1,8 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include<stddef.h>
+
 #include<dpipe.h>
 
 typedef struct stream stream;
@@ -17,13 +19,13 @@ struct stream
 
 	// this is the threshold of maximum unflushed_data that can exist in the unflushed_data pipe
 	// beyond which a flush will be called, from the write call
-	unsigned int max_unflushed_bytes_count;
+	size_t max_unflushed_bytes_count;
 
 	// returns bytes read from data, (atmost data_size number of bytes will be touched i.e. returned)
 	// on error return 0 bytes read and set the value of (non-zero) error
 	// reading 0 bytes, when data_size > 0 and strm->error == 0, then this implies an end_of_stream EOF
 	// no read calls will be made after an EOF is received
-	unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error);
+	size_t (*read_from_stream_context)(void* stream_context, void* data, size_t data_size, int* error);
 
 	// if this flag is set then, it implies that the last read call returned 0, i.e. EOF was received we call it end of stream
 	// after this no read_from_stream_context calls will be made, only unread data will be returned
@@ -32,7 +34,7 @@ struct stream
 
 	// returns bytes written from data (that consists of data_size number of bytes to be written)
 	// on error return 0 bytes read and set the value of (non-zero) error
-	unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error);
+	size_t (*write_to_stream_context)(void* stream_context, const void* data, size_t data_size, int* error);
 
 	// closes the stream context
 	void (*close_stream_context)(void* stream_context, int* error);
@@ -50,12 +52,12 @@ struct stream
 void initialize_stream(
 						stream* strm, 
 						void* stream_context,
-						unsigned int (*read_from_stream_context)(void* stream_context, void* data, unsigned int data_size, int* error),
-						unsigned int (*write_to_stream_context)(void* stream_context, const void* data, unsigned int data_size, int* error),
+						size_t (*read_from_stream_context)(void* stream_context, void* data, size_t data_size, int* error),
+						size_t (*write_to_stream_context)(void* stream_context, const void* data, size_t data_size, int* error),
 						void (*close_stream_context)(void* stream_context, int* error),
 						void (*destroy_stream_context)(void* stream_context),
 						void (*post_flush_callback_stream_context)(void* stream_context, int* error),
-						unsigned int max_unflushed_bytes_count
+						size_t max_unflushed_bytes_count
 					);
 
 #define DEFAULT_MAX_UNFLUSHED_BYTES_COUNT 4096
@@ -66,14 +68,14 @@ int is_writable_stream(stream* strm);
 
 // a return value of 0 from this function implies end of input/socket closed from the other end
 // after that no more calls should be made and you must exit your read loop
-unsigned int read_from_stream(stream* rs, void* data, unsigned int data_size, int* error);
+size_t read_from_stream(stream* rs, void* data, size_t data_size, int* error);
 
 // returns 1 on success else a 0
-int unread_from_stream(stream* rs, const void* data, unsigned int data_size);
+int unread_from_stream(stream* rs, const void* data, size_t data_size);
 
 // return value of this function suggests, the number of bytes from data_size, that were either
 // pushed to unflushed_data pipe, or actually wrriten to the stream_context (this happens if the incomming bytes and the unflushed_data bytes sum to more than max_unflushed_bytes_count)
-unsigned int write_to_stream(stream* ws, const void* data, unsigned int data_size, int* error);
+size_t write_to_stream(stream* ws, const void* data, size_t data_size, int* error);
 
 // flushes all the written data using the write_to_stream_context function call on the underlying stream context
 void flush_all_from_stream(stream* ws, int* error);

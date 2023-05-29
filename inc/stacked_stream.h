@@ -45,10 +45,10 @@ int pop_from_stacked_stream(stacked_stream* sstrm, int operate_on);
 // i.e. read and unread work on the top stream of sstrm->read_streams
 // while write and flush work on the top stream of sstrm->write_streams
 
-unsigned int read_from_stacked_stream(stacked_stream* sstrm, void* data, unsigned int data_size, int* error);
-int unread_from_stacked_stream(stacked_stream* sstrm, const void* data, unsigned int data_size);
+size_t read_from_stacked_stream(stacked_stream* sstrm, void* data, size_t data_size, int* error);
+int unread_from_stacked_stream(stacked_stream* sstrm, const void* data, size_t data_size);
 
-unsigned int write_to_stacked_stream(stacked_stream* sstrm, const void* data, unsigned int data_size, int* error);
+size_t write_to_stacked_stream(stacked_stream* sstrm, const void* data, size_t data_size, int* error);
 void flush_all_from_stacked_stream(stacked_stream* sstrm, int* error);
 
 #endif

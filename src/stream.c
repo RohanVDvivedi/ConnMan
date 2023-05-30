@@ -3,6 +3,9 @@
 #include<stddef.h>
 #include<string.h>
 
+// width of size_t must be lesser than or equal to the width of cy_uint
+fail_build_on(sizeof(size_t) > sizeof(cy_uint))
+
 void initialize_stream(stream* strm, 
 						void* stream_context,
 						size_t (*read_from_stream_context)(void* stream_context, void* data, size_t data_size, int* error),
@@ -40,7 +43,7 @@ static unsigned int min(unsigned int a, unsigned int b)
 	return (a < b) ? a : b;
 }
 
-unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, int* error)
+size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 {
 	// intialize error to 0
 	(*error) = 0;
@@ -48,7 +51,7 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 	if(strm->read_from_stream_context == NULL)
 		return 0;
 
-	unsigned int bytes_read = 0;
+	size_t bytes_read = 0;
 
 	// if the unread_data pipe has remaining bytes then read data from there
 	if(!is_empty_dpipe(&(strm->unread_data)))
@@ -62,7 +65,7 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 	// else make a read call to the stream context
 	else if(data_size >= 128 && !strm->end_of_stream_received)
 	{
-		bytes_read = strm->read_from_stream_context(strm->stream_context, data + bytes_read, data_size - bytes_read, error);
+		bytes_read = strm->read_from_stream_context(strm->stream_context, data, data_size, error);
 
 		// if it is EOF, then set the end_of_stream_received flag
 		if(bytes_read == 0 && (!(*error)))
@@ -73,8 +76,8 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 	{
 		// read a kilo byte worth of data, from the stream context and cache it
 		char data_cache_read[1024];
-		unsigned int data_cache_read_capacity = 1024;
-		unsigned int data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, error);
+		size_t data_cache_read_capacity = 1024;
+		size_t data_cache_read_size = strm->read_from_stream_context(strm->stream_context, data_cache_read, data_cache_read_capacity, error);
 
 		// if it is EOF, then set the end_of_stream_received flag
 		if(data_cache_read_size == 0 && (!(*error)))
@@ -90,15 +93,12 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 		{
 			// write the remaining bytes from data_cache_read to unread_data
 			void* cache_bytes_to_write = data_cache_read + bytes_read;
-			unsigned int cache_bytes_to_write_size = data_cache_read_size - bytes_read;
+			size_t cache_bytes_to_write_size = data_cache_read_size - bytes_read;
 
-			unsigned int bytes_written_from_cache_buffer = write_to_dpipe(&(strm->unread_data), cache_bytes_to_write, cache_bytes_to_write_size, ALL_OR_NONE);
+			if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < cache_bytes_to_write_size)
+				resize_dpipe(&(strm->unread_data), max(get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024, CY_UINT_MAX));
 
-			if(bytes_written_from_cache_buffer == 0)
-			{
-				resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024);
-				bytes_written_from_cache_buffer = write_to_dpipe(&(strm->unread_data), cache_bytes_to_write, cache_bytes_to_write_size, ALL_OR_NONE);
-			}
+			write_to_dpipe(&(strm->unread_data), cache_bytes_to_write, cache_bytes_to_write_size, ALL_OR_NONE);
 		}
 	}
 
@@ -109,19 +109,16 @@ unsigned int read_from_stream(stream* strm, void* data, unsigned int data_size, 
 	return bytes_read;
 }
 
-int unread_from_stream(stream* strm, const void* data, unsigned int data_size)
+int unread_from_stream(stream* strm, const void* data, size_t data_size)
 {
 	if(strm->read_from_stream_context == NULL)
 		return 0;
 
+	if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < data_size)
+		resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024);
+
 	// just push the data to unread_data pipe
 	unsigned int bytes_unread = unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
-
-	if(bytes_unread == 0)
-	{
-		resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024);
-		bytes_unread = unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
-	}
 
 	return bytes_unread == data_size;
 }

@@ -6,6 +6,9 @@
 #include<cutlery_math.h>
 
 // width of size_t must be lesser than or equal to the width of cy_uint
+// size_t must be able to hold size of largest object, while cy_uint is large enough to hold any valid address/byte offset and is as wide as the void* (according to cutlery standards)
+// on a flat mordern memory system they must be equal in size, but this may not be true on some systems
+// as per the assumptions, stream of ConnMan would work completely fine as long as size_t is lesser than or equal to cy_uint
 fail_build_on(sizeof(size_t) > sizeof(cy_uint))
 
 void initialize_stream(stream* strm, 
@@ -93,7 +96,7 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 			size_t cache_bytes_to_write_size = data_cache_read_size - bytes_read;
 
 			if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < cache_bytes_to_write_size)
-				resize_dpipe(&(strm->unread_data), max(get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024, CY_UINT_MAX));
+				resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024);
 
 			write_to_dpipe(&(strm->unread_data), cache_bytes_to_write, cache_bytes_to_write_size, ALL_OR_NONE);
 		}
@@ -149,7 +152,7 @@ static void flush_all_unflushed_data(stream* strm, int* error)
 		cy_uint data_size;
 		const void* data = peek_max_consecutive_from_dpipe(&(strm->unflushed_data), &data_size);
 
-		size_t bytes_flushed = write_flushable_bytes(strm, data, data_size, error);
+		size_t bytes_flushed = write_flushable_bytes(strm, data, min(data_size, SIZE_MAX), error);
 
 		discard_from_dpipe(&(strm->unflushed_data), bytes_flushed);
 	}

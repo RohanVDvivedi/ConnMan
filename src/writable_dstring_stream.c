@@ -2,7 +2,7 @@
 
 #include<stddef.h>
 
-static unsigned int write_to_writable_dstring_stream(void* stream_context, const void* data, unsigned int data_size, int* error)
+static size_t write_to_writable_dstring_stream(void* stream_context, const void* data, size_t data_size, int* error)
 {
 	if(concatenate_dstring((dstring*)stream_context, &get_dstring_pointing_to(data, data_size)))
 		return data_size;

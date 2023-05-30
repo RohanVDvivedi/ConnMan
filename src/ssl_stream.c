@@ -3,11 +3,13 @@
 #include<unistd.h>
 #include<errno.h>
 
-static unsigned int read_from_ssl(void* ssl_sc_vp, void* data, unsigned int data_size, int* error)
+#include<cutlery_math.h>
+
+static size_t read_from_ssl(void* ssl_sc_vp, void* data, size_t data_size, int* error)
 {
 	SSL* ssl = ssl_sc_vp;
 
-	int ret = SSL_read(ssl, data, data_size);
+	int ret = SSL_read(ssl, data, min(data_size, INT_MAX));
 	if(ret <= 0)
 	{
 		*error = SSL_get_error(ssl, ret);
@@ -16,11 +18,11 @@ static unsigned int read_from_ssl(void* ssl_sc_vp, void* data, unsigned int data
 	return ret;
 }
 
-static unsigned int write_to_ssl(void* ssl_sc_vp, const void* data, unsigned int data_size, int* error)
+static size_t write_to_ssl(void* ssl_sc_vp, const void* data, size_t data_size, int* error)
 {
 	SSL* ssl = ssl_sc_vp;
 
-	int ret = SSL_write(ssl, data, data_size);
+	int ret = SSL_write(ssl, data, min(data_size, INT_MAX));
 	if(ret <= 0)
 	{
 		*error = SSL_get_error(ssl, ret);

@@ -3,10 +3,16 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<errno.h>
+#include<limits.h>
 
-static unsigned int read_from_fd(void* stream_context, void* data, unsigned int data_size, int* error)
+#include<cutlery_math.h>
+
+// must always be lesser than or equal to SSIZE_MAX
+#define MAX_IO_SIZE (SSIZE_MAX >> 4)
+
+static size_t read_from_fd(void* stream_context, void* data, size_t data_size, int* error)
 {
-	ssize_t ret = read(*((int*)stream_context), data, data_size);
+	ssize_t ret = read(*((int*)stream_context), data, min(data_size, MAX_IO_SIZE));
 	if(ret == -1)
 	{
 		*error = errno;
@@ -15,9 +21,9 @@ static unsigned int read_from_fd(void* stream_context, void* data, unsigned int 
 	return ret;
 }
 
-static unsigned int write_to_fd(void* stream_context, const void* data, unsigned int data_size, int* error)
+static size_t write_to_fd(void* stream_context, const void* data, size_t data_size, int* error)
 {
-	ssize_t ret = write(*((int*)stream_context), data, data_size);
+	ssize_t ret = write(*((int*)stream_context), data, min(data_size, MAX_IO_SIZE));
 	if(ret == -1)
 	{
 		*error = errno;

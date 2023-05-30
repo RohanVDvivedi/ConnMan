@@ -3,6 +3,8 @@
 #include<stddef.h>
 #include<string.h>
 
+#include<cutlery_math.h>
+
 // width of size_t must be lesser than or equal to the width of cy_uint
 fail_build_on(sizeof(size_t) > sizeof(cy_uint))
 
@@ -36,11 +38,6 @@ int is_readable_stream(stream* strm)
 int is_writable_stream(stream* strm)
 {
 	return strm->write_to_stream_context != NULL;
-}
-
-static unsigned int min(unsigned int a, unsigned int b)
-{
-	return (a < b) ? a : b;
 }
 
 size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
@@ -118,7 +115,7 @@ int unread_from_stream(stream* strm, const void* data, size_t data_size)
 		resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024);
 
 	// just push the data to unread_data pipe
-	unsigned int bytes_unread = unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
+	size_t bytes_unread = unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
 
 	return bytes_unread == data_size;
 }
@@ -126,10 +123,10 @@ int unread_from_stream(stream* strm, const void* data, size_t data_size)
 // INTERNAL FUNCTION ONLY - to be only used by write and flush_all functions
 // this function will be used to write unflushed bytes, i.e. to flush them, i.e. to perfrom actual write to stream context
 // return value suggests the number of bytes flushed, regardless of the error
-static unsigned int write_flushable_bytes(stream* strm, const void* data, unsigned int data_size, int* error)
+static size_t write_flushable_bytes(stream* strm, const void* data, size_t data_size, int* error)
 {
 	// return value
-	unsigned int bytes_written = 0;
+	size_t bytes_written = 0;
 	
 	// clear error
 	(*error) = 0;
@@ -152,13 +149,13 @@ static void flush_all_unflushed_data(stream* strm, int* error)
 		cy_uint data_size;
 		const void* data = peek_max_consecutive_from_dpipe(&(strm->unflushed_data), &data_size);
 
-		unsigned bytes_flushed = write_flushable_bytes(strm, data, data_size, error);
+		size_t bytes_flushed = write_flushable_bytes(strm, data, data_size, error);
 
 		discard_from_dpipe(&(strm->unflushed_data), bytes_flushed);
 	}
 }
 
-unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_size, int* error)
+size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* error)
 {
 	if(strm->write_to_stream_context == NULL)
 		return 0;
@@ -168,14 +165,13 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 	// if the total unflushed_data_bytes count is lesser than max_unflushed_bytes_count, then just push these new data to unflushed_data pipe
 	if(data_size + get_bytes_readable_in_dpipe(&(strm->unflushed_data)) <= strm->max_unflushed_bytes_count)
 	{
-		unsigned int bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
-
-		if(bytes_written == 0)
+		if(get_bytes_writable_in_dpipe(&(strm->unflushed_data)) < data_size)
 		{
-			unsigned int additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
+			size_t additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
 			resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count));
-			bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
 		}
+
+		size_t bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
 
 		return bytes_written;
 	}
@@ -191,7 +187,7 @@ unsigned int write_to_stream(stream* strm, const void* data, unsigned int data_s
 		}
 
 		// then flush the new arriving data
-		unsigned int bytes_written = write_flushable_bytes(strm, data, data_size, error);
+		size_t bytes_written = write_flushable_bytes(strm, data, data_size, error);
 
 		if(*error)
 		{

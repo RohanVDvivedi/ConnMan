@@ -4,9 +4,10 @@
 
 #include<stdlib.h>
 
+// must be lesser than SIZE_MAX and INT_MAX
 #define OUT_CHUNK_SIZE 4096
 
-static unsigned int write_to_stream_compressed(void* stream_context, const void* data, unsigned int data_size, int* error)
+static size_t write_to_stream_compressed(void* stream_context, const void* data, size_t data_size, int* error)
 {
 	zlib_stream_context* stream_context_p = stream_context;
 
@@ -14,7 +15,7 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 	stream_context_p->zlib_context.next_in = (z_const Bytef *) data;
 	stream_context_p->zlib_context.avail_in = data_size;
 
-	unsigned int data_out_size = OUT_CHUNK_SIZE;
+	size_t data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
 	(*error) = 0;
@@ -35,7 +36,7 @@ static unsigned int write_to_stream_compressed(void* stream_context, const void*
 		}
 
 		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
-		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
+		size_t bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
 		{
 			int u_error = 0;
@@ -63,7 +64,7 @@ static void close_stream_context(void* stream_context, int* error)
 	stream_context_p->zlib_context.next_in = Z_NULL;
 	stream_context_p->zlib_context.avail_in = 0;
 
-	unsigned int data_out_size = OUT_CHUNK_SIZE;
+	size_t data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
 	(*error) = 0;
@@ -84,7 +85,7 @@ static void close_stream_context(void* stream_context, int* error)
 		}
 
 		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
-		unsigned int bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
+		size_t bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
 		{
 			int u_error = 0;

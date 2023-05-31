@@ -4,17 +4,20 @@
 
 #include<stdlib.h>
 
+#include<cutlery_math.h>
+
+// this must be lesser than both SIZE_MAX and INT_MAX
 #define IN_CHUNK_SIZE 4096
 
-static unsigned int read_from_stream_decompressed(void* stream_context, void* data, unsigned int data_size, int* error)
+static size_t read_from_stream_decompressed(void* stream_context, void* data, size_t data_size, int* error)
 {
 	zlib_stream_context* stream_context_p = stream_context;
 
 	// initialize available out
 	stream_context_p->zlib_context.next_out = (Bytef *) data;
-	stream_context_p->zlib_context.avail_out = data_size;
+	stream_context_p->zlib_context.avail_out = min(data_size, INT_MAX);
 
-	unsigned int data_in_size = IN_CHUNK_SIZE;
+	size_t data_in_size = IN_CHUNK_SIZE;
 	char* data_in = malloc(sizeof(char) * data_in_size);
 
 	(*error) = 0;
@@ -23,7 +26,7 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 	{
 		// perform read from underlying stream
 		int uerror = 0;
-		unsigned int data_in_bytes_read = read_from_stream(stream_context_p->underlying_strm, data_in, data_in_size, &uerror);
+		size_t data_in_bytes_read = read_from_stream(stream_context_p->underlying_strm, data_in, data_in_size, &uerror);
 		if(uerror)
 		{
 			uerror = UNDERLYING_STREAM_ERROR;
@@ -38,7 +41,7 @@ static unsigned int read_from_stream_decompressed(void* stream_context, void* da
 
 		// decompress
 		int ret = inflate(&(stream_context_p->zlib_context), flush);
-		unsigned int data_in_bytes_consumed = data_in_bytes_read - stream_context_p->zlib_context.avail_in;
+		size_t data_in_bytes_consumed = data_in_bytes_read - stream_context_p->zlib_context.avail_in;
 		if(ret == Z_STREAM_ERROR || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR)
 		{
 			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in);

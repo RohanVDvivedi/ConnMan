@@ -2,11 +2,11 @@
 
 #include<stdlib.h>
 
-static unsigned int read_from_stream_context(void* stream_context, void* data, unsigned int data_size, int* error)
+static size_t read_from_stream_context(void* stream_context, void* data, size_t data_size, int* error)
 {
 	read_until_dstring_stream_context* sc = stream_context;
 
-	unsigned int data_size_res = 0;
+	size_t data_size_res = 0;
 
 	const char* read_until_dstr_data = get_byte_array_dstring(&(sc->read_until_dstr));
 	const cy_uint read_until_dstr_size = get_char_count_dstring(&(sc->read_until_dstr));
@@ -24,7 +24,7 @@ static unsigned int read_from_stream_context(void* stream_context, void* data, u
 
 		char c;
 		int uerror = 0;
-		unsigned int byte_read = read_from_stream(sc->underlying_strm, &c, 1, &uerror);
+		size_t byte_read = read_from_stream(sc->underlying_strm, &c, 1, &uerror);
 		if(uerror)
 		{
 			(*error) = UNDERLYING_STREAM_ERROR;

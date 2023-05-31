@@ -1,4 +1,3 @@
-0* use size_t for data_size and return vaues of stream and stacked stream functions, for all the streams not taking size_t as inputs, write special logic to handle that, for portablity
 0* optimize read until dstring stream, reduce read calls to underlying stream and read and write calls to intermediate dpipe of matched bytes
 1* propogate stream and client_set api to cashed.
 

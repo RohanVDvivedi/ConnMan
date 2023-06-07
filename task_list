@@ -1,4 +1,3 @@
-0* optimize read until dstring stream, reduce read calls to underlying stream and read and write calls to intermediate dpipe of matched bytes
 0* make read uint64 to read unsigned long long int, and calculate max bytes to read as a static variable inside function, using division by radix of the ULLONG_MAX
 1* propogate stream and client_set api to cashed.
 

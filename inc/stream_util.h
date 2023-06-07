@@ -15,7 +15,7 @@ size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format
 #define DECIMAL 	10
 #define HEXADECIMAL 16
 
-size_t read_uint64_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error);
+size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, unsigned long long int* data, int* error);
 
 size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, int* error);
 

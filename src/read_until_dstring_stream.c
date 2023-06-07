@@ -14,10 +14,7 @@ static size_t read_from_stream_context(void* stream_context, void* data, size_t 
 	while(sc->matched_length < read_until_dstr_size)
 	{
 		while(get_bytes_readable_in_dpipe(&(sc->cached_bytes)) > sc->matched_length && data_size_res < data_size)
-		{
-			read_from_dpipe(&(sc->cached_bytes), data + data_size_res, 1, PARTIAL_ALLOWED);
-			data_size_res++;
-		}
+			data_size_res += read_from_dpipe(&(sc->cached_bytes), data + data_size_res, min(CY_UINT_MAX, min(data_size - data_size_res, get_bytes_readable_in_dpipe(&(sc->cached_bytes)) - sc->matched_length)), PARTIAL_ALLOWED);
 
 		if(data_size_res == data_size)
 			break;

@@ -2,6 +2,8 @@
 
 #include<stdlib.h>
 
+#include<cutlery_math.h>
+
 static size_t read_from_stream_context(void* stream_context, void* data, size_t data_size, int* error)
 {
 	read_until_dstring_stream_context* sc = stream_context;

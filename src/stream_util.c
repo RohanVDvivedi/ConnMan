@@ -1,8 +1,11 @@
 #include<stream_util.h>
 
 #include<stddef.h>
+#include<limits.h>
+
 #include<dstring.h>
 #include<cutlery_stds.h>
+#include<cutlery_math.h>
 
 size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...)
 {
@@ -36,7 +39,7 @@ size_t max_bytes_to_read_for_unsigned_long_long_int(unsigned int radix)
 	return s;
 }
 
-size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, uint64_t* data, int* error)
+size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, unsigned long long int* data, int* error)
 {
 	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
 	{

@@ -27,6 +27,22 @@ size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format
 	return bytes_written;
 }
 
+#include<pthread.h>
+
+static pthread_once_t init_max_bytes = PTHREAD_ONCE_INIT;
+static size_t max_bytes_to_read_BINARY;
+static size_t max_bytes_to_read_OCTAL;
+static size_t max_bytes_to_read_DECIMAL;
+static size_t max_bytes_to_read_HEXADECIMAL;
+
+void init_max_bytes_to_read_for_radices()
+{
+	max_bytes_to_read_BINARY = get_digits_required_to_represent_unsigned_long_long_int(2);
+	max_bytes_to_read_OCTAL = get_digits_required_to_represent_unsigned_long_long_int(8);
+	max_bytes_to_read_DECIMAL = get_digits_required_to_represent_unsigned_long_long_int(10);
+	max_bytes_to_read_HEXADECIMAL = get_digits_required_to_represent_unsigned_long_long_int(16);
+}
+
 size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, unsigned long long int* data, int* error)
 {
 	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
@@ -35,7 +51,33 @@ size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, u
 		return 0;
 	}
 
-	size_t max_bytes_to_read = get_digits_required_to_represent_unsigned_long_long_int(radix);
+	pthread_once(&init_max_bytes, init_max_bytes_to_read_for_radices);
+
+	size_t max_bytes_to_read = 0;
+
+	switch(radix)
+	{
+		case BINARY :
+		{
+			max_bytes_to_read = max_bytes_to_read_BINARY;
+			break;
+		}
+		case OCTAL :
+		{
+			max_bytes_to_read = max_bytes_to_read_OCTAL;
+			break;
+		}
+		case DECIMAL :
+		{
+			max_bytes_to_read = max_bytes_to_read_DECIMAL;
+			break;
+		}
+		case HEXADECIMAL :
+		{
+			max_bytes_to_read = max_bytes_to_read_HEXADECIMAL;
+			break;
+		}
+	}
 
 	(*data) = 0;
 

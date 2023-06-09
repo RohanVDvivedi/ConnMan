@@ -27,18 +27,6 @@ size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format
 	return bytes_written;
 }
 
-size_t max_bytes_to_read_for_unsigned_long_long_int(unsigned int radix)
-{
-	size_t s = 0;
-	unsigned long long int m = ULLONG_MAX;
-	while(m > 0)
-	{
-		s++;
-		m /= radix;
-	}
-	return s;
-}
-
 size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, unsigned long long int* data, int* error)
 {
 	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
@@ -47,7 +35,7 @@ size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, u
 		return 0;
 	}
 
-	size_t max_bytes_to_read = max_bytes_to_read_for_unsigned_long_long_int(radix);
+	size_t max_bytes_to_read = get_digits_required_to_represent_unsigned_long_long_int(radix);
 
 	(*data) = 0;
 

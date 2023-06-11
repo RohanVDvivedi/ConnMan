@@ -7,7 +7,7 @@ DOWNLOAD_DIR:=/usr/local
 # we may download all the public headers
 
 # list of public api headers (only these headers will be installed)
-PUBLIC_HEADERS:=stream.h server.h client.h client_set.h comm_address.h ssl_ctx_helper.h file_descriptor_stream.h piped_stream.h ssl_stream.h writable_dstring_stream.h stream_util.h read_until_dstring_stream.h zlib_readable_decompression_stream.h zlib_writable_compression_stream.h stacked_stream.h
+PUBLIC_HEADERS:=stream.h server.h client.h client_set.h comm_address.h ssl_ctx_helper.h file_descriptor_stream.h piped_stream.h ssl_stream.h writable_dstring_stream.h stream_util.h read_until_dstring_stream.h zlib_readable_decompression_stream.h zlib_writable_compression_stream.h stacked_stream.h stacked_stream_util.h
 # the library, which we will create
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library

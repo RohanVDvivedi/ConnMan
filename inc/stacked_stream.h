@@ -51,4 +51,6 @@ int unread_from_stacked_stream(stacked_stream* sstrm, const void* data, size_t d
 size_t write_to_stacked_stream(stacked_stream* sstrm, const void* data, size_t data_size, int* error);
 void flush_all_from_stacked_stream(stacked_stream* sstrm, int* error);
 
+#include<stacked_stream_util.h>
+
 #endif

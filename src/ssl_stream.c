@@ -60,7 +60,10 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 	SSL_set_accept_state(ssl);
 	int ret = SSL_accept(ssl);
 	if(ret <= 0)
+	{
+		SSL_free(ssl);
 		return 0;
+	}
 
 	SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 
@@ -77,7 +80,10 @@ int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, int fd)
 	SSL_set_connect_state(ssl);
 	int ret = SSL_connect(ssl);
 	if(ret <= 0)
+	{
+		SSL_free(ssl);
 		return 0;
+	}
 
 	SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 

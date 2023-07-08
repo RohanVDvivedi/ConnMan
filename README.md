@@ -48,3 +48,7 @@ Additionally, it porvides a stream interface to work with tcp sockets, along wit
 **Uninstall :**
  * `cd ConnMan`
  * `sudo make uninstall`
+
+## Third party acknowledgements
+ * *gzip and deflate compression streams, internally supported by [zlib](https://github.com/madler/zlib) checkout their website [here](https://zlib.net/).*
+ * *SSL and TLS encryption for ssl-ed streams, internally supported by [openssl](https://github.com/openssl/openssl) checkout their website [here](https://www.openssl.org/).*

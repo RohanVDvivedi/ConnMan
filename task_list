@@ -1,7 +1,4 @@
- * add logic to ensure the correctness in the below conditions
-  * in stream_util fail if string functions fail to concatenate or allocate memory
-  * make the above change in all the source files that deal with dpipe or dstring
-  * fail to unread bytes, if the dpipe can not expand to hold the new unread data
+ * in all sources, fail if the dstring or dpipe functions fail (including their initialization or expansion)
 
 1* propogate stream and client_set api to cashed.
 

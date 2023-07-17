@@ -1,4 +1,7 @@
  * in all sources, fail if the dstring or dpipe functions fail (including their initialization or expansion)
+ * add stream error codes, for FAILED_TO_APPEND_TO_WRITE_BUFFER_IN_STREAM and FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM, retrun them respectively on read, unread and write calls of stream
+ * change unread_stream api to return void and take in int* error to return FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM
+ * update all downstream apis, HTTPparser, Serc and JSONparser
 
 1* propogate stream and client_set api to cashed.
 

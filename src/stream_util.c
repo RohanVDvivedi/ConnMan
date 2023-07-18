@@ -234,7 +234,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 	(*last_byte) = 257;
 
-	while(get_char_count_dstring(&res) < max_bytes_to_read && !end_encountered)
+	while(!end_encountered)
 	{
 		char byte;
 		size_t byte_read = read_from_stream(rs, &byte, 1, error);

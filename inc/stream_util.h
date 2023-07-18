@@ -33,7 +33,7 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* err
 dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, size_t max_bytes_to_read, int* error);
 
 // this function returns a dstring from stream rs, until any of an end char is encountered
-// unless max_bytes_to_read are encountered first, then an empty streing is returned
+// unless max_bytes_to_read are encountered first, then an empty string is returned
 // last_byte will be set to the last byte read, and 256 for end of stream
 dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error);
 

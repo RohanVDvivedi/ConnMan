@@ -261,6 +261,9 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 		else
 		{
 			unread_from_stream(rs, &byte, 1, error);
+			// since we were not suppossed to read the last byte (due to size constraints on res)
+			// any end_encountered is nullified
+			end_encountered = 0;
 			break;
 		}
 	}

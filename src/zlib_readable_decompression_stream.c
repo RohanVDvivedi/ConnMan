@@ -44,14 +44,16 @@ static size_t read_from_stream_decompressed(void* stream_context, void* data, si
 		size_t data_in_bytes_consumed = data_in_bytes_read - stream_context_p->zlib_context.avail_in;
 		if(ret == Z_STREAM_ERROR || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR)
 		{
-			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in);
+			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in, &uerror);
 			(*error) = ret;
 			break;
 		}
 
 		if(stream_context_p->zlib_context.avail_out == 0 || ret == Z_STREAM_END)
 		{
-			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in);
+			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in, &uerror);
+			if(uerror)
+				uerror = UNDERLYING_STREAM_ERROR;
 			break;
 		}
 

@@ -1,4 +1,4 @@
- * fail if the dstring concatenation in stream util fails
+ * fail if the dstring concatenation in stream util fails, or memory allocation fails
 
 1* propogate stream and client_set api to cashed.
 

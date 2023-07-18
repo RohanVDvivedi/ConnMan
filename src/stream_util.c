@@ -255,34 +255,13 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 		if(byte_read == 0 || (*error))
 			break;
 
-		// append the character we just read to the res
-		concatenate_char(&res, byte);
-	}
-
-	if((*error))
-	{
-		make_dstring_empty(&res);
-		shrink_dstring(&res);
-		return res;
-	}
-
-	// in case when maximum bytes are already read, test to see if the next byte is not end of file,
-	// we need to make this test, if end of stream is in the end characters set
-	if(get_char_count_dstring(&res) == max_bytes_to_read && !end_encountered && is_end_char(1, 0, cntxt))
-	{
-		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, error);
-
-		// if not an error, then set last_byte
-		if(!(*error))
+		// append the character we just read to the res, only if number of bytes in res
+		if(get_char_count_dstring(&res) < max_bytes_to_read)
+			concatenate_char(&res, byte);
+		else
 		{
-			if(byte_read == 0)
-			{
-				(*last_byte) = 256;
-				end_encountered = 1;
-			}
-			else
-				unread_from_stream(rs, &byte, 1, error);
+			unread_dstring_from_stream(rs, &byte, 1, error);
+			break;
 		}
 	}
 

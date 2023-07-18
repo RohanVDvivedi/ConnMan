@@ -260,7 +260,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 			concatenate_char(&res, byte);
 		else
 		{
-			unread_dstring_from_stream(rs, &byte, 1, error);
+			unread_from_stream(rs, &byte, 1, error);
 			break;
 		}
 	}

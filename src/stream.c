@@ -96,8 +96,14 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 			void* cache_bytes_to_write = data_cache_read + bytes_read;
 			size_t cache_bytes_to_write_size = data_cache_read_size - bytes_read;
 
-			if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < cache_bytes_to_write_size)
-				resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024);
+			if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < cache_bytes_to_write_size &&
+				!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024))
+			{
+				// this is a case when there is not enough memeory in the unread_data buffer and the expansion failed
+				// so we return an error
+				(*error) = FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM;
+				return bytes_read;
+			}
 
 			write_to_dpipe(&(strm->unread_data), cache_bytes_to_write, cache_bytes_to_write_size, ALL_OR_NONE);
 		}
@@ -110,18 +116,22 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 	return bytes_read;
 }
 
-int unread_from_stream(stream* strm, const void* data, size_t data_size)
+void unread_from_stream(stream* strm, const void* data, size_t data_size, int* error)
 {
 	if(strm->read_from_stream_context == NULL)
 		return 0;
 
-	if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < data_size)
-		resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024);
+	if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < data_size &&
+		!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024))
+	{
+		// this is a case when there is not enough memeory in the unread_data buffer and the expansion failed
+		// so we return an error
+		(*error) = FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM;
+		return ;
+	}
 
-	// just push the data to unread_data pipe
-	size_t bytes_unread = unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
-
-	return bytes_unread == data_size;
+	// just push the data to unread_data pipe, this must succeed
+	unread_to_dpipe(&(strm->unread_data), data, data_size, ALL_OR_NONE);
 }
 
 // INTERNAL FUNCTION ONLY - to be only used by write and flush_all functions
@@ -172,7 +182,12 @@ size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* er
 		if(get_bytes_writable_in_dpipe(&(strm->unflushed_data)) < data_size)
 		{
 			size_t additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
-			resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count));
+			if(!resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count)))
+			{
+				// this is the case when an append to unflushed_data buffer has failed
+				(*error) = FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM;
+				return 0;
+			}
 		}
 
 		size_t bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);

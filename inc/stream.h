@@ -90,7 +90,7 @@ void deinitialize_stream(stream* strm);
 #define UNDERLYING_STREAM_ERROR ((-1)<<15)
 
 // below errors are returned when an append to stream's internal dpipe buffers fail
-#define FAILED_TO_APPEND_TO_WRITE_BUFFER_IN_STREAM  (UNDERLYING_STREAM_ERROR+1)
-#define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM (UNDERLYING_STREAM_ERROR+2)
+#define FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM  (UNDERLYING_STREAM_ERROR+1)
+#define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM     (UNDERLYING_STREAM_ERROR+2)
 
 #endif

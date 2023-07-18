@@ -218,7 +218,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	if(match_length < until_str_size)
 	{
 		if(!(*error))
-			unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res), error);
+			unread_dstring_from_stream(rs, &res, error);
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
 	}
@@ -295,7 +295,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 	if(!end_encountered)
 	{
-		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res), error);
+		unread_dstring_from_stream(rs, &res, error);
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
 		(*last_byte) = 257;

@@ -1,5 +1,4 @@
  * fail if the dstring concatenation in stream util fails
- * update all downstream apis, HTTPparser, Serc and JSONparser
 
 1* propogate stream and client_set api to cashed.
 

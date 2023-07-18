@@ -100,7 +100,9 @@ size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, u
 		}
 		else
 		{
-			unread_from_stream(rs, &byte, 1);
+			unread_from_stream(rs, &byte, 1, error);
+			if((*error))
+				bytes_read++;
 			break;
 		}
 	}
@@ -123,7 +125,9 @@ size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, 
 			bytes_read++;
 		else
 		{
-			unread_from_stream(rs, &byte, 1);
+			unread_from_stream(rs, &byte, 1, error);
+			if((*error))
+				bytes_read++;
 			break;
 		}
 	}
@@ -148,7 +152,9 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* err
 
 		if(byte != str_data[match_size])
 		{
-			unread_from_stream(rs, &byte, 1);
+			unread_from_stream(rs, &byte, 1, error);
+			if((*error))
+				return match_size + 1;
 			break;
 		}
 	}
@@ -156,7 +162,9 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* err
 	// upon mismatch unread all
 	if(match_size < str_size)
 	{
-		unread_from_stream(rs, str_data, match_size);
+		unread_from_stream(rs, str_data, match_size, error);
+		if((*error))
+			return match_size;
 		return 0;
 	}
 
@@ -209,7 +217,8 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	// if we couldn't match with until_str
 	if(match_length < until_str_size)
 	{
-		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res));
+		if(!(*error))
+			unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res), error);
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
 	}
@@ -250,6 +259,13 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 		concatenate_char(&res, byte);
 	}
 
+	if((*error))
+	{
+		make_dstring_empty(&res);
+		shrink_dstring(&res);
+		return res;
+	}
+
 	// in case when maximum bytes are already read, test to see if the next byte is not end of file,
 	// we need to make this test, if end of stream is in the end characters set
 	if(get_char_count_dstring(&res) == max_bytes_to_read && !end_encountered && is_end_char(1, 0, cntxt))
@@ -266,13 +282,20 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 				end_encountered = 1;
 			}
 			else
-				unread_from_stream(rs, &byte, 1);
+				unread_from_stream(rs, &byte, 1, error);
 		}
+	}
+
+	if((*error))
+	{
+		make_dstring_empty(&res);
+		shrink_dstring(&res);
+		return res;
 	}
 
 	if(!end_encountered)
 	{
-		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res));
+		unread_from_stream(rs, get_byte_array_dstring(&res), get_char_count_dstring(&res), error);
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
 		(*last_byte) = 257;

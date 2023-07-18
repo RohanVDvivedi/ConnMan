@@ -119,7 +119,7 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 void unread_from_stream(stream* strm, const void* data, size_t data_size, int* error)
 {
 	if(strm->read_from_stream_context == NULL)
-		return 0;
+		return ;
 
 	if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < data_size &&
 		!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024))

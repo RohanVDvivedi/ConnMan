@@ -70,8 +70,9 @@ int is_writable_stream(stream* strm);
 // after that no more calls should be made and you must exit your read loop
 size_t read_from_stream(stream* rs, void* data, size_t data_size, int* error);
 
-// returns 1 on success else a 0
-int unread_from_stream(stream* rs, const void* data, size_t data_size);
+// unreads to stream's internal buffer, the contents can be re-read on a read_from_stream call
+// an error is thrown, then the unread call has failed
+void unread_from_stream(stream* rs, const void* data, size_t data_size, int* error);
 
 // return value of this function suggests, the number of bytes from data_size, that were either
 // pushed to unflushed_data pipe, or actually wrriten to the stream_context (this happens if the incomming bytes and the unflushed_data bytes sum to more than max_unflushed_bytes_count)

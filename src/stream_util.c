@@ -281,9 +281,9 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 	return res;
 }
 
-int unread_dstring_from_stream(stream* rs, const dstring* str)
+void unread_dstring_from_stream(stream* rs, const dstring* str, int* error)
 {
-	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str));
+	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str), error);
 }
 
 size_t write_dstring_to_stream(stream* ws, const dstring* str, int* error)

@@ -38,7 +38,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error);
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream
-int unread_dstring_from_stream(stream* rs, const dstring* str);
+void unread_dstring_from_stream(stream* rs, const dstring* str, int* error);
 size_t write_dstring_to_stream(stream* ws, const dstring* str, int* error);
 
 #endif

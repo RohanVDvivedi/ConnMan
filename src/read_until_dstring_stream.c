@@ -71,6 +71,8 @@ static void destroy_stream_context(void* stream_context)
 static read_until_dstring_stream_context*  new_reading_until_dstring_stream_context(stream* underlying_strm, const dstring* read_until_dstr, cy_uint* read_until_dstr_spml)
 {
 	read_until_dstring_stream_context* sc = malloc(sizeof(read_until_dstring_stream_context));
+	if(sc == NULL)
+		return NULL;
 	sc->underlying_strm = underlying_strm;
 	sc->matched_length = 0;
 	initialize_dpipe(&(sc->cached_bytes), get_char_count_dstring(read_until_dstr));
@@ -83,10 +85,17 @@ int initialize_stream_for_reading_until_dstring(stream* strm, stream* underlying
 {
 	// create suffix prefix match lengths for read_until_dtr
 	cy_uint* read_until_dstr_spml = malloc(sizeof(cy_uint) * (get_char_count_dstring(read_until_dstr) + 1));
+	if(read_until_dstr_spml == NULL)
+		return 0;
 	get_prefix_suffix_match_lengths(read_until_dstr, read_until_dstr_spml);
 
 	// create stream context
 	read_until_dstring_stream_context* sc = new_reading_until_dstring_stream_context(underlying_strm, read_until_dstr, read_until_dstr_spml);
+	if(sc == NULL)
+	{
+		free(read_until_dstr_spml);
+		return 0;
+	}
 
 	// initialize stream
 	initialize_stream(strm, sc, read_from_stream_context, NULL, close_stream_context, destroy_stream_context, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
@@ -98,11 +107,18 @@ int initialize_stream_for_reading_until_dstring2(stream* strm, stream* underlyin
 {
 	// create a copy suffix prefix match lengths (read_until_dst_spml)
 	cy_uint* read_until_dstr_spml_l = malloc(sizeof(cy_uint) * (get_char_count_dstring(read_until_dstr) + 1));
+	if(read_until_dstr_spml_l == NULL)
+		return 0;
 	for(cy_uint i = 0; i <= get_char_count_dstring(read_until_dstr); i++)
 		read_until_dstr_spml_l[i] = read_until_dstr_spml[i];
 
 	// create stream context
 	read_until_dstring_stream_context* sc = new_reading_until_dstring_stream_context(underlying_strm, read_until_dstr, read_until_dstr_spml_l);
+	if(sc == NULL)
+	{
+		free(read_until_dstr_spml_l);
+		return 0;
+	}
 
 	// initialize stream
 	initialize_stream(strm, sc, read_from_stream_context, NULL, close_stream_context, destroy_stream_context, NULL, 0);

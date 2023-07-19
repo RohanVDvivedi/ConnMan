@@ -49,7 +49,11 @@ int make_connection_stream(stream* strm, comm_address* server_addr_p, comm_addre
 
 	if(ssl_ctx == NULL)
 	{
-		initialize_stream_for_fd(strm, fd);
+		if(!initialize_stream_for_fd(strm, fd))
+		{
+			close(fd);
+			return -1;
+		}
 		return fd;
 	}
 	else

@@ -37,7 +37,8 @@ static stream* pop_from_stream_queue(client_set* cls)
 		pop_from_queue(&(cls->active_clients_queue));
 	}
 
-	if(get_element_count_queue(&(cls->active_clients_queue)) * 3 >= get_capacity_queue(&(cls->active_clients_queue)))
+	// attempt to shrink, if the capacity of the queue is more than 3 times the element count of the queue
+	if(get_capacity_queue(&(cls->active_clients_queue)) >= get_element_count_queue(&(cls->active_clients_queue)) * 3)
 		shrink_queue(&(cls->active_clients_queue));
 
 	return strm;

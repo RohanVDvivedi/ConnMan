@@ -3,7 +3,7 @@
 static stream* create_client_connection(client_set* cls)
 {
 	stream* strm = malloc(sizeof(stream));
-	if(make_connection_stream(strm, &(cls->server_addr), NULL, cls->ssl_ctx) == -1)
+	if(strm != NULL && make_connection_stream(strm, &(cls->server_addr), NULL, cls->ssl_ctx) == -1)
 	{
 		free(strm);
 		strm = NULL;

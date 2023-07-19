@@ -7,6 +7,6 @@
 
 #define ERROR_PIPED_STREAM_CLOSED -1
 
-void initialize_piped_stream(stream* strm, cy_uint max_capacity);
+int initialize_piped_stream(stream* strm, cy_uint max_capacity);
 
 #endif

@@ -55,6 +55,9 @@ static void destroy_stream_context_ssl(void* ssl_sc_vp)
 int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 {
 	SSL* ssl = SSL_new(ctx);
+	if(ssl == NULL)
+		return 0;
+
 	SSL_set_fd(ssl, fd);
 
 	SSL_set_accept_state(ssl);
@@ -75,6 +78,9 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, int fd)
 {
 	SSL* ssl = SSL_new(ctx);
+	if(ssl == NULL)
+		return 0;
+
 	SSL_set_fd(ssl, fd);
 
 	SSL_set_connect_state(ssl);

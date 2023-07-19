@@ -46,6 +46,8 @@ static void destroy_stream_context_fd(void* stream_context)
 int initialize_stream_for_fd(stream* strm, int fd)
 {
 	int* stream_context = malloc(sizeof(int));
+	if(stream_context == NULL)
+		return 0;
 	*stream_context = fd;
 	initialize_stream(strm, stream_context, read_from_fd, write_to_fd, close_stream_context_fd, destroy_stream_context_fd, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
 	return 1;

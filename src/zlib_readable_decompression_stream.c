@@ -11,6 +11,9 @@
 
 static size_t read_from_stream_decompressed(void* stream_context, void* data, size_t data_size, int* error)
 {
+	// default error is no error
+	(*error) = 0;
+
 	zlib_stream_context* stream_context_p = stream_context;
 
 	// initialize available out
@@ -20,7 +23,13 @@ static size_t read_from_stream_decompressed(void* stream_context, void* data, si
 	size_t data_in_size = IN_CHUNK_SIZE;
 	char* data_in = malloc(sizeof(char) * data_in_size);
 
-	(*error) = 0;
+	// we failed to allocate an intermediate buffer,
+	// this should be treated equivalently to an allocation failure inside the zlib's inflate call
+	if(data_in == NULL)
+	{
+		(*error) = Z_MEM_ERROR;
+		return 0;
+	}
 
 	while(!(*error))
 	{

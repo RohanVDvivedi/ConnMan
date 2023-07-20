@@ -219,7 +219,8 @@ void return_client(client_set* cls, stream* strm)
 	pthread_mutex_lock(&(cls->client_set_lock));
 
 	// these are the conditions -> to destroy the client
-	if(strm->last_error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count)
+	// stream errored OR shutdown was called OR excess clients OR stream could not be pushed -> destroy the client stream
+	if(strm->last_error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count || !push_to_stream_queue(cls, strm))
 	{
 		// decrement the curr_client_count
 		cls->curr_client_count--;
@@ -233,8 +234,7 @@ void return_client(client_set* cls, stream* strm)
 	// else push the ctream to active clients queue
 	else
 	{
-		push_to_stream_queue(cls, strm);
-
+		// on a sucessfull push of a valid stream in the stream_queue
 		// signal a thread that are waiting for no clients in the active_clients_queue
 		pthread_cond_signal(&(cls->all_clients_in_use_at_max_clients));
 	}
@@ -251,12 +251,12 @@ void shutdown_and_delete_client_set(client_set* cls)
 	// shutdown logic
 	pthread_mutex_lock(&(cls->client_set_lock));
 
+	// set shutdown_called
+	cls->shutdown_called = 1;
+
 	// signal all threads that are waiting for no clients in the active_clients_queue
 	// to let them know that a shutdown was called
 	pthread_cond_broadcast(&(cls->all_clients_in_use_at_max_clients));
-
-	// set shutdown_called
-	cls->shutdown_called = 1;
 
 	// destroy all clients that are queued in the active_clients_queue
 	while(!is_empty_queue(&(cls->active_clients_queue)))

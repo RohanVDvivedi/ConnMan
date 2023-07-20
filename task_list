@@ -1,5 +1,4 @@
  * fail if the dstring concatenation in stream util fails
- * destroy a client_set's stream if it could not be inserted into the queue
 
 1* propogate stream and client_set api to cashed.
 

@@ -51,9 +51,13 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 	if(err == -1)
 		return err;
 
+	// start a cached thread pool executor
+	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
+	if(connection_executor == NULL)
+		return -1;
+
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
-	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
 	while(1)
 	{
 		// phase 4

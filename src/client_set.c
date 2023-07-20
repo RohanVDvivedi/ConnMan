@@ -197,6 +197,10 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 			// decrement the curr_client_count
 			cls->curr_client_count--;
 
+			// if we couldn't create a client, then we allow someone else to go ahead, by waking them up
+			if(cls->curr_client_count < cls->max_client_count)
+				pthread_cond_signal(&(cls->all_clients_in_use_at_max_clients));
+
 			// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
 			if(cls->shutdown_called && cls->curr_client_count == 0)
 				pthread_cond_signal(&(cls->client_count_reached_0_after_shutdown));
@@ -224,6 +228,12 @@ void return_client(client_set* cls, stream* strm)
 	{
 		// decrement the curr_client_count
 		cls->curr_client_count--;
+
+		// if we are destroying a client, and there are threads waiting for acquiring a client stream 
+		// (either by popping it from the client OR creating a new client connection stream)
+		// then we allow then to create a new client connection stream by waking them up
+		if(cls->curr_client_count < cls->max_client_count)
+			pthread_cond_signal(&(cls->all_clients_in_use_at_max_clients));
 
 		// wake up a thread that wants shutdown and is waiting for all clients to be destroyed
 		if(cls->shutdown_called && cls->curr_client_count == 0)

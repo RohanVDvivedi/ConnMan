@@ -1,5 +1,4 @@
  * fail when malloc fails in zlib stream reader and writer
- * fail when BoomPar functions fail
  * fail if the dstring concatenation in stream util fails
  * destroy a client_set's stream if it could not be inserted into the queue
 

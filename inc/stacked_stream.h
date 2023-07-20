@@ -19,7 +19,7 @@ struct stacked_stream
 
 // below two functions only initialize and deinitialize the stacked stream
 // they do not allocate memory, free, intialize, deinitialize, or destroy your streams, you are solely responsible to do that
-void initialize_stacked_stream(stacked_stream* sstrm);
+int initialize_stacked_stream(stacked_stream* sstrm);
 void deinitialize_stacked_stream(stacked_stream* sstrm);
 
 // the operate_on parameter can be one of the following in the below functions

@@ -1,12 +1,18 @@
 #include<stacked_stream.h>
 
 // the (read_streams and write_streams) stacks in the stacked_stream are initialized with capacity equal to DEFAULT_STACKED_STREAM_STACKS_CAPACITY
-#define DEFAULT_STACKED_STREAM_STACKS_CAPACITY 4
+#define DEFAULT_STACKED_STREAM_STACKS_CAPACITY 8
 
-void initialize_stacked_stream(stacked_stream* sstrm)
+int initialize_stacked_stream(stacked_stream* sstrm)
 {
-	initialize_stack(&(sstrm->read_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY);
-	initialize_stack(&(sstrm->write_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY);
+	if(!initialize_stack(&(sstrm->read_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY))
+		return 0;
+	if(!initialize_stack(&(sstrm->write_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY))
+	{
+		deinitialize_stack(&(sstrm->read_streams));
+		return 0;
+	}
+	return 1;
 }
 
 void deinitialize_stacked_stream(stacked_stream* sstrm)

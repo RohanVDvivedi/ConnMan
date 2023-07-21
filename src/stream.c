@@ -50,7 +50,10 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 	(*error) = 0;
 
 	if(strm->read_from_stream_context == NULL)
+	{
+		(*error) = INACCESSIBLE_STREAM_FUNCTIONALITY;
 		return 0;
+	}
 
 	size_t bytes_read = 0;
 
@@ -118,8 +121,14 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 
 void unread_from_stream(stream* strm, const void* data, size_t data_size, int* error)
 {
+	// intialize error to 0
+	(*error) = 0;
+
 	if(strm->read_from_stream_context == NULL)
+	{
+		(*error) = INACCESSIBLE_STREAM_FUNCTIONALITY;
 		return ;
+	}
 
 	if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < data_size &&
 		!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024))
@@ -171,10 +180,14 @@ static void flush_all_unflushed_data(stream* strm, int* error)
 
 size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* error)
 {
-	if(strm->write_to_stream_context == NULL)
-		return 0;
-
+	// intialize error to 0
 	(*error) = 0;
+
+	if(strm->write_to_stream_context == NULL)
+	{
+		(*error) = INACCESSIBLE_STREAM_FUNCTIONALITY;
+		return 0;
+	}
 
 	// if the total unflushed_data_bytes count is lesser than max_unflushed_bytes_count, then just push these new data to unflushed_data pipe
 	if(data_size + get_bytes_readable_in_dpipe(&(strm->unflushed_data)) <= strm->max_unflushed_bytes_count)
@@ -230,6 +243,12 @@ void flush_all_from_stream(stream* strm, int* error)
 {
 	// intialize error to 0
 	(*error) = 0;
+
+	if(strm->write_to_stream_context == NULL)
+	{
+		(*error) = INACCESSIBLE_STREAM_FUNCTIONALITY;
+		return 0;
+	}
 
 	// flush all of the unflushed_data
 	flush_all_unflushed_data(strm, error);

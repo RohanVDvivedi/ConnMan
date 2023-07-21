@@ -33,6 +33,7 @@ void* transact_with_server(void* param)
 	if(error)
 	{
 		printf("error in writing to stream\n");
+		return_client(cls, cli_strm, 1);
 		return NULL;
 	}
 
@@ -40,6 +41,7 @@ void* transact_with_server(void* param)
 	if(error)
 	{
 		printf("error in flushing to stream\n");
+		return_client(cls, cli_strm, 1);
 		return NULL;
 	}
 
@@ -49,6 +51,7 @@ void* transact_with_server(void* param)
 	if(error)
 	{
 		printf("error in reading from stream\n");
+		return_client(cls, cli_strm, 1);
 		return NULL;
 	}
 	output[buffreadlength] = '\0';
@@ -57,7 +60,7 @@ void* transact_with_server(void* param)
 	printf("%s -> %s\n", input, output);
 
 	// release/return the client stream
-	return_client(cls, cli_strm);
+	return_client(cls, cli_strm, 0);
 
 	return NULL;
 }

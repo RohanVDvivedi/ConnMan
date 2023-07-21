@@ -46,7 +46,12 @@ static stream* pop_from_stream_queue(client_set* cls)
 
 client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients)
 {
+	if(server_addr_p == NULL)
+		return NULL;
+
 	client_set* cls = malloc(sizeof(client_set));
+	if(cls == NULL)
+		return NULL;
 
 	cls->server_addr = *server_addr_p;
 	cls->ssl_ctx = ssl_ctx;

@@ -94,7 +94,7 @@ void deinitialize_stream(stream* strm);
 // use this error in your custom stream functionality, when a malloc (or any other memory allocation function) fails in your stream implementation
 #define ALLOCATION_FAILURE_IN_STREAM (SIGNED_MIN_VALUE_OF(int)+1)
 
-// below errors are returned when an append to stream's internal dpipe buffers fail
+// below errors are returned when an append to stream's internal dpipe buffers fail, below errors are non-recoverable
 #define FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM  (SIGNED_MIN_VALUE_OF(int)+2)
 #define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM     (SIGNED_MIN_VALUE_OF(int)+3)
 

@@ -1,6 +1,5 @@
  *2 fail if the dstring concatenation in stream util fails
  *1 logic to force close a stream connection in client_set, on returning a client
- *3 streams will return an error instead of failing silently, when reading from a non readable stream or writing to a non writable stream
 
 1* propogate stream and client_set api to cashed.
 

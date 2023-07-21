@@ -21,11 +21,10 @@ static size_t write_to_stream_compressed(void* stream_context, const void* data,
 	size_t data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
-	// we failed to allocate an intermediate buffer,
-	// this should be treated equivalently to an allocation failure inside the zlib's deflate call
+	// we failed to allocate an intermediate buffer
 	if(data_out == NULL)
 	{
-		(*error) = Z_MEM_ERROR;
+		(*error) = ALLOCATION_FAILURE_IN_STREAM;
 		return 0;
 	}
 

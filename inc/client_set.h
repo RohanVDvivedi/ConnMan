@@ -55,8 +55,8 @@ int reset_max_clients(client_set* cls, unsigned int max_clients);
 // pass timeout as 0, to perform an untimed wait
 stream* reserve_client(client_set* cls, unsigned int timeout_in_secs);
 
-// return a reserved client, this function will close and destroy the client stream if it has errored
-void return_client(client_set* cls, stream* strm);
+// return a reserved client, this function will close and destroy the client stream if it has errored OR force_destroy_client_stream flag was set
+void return_client(client_set* cls, stream* strm, int force_destroy_client_stream);
 
 // waits for all the client streams to be returned
 // you may delete the client_set only

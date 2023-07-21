@@ -221,15 +221,15 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 		return NULL;
 }
 
-void return_client(client_set* cls, stream* strm)
+void return_client(client_set* cls, stream* strm, int force_destroy_client_stream)
 {
 	int client_to_be_destroyed = 0;
 
 	pthread_mutex_lock(&(cls->client_set_lock));
 
 	// these are the conditions -> to destroy the client
-	// stream errored OR shutdown was called OR excess clients OR stream could not be pushed -> destroy the client stream
-	if(strm->last_error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count || !push_to_stream_queue(cls, strm))
+	// if the user wants us to not reuse the client stream OR stream errored OR shutdown was called OR excess clients OR stream could not be pushed -> destroy the client stream
+	if(force_destroy_client_stream || strm->last_error || cls->shutdown_called || cls->curr_client_count > cls->max_client_count || !push_to_stream_queue(cls, strm))
 	{
 		// decrement the curr_client_count
 		cls->curr_client_count--;

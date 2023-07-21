@@ -247,7 +247,7 @@ void flush_all_from_stream(stream* strm, int* error)
 	if(strm->write_to_stream_context == NULL)
 	{
 		(*error) = INACCESSIBLE_STREAM_FUNCTIONALITY;
-		return 0;
+		return ;
 	}
 
 	// flush all of the unflushed_data

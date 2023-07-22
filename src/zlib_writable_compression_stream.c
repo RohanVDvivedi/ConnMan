@@ -138,7 +138,6 @@ int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm
 
 	if(Z_OK != deflateInit(&(stream_context->zlib_context), level))
 	{
-		deflateEnd(&(stream_context->zlib_context));
 		free(stream_context);
 		return 0;
 	}
@@ -157,7 +156,6 @@ int initialize_stream_for_zlib_compression2(stream* strm, stream* underlying_str
 
 	if(Z_OK != deflateInit2(&(stream_context->zlib_context), level, method, windowBits, memLevel, strategy))
 	{
-		deflateEnd(&(stream_context->zlib_context));
 		free(stream_context);
 		return 0;
 	}

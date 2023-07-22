@@ -97,7 +97,6 @@ int initialize_stream_for_zlib_decompression(stream* strm, stream* underlying_st
 
 	if(Z_OK != inflateInit(&(stream_context->zlib_context)))
 	{
-		inflateEnd(&(stream_context->zlib_context));
 		free(stream_context);
 		return 0;
 	}
@@ -116,7 +115,6 @@ int initialize_stream_for_zlib_decompression2(stream* strm, stream* underlying_s
 
 	if(Z_OK != inflateInit2(&(stream_context->zlib_context), windowBits))
 	{
-		inflateEnd(&(stream_context->zlib_context));
 		free(stream_context);
 		return 0;
 	}

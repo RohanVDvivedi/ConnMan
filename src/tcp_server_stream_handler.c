@@ -43,6 +43,14 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 	return NULL;
 }
 
+// to handle clean up of the connection on cancellation of the job
+static void stream_handler_wrapper_on_cancellation_callback(void* stream_handler_wrapper_input_params_v_p)
+{
+	stream_handler_wrapper_input_params* handler_data = ((stream_handler_wrapper_input_params*)stream_handler_wrapper_input_params_v_p);
+	close(handler_data->fd);
+	free(handler_data);
+}
+
 int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx)
 {
 	// phase 3
@@ -73,7 +81,7 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
 		// here wait for 10 milliseconds to timeout job submission
-		submit_job(connection_executor, stream_handler_wrapper, new_stream_handler_wrapper_input_params(conn_fd, ssl_ctx, additional_params, stream_handler), NULL, 10 * 1000);
+		submit_job(connection_executor, stream_handler_wrapper, new_stream_handler_wrapper_input_params(conn_fd, ssl_ctx, additional_params, stream_handler), NULL, stream_handler_wrapper_on_cancellation_callback, 10 * 1000);
 	}
 
 	shutdown_executor(connection_executor, 1);

@@ -22,7 +22,7 @@ int udp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 	unsigned int jobs_left_to_be_created = thread_count;
 	while(jobs_left_to_be_created)
 	{
-		submit_job(message_executor, handler_wrapper, new_handler_wrapper_input_params(listen_fd, additional_params, handler), NULL, 10 * 1000);
+		submit_job(message_executor, handler_wrapper, new_handler_wrapper_input_params(listen_fd, additional_params, handler), NULL, NULL, 10 * 1000);
 		jobs_left_to_be_created--;
 	}
 

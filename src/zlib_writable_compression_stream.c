@@ -131,6 +131,9 @@ static void post_flush_calling_underlying_stream_flush_zlib(void* stream_context
 int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm, int level)
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
+	if(stream_context == NULL)
+		return 0;
+
 	stream_context->underlying_strm = underlying_strm;
 	stream_context->zlib_context.zalloc = Z_NULL;
 	stream_context->zlib_context.zfree = Z_NULL;
@@ -149,6 +152,9 @@ int initialize_stream_for_zlib_compression(stream* strm, stream* underlying_strm
 int initialize_stream_for_zlib_compression2(stream* strm, stream* underlying_strm, int level, int method, int windowBits, int memLevel, int strategy)
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
+	if(stream_context == NULL)
+		return 0;
+
 	stream_context->underlying_strm = underlying_strm;
 	stream_context->zlib_context.zalloc = Z_NULL;
 	stream_context->zlib_context.zfree = Z_NULL;

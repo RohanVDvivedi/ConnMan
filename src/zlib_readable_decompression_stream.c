@@ -90,6 +90,9 @@ static void destroy_stream_context(void* stream_context)
 int initialize_stream_for_zlib_decompression(stream* strm, stream* underlying_strm)
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
+	if(stream_context == NULL)
+		return 0;
+
 	stream_context->underlying_strm = underlying_strm;
 	stream_context->zlib_context.zalloc = Z_NULL;
 	stream_context->zlib_context.zfree = Z_NULL;
@@ -108,6 +111,9 @@ int initialize_stream_for_zlib_decompression(stream* strm, stream* underlying_st
 int initialize_stream_for_zlib_decompression2(stream* strm, stream* underlying_strm, int windowBits)
 {
 	zlib_stream_context* stream_context = malloc(sizeof(zlib_stream_context));
+	if(stream_context == NULL)
+		return 0;
+
 	stream_context->underlying_strm = underlying_strm;
 	stream_context->zlib_context.zalloc = Z_NULL;
 	stream_context->zlib_context.zfree = Z_NULL;

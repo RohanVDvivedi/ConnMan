@@ -94,8 +94,8 @@ void deinitialize_stream(stream* strm);
 #define ALLOCATION_FAILURE_IN_STREAM (INT_MIN+1)
 
 // below errors are returned when an append to stream's internal dpipe buffers fail, below errors are non-recoverable
-#define FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM  (INT_MIN+2)
-#define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM     (INT_MIN+3)
+#define FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM (INT_MIN+2)
+#define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM (INT_MIN+3)
 
 // below errors are returned when you read or unread to a non readable stream OR when you write of flush an only readable stream
 #define INACCESSIBLE_STREAM_FUNCTIONALITY (INT_MIN+4)

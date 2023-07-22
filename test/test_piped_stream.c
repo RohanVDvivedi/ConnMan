@@ -102,11 +102,11 @@ int main()
 
 	// submit consumer jobs
 	for(int i = 0; i < CONSUMERS_COUNT; i++)
-		submit_job(transaction_executor, consumer, ((void*)i), NULL, 0);
+		submit_job(transaction_executor, consumer, ((void*)i), NULL, NULL, 0);
 
 	// submit producer jobs
 	for(int i = 0; i < PRODUCERS_COUNT; i++)
-		submit_job(transaction_executor, producer, ((void*)i), NULL, 0);
+		submit_job(transaction_executor, producer, ((void*)i), NULL, NULL, 0);
 
 	// shutdown, wait for shutdown and delete the job executor
 	shutdown_executor(transaction_executor, 0);

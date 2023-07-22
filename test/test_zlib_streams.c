@@ -105,10 +105,10 @@ int main()
 	executor* transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, 2, 10, 0, NULL, NULL, NULL);
 
 	// submit consumer job
-	submit_job(transaction_executor, consumer, NULL, NULL, 0);
+	submit_job(transaction_executor, consumer, NULL, NULL, NULL, 0);
 
 	// submit producer job
-	submit_job(transaction_executor, producer, NULL, NULL, 0);
+	submit_job(transaction_executor, producer, NULL, NULL, NULL, 0);
 
 	// shutdown, wait for shutdown and delete the job executor
 	shutdown_executor(transaction_executor, 0);

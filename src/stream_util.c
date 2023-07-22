@@ -7,7 +7,7 @@
 #include<cutlery_stds.h>
 #include<cutlery_math.h>
 
-size_t write_to_stream_formatted(stream* ws, int* stream_error, const char* cstr_format, ...)
+size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...)
 {
 	dstring str = new_dstring(NULL, 0);
 
@@ -20,7 +20,7 @@ size_t write_to_stream_formatted(stream* ws, int* stream_error, const char* cstr
 
 	size_t bytes_written = 0;
 	if(dstringify_success)
-		bytes_written = write_dstring_to_stream(ws, &str, stream_error);
+		bytes_written = write_dstring_to_stream(ws, &str, error);
 
 	deinit_dstring(&str);
 
@@ -43,11 +43,11 @@ void init_max_bytes_to_read_for_radices()
 	max_bytes_to_read_HEXADECIMAL = get_digits_required_to_represent_unsigned_long_long_int(16);
 }
 
-size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, unsigned long long int* data, int* stream_error)
+size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, unsigned long long int* data, int* error)
 {
 	if((radix != BINARY) && (radix != OCTAL) && (radix != DECIMAL) && (radix != HEXADECIMAL))
 	{
-		(*stream_error) = -1;
+		(*error) = -1;
 		return 0;
 	}
 
@@ -85,9 +85,9 @@ size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, u
 	while(bytes_read < max_bytes_to_read)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, stream_error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(byte_read == 0 || (*stream_error))
+		if(byte_read == 0 || (*error))
 			break;
 
 		unsigned int digit = get_digit_from_char(byte, radix);
@@ -100,8 +100,8 @@ size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, u
 		}
 		else
 		{
-			unread_from_stream(rs, &byte, 1, stream_error);
-			if((*stream_error))
+			unread_from_stream(rs, &byte, 1, error);
+			if((*error))
 				bytes_read++;
 			break;
 		}
@@ -110,23 +110,23 @@ size_t read_unsigned_long_long_int_from_stream(stream* rs, unsigned int radix, u
 	return bytes_read;
 }
 
-size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, int* stream_error)
+size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, int* error)
 {
 	size_t bytes_read = 0;
 	while(bytes_read < max_whitespaces_to_skip)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, stream_error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(byte_read == 0 || (*stream_error))
+		if(byte_read == 0 || (*error))
 			break;
 
 		if(is_whitespace_char(byte))
 			bytes_read++;
 		else
 		{
-			unread_from_stream(rs, &byte, 1, stream_error);
-			if((*stream_error))
+			unread_from_stream(rs, &byte, 1, error);
+			if((*error))
 				bytes_read++;
 			break;
 		}
@@ -135,7 +135,7 @@ size_t skip_whitespaces_from_stream(stream* rs, size_t max_whitespaces_to_skip, 
 	return bytes_read;
 }
 
-size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* stream_error)
+size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* error)
 {
 	const char* str_data = get_byte_array_dstring(str_to_skip);
 	const cy_uint str_size = get_char_count_dstring(str_to_skip);
@@ -145,15 +145,15 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* str
 	for(; match_size < str_size; match_size++)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, stream_error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(byte_read == 0 || (*stream_error))
+		if(byte_read == 0 || (*error))
 			break;
 
 		if(byte != str_data[match_size])
 		{
-			unread_from_stream(rs, &byte, 1, stream_error);
-			if((*stream_error))
+			unread_from_stream(rs, &byte, 1, error);
+			if((*error))
 				return match_size + 1;
 			break;
 		}
@@ -162,8 +162,8 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* str
 	// upon mismatch unread all
 	if(match_size < str_size)
 	{
-		unread_from_stream(rs, str_data, match_size, stream_error);
-		if((*stream_error))
+		unread_from_stream(rs, str_data, match_size, error);
+		if((*error))
 			return match_size;
 		return 0;
 	}
@@ -171,7 +171,7 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* str
 	return str_size; // same as match_size
 }
 
-dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, size_t max_bytes_to_read, int* stream_error)
+dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, size_t max_bytes_to_read, int* error)
 {
 	const char* until_str_data = get_byte_array_dstring(until_str);
 	const cy_uint until_str_size = get_char_count_dstring(until_str);
@@ -188,9 +188,9 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	while(match_length < until_str_size && get_char_count_dstring(&res) < max_bytes_to_read)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, stream_error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
-		if(byte_read == 0 || (*stream_error))
+		if(byte_read == 0 || (*error))
 			break;
 
 		// append the character we just read to the res
@@ -217,8 +217,8 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	// if we couldn't match with until_str
 	if(match_length < until_str_size)
 	{
-		if(!(*stream_error))
-			unread_dstring_from_stream(rs, &res, stream_error);
+		if(!(*error))
+			unread_dstring_from_stream(rs, &res, error);
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
 	}
@@ -226,7 +226,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	return res;
 }
 
-dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* stream_error)
+dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error)
 {
 	dstring res = new_dstring(NULL, 0);
 
@@ -237,10 +237,10 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 	while(!end_encountered)
 	{
 		char byte;
-		size_t byte_read = read_from_stream(rs, &byte, 1, stream_error);
+		size_t byte_read = read_from_stream(rs, &byte, 1, error);
 
-		// if not an stream_error, then set last_byte
-		if(!(*stream_error))
+		// if not an error, then set last_byte
+		if(!(*error))
 		{
 			if(byte_read == 0)
 				(*last_byte) = 256;
@@ -249,10 +249,10 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 		}
 
 		// if the current byte read is an end character, then set end_encountered
-		if((!(*stream_error)) && is_end_char(byte_read == 0, byte, cntxt))
+		if((!(*error)) && is_end_char(byte_read == 0, byte, cntxt))
 			end_encountered = 1;
 
-		if(byte_read == 0 || (*stream_error))
+		if(byte_read == 0 || (*error))
 			break;
 
 		// append the character we just read to the res, only if number of bytes in res
@@ -260,7 +260,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 			concatenate_char(&res, byte);
 		else
 		{
-			unread_from_stream(rs, &byte, 1, stream_error);
+			unread_from_stream(rs, &byte, 1, error);
 			// since we were not suppossed to read the last byte (due to size constraints on res)
 			// any end_encountered is nullified
 			end_encountered = 0;
@@ -268,7 +268,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 		}
 	}
 
-	if((*stream_error))
+	if((*error))
 	{
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
@@ -277,7 +277,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 	if(!end_encountered)
 	{
-		unread_dstring_from_stream(rs, &res, stream_error);
+		unread_dstring_from_stream(rs, &res, error);
 		make_dstring_empty(&res);
 		shrink_dstring(&res);
 		(*last_byte) = 257;
@@ -286,12 +286,12 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 	return res;
 }
 
-void unread_dstring_from_stream(stream* rs, const dstring* str, int* stream_error)
+void unread_dstring_from_stream(stream* rs, const dstring* str, int* error)
 {
-	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str), stream_error);
+	return unread_from_stream(rs, get_byte_array_dstring(str), get_char_count_dstring(str), error);
 }
 
-size_t write_dstring_to_stream(stream* ws, const dstring* str, int* stream_error)
+size_t write_dstring_to_stream(stream* ws, const dstring* str, int* error)
 {
-	return write_to_stream(ws, get_byte_array_dstring(str), get_char_count_dstring(str), stream_error);
+	return write_to_stream(ws, get_byte_array_dstring(str), get_char_count_dstring(str), error);
 }

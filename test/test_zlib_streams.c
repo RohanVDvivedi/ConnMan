@@ -90,6 +90,7 @@ void* consumer(void* param)
 		printf("consumer : <%.*s>\n", bytes_read, read_buffer);
 	}
 
+	close_stream(&zlib_decomp, &error);
 	printf("consumer : EXIT after reading %u bytes\n", total_bytes_read);
 
 	return NULL;

@@ -15,12 +15,16 @@ size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format
 	va_start(var_args, cstr_format);
 
 	int dstringify_success = vsnprintf_dstring(&str, cstr_format, var_args);
+	if(!dstringify_success)
+	{
+		(*error) = ALLOCATION_FAILURE_IN_STREAM;
+		deinit_dstring(&str);
+		return 0;
+	}
 
 	va_end(var_args);
 
-	size_t bytes_written = 0;
-	if(dstringify_success)
-		bytes_written = write_dstring_to_stream(ws, &str, error);
+	size_t bytes_written = write_dstring_to_stream(ws, &str, error);
 
 	deinit_dstring(&str);
 
@@ -194,7 +198,13 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 			break;
 
 		// append the character we just read to the res
-		concatenate_char(&res, byte);
+		if(!concatenate_char(&res, byte))
+		{
+			(*error) = ALLOCATION_FAILURE_IN_STREAM;
+			make_dstring_empty(&res);
+			shrink_dstring(&res);
+			return 0;
+		}
 
 		// evaluate the new match length
 		while(1)
@@ -257,7 +267,15 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 		// append the character we just read to the res, only if number of bytes in res
 		if(get_char_count_dstring(&res) < max_bytes_to_read)
-			concatenate_char(&res, byte);
+		{
+			if(!concatenate_char(&res, byte))
+			{
+				(*error) = ALLOCATION_FAILURE_IN_STREAM;
+				make_dstring_empty(&res);
+				shrink_dstring(&res);
+				return res;
+			}
+		}
 		else
 		{
 			unread_from_stream(rs, &byte, 1, error);

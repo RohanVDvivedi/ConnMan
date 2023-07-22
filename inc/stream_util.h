@@ -7,6 +7,12 @@
 
 #include<stdint.h>
 
+/*
+	All the below function may return an ALLOCATION_FAILURE_IN_STREAM, even on no last_error in stream.
+	This could happen because there was a data structure or string in these functions that could not be allocated.
+	But this error is expected to be handled in a similar way to an ALLOCATION_FAILURE_IN_STREAM, hence the same error variable and same error code.
+*/
+
 size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...);
 
 // supported radix for below functions are only

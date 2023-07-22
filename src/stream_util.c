@@ -203,7 +203,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 			(*error) = ALLOCATION_FAILURE_IN_STREAM;
 			make_dstring_empty(&res);
 			shrink_dstring(&res);
-			return 0;
+			return res;
 		}
 
 		// evaluate the new match length

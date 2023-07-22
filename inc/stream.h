@@ -1,6 +1,7 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include<limits.h>
 #include<stddef.h>
 
 #include<dpipe.h>
@@ -85,20 +86,18 @@ void close_stream(stream* strm, int* error);
 
 void deinitialize_stream(stream* strm);
 
-#include<cutlery_stds.h>
-
 // use UNDERLYING_STREAM_ERROR as error code when write_to_stream_context has failed,
 // due to failure to write to an underlying stream (probably because of memory allocation failure)
-#define UNDERLYING_STREAM_ERROR (SIGNED_MIN_VALUE_OF(int)+0)
+#define UNDERLYING_STREAM_ERROR (INT_MIN+0)
 
 // use this error in your custom stream functionality, when a malloc (or any other memory allocation function) fails in your stream implementation
-#define ALLOCATION_FAILURE_IN_STREAM (SIGNED_MIN_VALUE_OF(int)+1)
+#define ALLOCATION_FAILURE_IN_STREAM (INT_MIN+1)
 
 // below errors are returned when an append to stream's internal dpipe buffers fail, below errors are non-recoverable
-#define FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM  (SIGNED_MIN_VALUE_OF(int)+2)
-#define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM     (SIGNED_MIN_VALUE_OF(int)+3)
+#define FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM  (INT_MIN+2)
+#define FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM     (INT_MIN+3)
 
 // below errors are returned when you read or unread to a non readable stream OR when you write of flush an only readable stream
-#define INACCESSIBLE_STREAM_FUNCTIONALITY (SIGNED_MIN_VALUE_OF(int)+4)
+#define INACCESSIBLE_STREAM_FUNCTIONALITY (INT_MIN+4)
 
 #endif

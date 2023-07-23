@@ -63,7 +63,7 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 		bytes_read = read_from_dpipe(&(strm->unread_data), data, data_size, PARTIAL_ALLOWED);
 
 		// shrink unread_data dpipe if it is larger than 4 times what it is required
-		if(get_capacity_dpipe(&(strm->unread_data)) >= 4 * get_bytes_readable_in_dpipe(&(strm->unread_data)))
+		if(get_capacity_dpipe(&(strm->unread_data)) > 3 * get_bytes_readable_in_dpipe(&(strm->unread_data)))
 			resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data)));
 	}
 	// else make a read call to the stream context

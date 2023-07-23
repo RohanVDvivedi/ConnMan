@@ -56,12 +56,12 @@ int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
 		// here wait for 10 milliseconds to timeout job submission
-		submit_job(connection_executor, handler_wrapper, new_handler_wrapper_input_params(conn_fd, additional_params, handler), NULL, handler_wrapper_on_cancellation_callback, 10 * 1000);
+		submit_job_executor(connection_executor, handler_wrapper, new_handler_wrapper_input_params(conn_fd, additional_params, handler), NULL, handler_wrapper_on_cancellation_callback, 10 * 1000);
 	}
 
 	shutdown_executor(connection_executor, 1);
 
-	wait_for_all_threads_to_complete(connection_executor);
+	wait_for_all_executor_workers_to_complete(connection_executor);
 
 	delete_executor(connection_executor);
 

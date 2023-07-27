@@ -46,7 +46,8 @@ static stream* pop_from_stream_queue(client_set* cls)
 
 client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients)
 {
-	if(server_addr_p == NULL)
+	// fail if server_addr_p == NULL OR max_clients = 0
+	if(server_addr_p == NULL || max_clients == 0)
 		return NULL;
 
 	client_set* cls = malloc(sizeof(client_set));
@@ -84,8 +85,9 @@ unsigned int get_max_clients(client_set* cls)
 
 int reset_max_clients(client_set* cls, unsigned int max_clients)
 {
+	// fail to reset the max_clients, if setting it to 0
 	if(max_clients == 0)
-		max_clients = 1;
+		return 0;
 
 	int reset_max_clients_success = 0;
 

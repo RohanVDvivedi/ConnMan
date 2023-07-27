@@ -41,7 +41,8 @@ struct client_set
 	int shutdown_called;
 };
 
-// construct a new client_set connecting to the server_addr_p, each of it will be a ssl stream if ssl_ctx is not NULL 
+// construct a new client_set connecting to the server_addr_p, each of it will be a ssl stream if ssl_ctx is not NULL
+// This function fails with a NULL on an allocation error OR server_addr_p == NULL OR max_clients == 0
 client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, unsigned int max_clients);
 
 // returns the max_clients count that is set on the client_set

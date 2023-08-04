@@ -5,11 +5,11 @@
 
 int initialize_stacked_stream(stacked_stream* sstrm)
 {
-	if(!initialize_stack(&(sstrm->read_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY))
+	if(!initialize_arraylist(&(sstrm->read_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY))
 		return 0;
-	if(!initialize_stack(&(sstrm->write_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY))
+	if(!initialize_arraylist(&(sstrm->write_streams), DEFAULT_STACKED_STREAM_STACKS_CAPACITY))
 	{
-		deinitialize_stack(&(sstrm->read_streams));
+		deinitialize_arraylist(&(sstrm->read_streams));
 		return 0;
 	}
 	return 1;
@@ -17,8 +17,8 @@ int initialize_stacked_stream(stacked_stream* sstrm)
 
 void deinitialize_stacked_stream(stacked_stream* sstrm)
 {
-	deinitialize_stack(&(sstrm->read_streams));
-	deinitialize_stack(&(sstrm->write_streams));
+	deinitialize_arraylist(&(sstrm->read_streams));
+	deinitialize_arraylist(&(sstrm->write_streams));
 }
 
 int is_empty_stacked_stream(stacked_stream* sstrm, int operate_on)
@@ -26,9 +26,9 @@ int is_empty_stacked_stream(stacked_stream* sstrm, int operate_on)
 	switch(operate_on)
 	{
 		case READ_STREAMS :
-			return is_empty_stack(&(sstrm->read_streams));
+			return is_empty_arraylist(&(sstrm->read_streams));
 		case WRITE_STREAMS :
-			return is_empty_stack(&(sstrm->write_streams));
+			return is_empty_arraylist(&(sstrm->write_streams));
 		default :
 			return 1;
 	}
@@ -39,9 +39,9 @@ unsigned int get_stream_count_stacked_stream(stacked_stream* sstrm, int operate_
 	switch(operate_on)
 	{
 		case READ_STREAMS :
-			return get_element_count_stack(&(sstrm->read_streams));
+			return get_element_count_arraylist(&(sstrm->read_streams));
 		case WRITE_STREAMS :
-			return get_element_count_stack(&(sstrm->write_streams));
+			return get_element_count_arraylist(&(sstrm->write_streams));
 		default :
 			return 0;
 	}
@@ -58,27 +58,27 @@ int push_to_stacked_stream(stacked_stream* sstrm, stream* strm, int operate_on)
 		{
 			if(!is_readable_stream(strm))
 				return 0;
-			if(is_full_stack(&sstrm->read_streams) && !expand_stack(&sstrm->read_streams))
+			if(is_full_arraylist(&sstrm->read_streams) && !expand_arraylist(&sstrm->read_streams))
 				return 0;
-			return push_to_stack(&(sstrm->read_streams), strm);
+			return push_back_to_arraylist(&(sstrm->read_streams), strm);
 		}
 		case WRITE_STREAMS :
 		{
 			if(!is_writable_stream(strm))
 				return 0;
-			if(is_full_stack(&sstrm->write_streams) && !expand_stack(&sstrm->write_streams))
+			if(is_full_arraylist(&sstrm->write_streams) && !expand_arraylist(&sstrm->write_streams))
 				return 0;
-			return push_to_stack(&(sstrm->write_streams), strm);
+			return push_back_to_arraylist(&(sstrm->write_streams), strm);
 		}
 		case BOTH_STREAMS :
 		{
 			if(!is_writable_stream(strm) || !is_readable_stream(strm))
 				return 0;
-			if(is_full_stack(&sstrm->read_streams) && !expand_stack(&sstrm->read_streams))
+			if(is_full_arraylist(&sstrm->read_streams) && !expand_arraylist(&sstrm->read_streams))
 				return 0;
-			if(is_full_stack(&sstrm->write_streams) && !expand_stack(&sstrm->write_streams))
+			if(is_full_arraylist(&sstrm->write_streams) && !expand_arraylist(&sstrm->write_streams))
 				return 0;
-			return push_to_stack(&(sstrm->read_streams), strm) && push_to_stack(&(sstrm->write_streams), strm);
+			return push_back_to_arraylist(&(sstrm->read_streams), strm) && push_back_to_arraylist(&(sstrm->write_streams), strm);
 		}
 		default :
 			return 0;
@@ -90,9 +90,9 @@ stream* get_top_of_stacked_stream(stacked_stream* sstrm, int operate_on)
 	switch(operate_on)
 	{
 		case READ_STREAMS :
-			return (stream*) get_top_of_stack(&(sstrm->read_streams));
+			return (stream*) get_back_of_arraylist(&(sstrm->read_streams));
 		case WRITE_STREAMS :
-			return (stream*) get_top_of_stack(&(sstrm->write_streams));
+			return (stream*) get_back_of_arraylist(&(sstrm->write_streams));
 		default :
 			return NULL;
 	}
@@ -103,9 +103,9 @@ stream* get_from_top_of_stacked_stream(stacked_stream* sstrm, unsigned int index
 	switch(operate_on)
 	{
 		case READ_STREAMS :
-			return (stream*) get_from_top_of_stack(&(sstrm->read_streams), index);
+			return (stream*) get_from_back_of_arraylist(&(sstrm->read_streams), index);
 		case WRITE_STREAMS :
-			return (stream*) get_from_top_of_stack(&(sstrm->write_streams), index);
+			return (stream*) get_from_back_of_arraylist(&(sstrm->write_streams), index);
 		default :
 			return NULL;
 	}
@@ -116,14 +116,14 @@ int pop_from_stacked_stream(stacked_stream* sstrm, int operate_on)
 	switch(operate_on)
 	{
 		case READ_STREAMS :
-			return pop_from_stack(&(sstrm->read_streams));
+			return pop_back_from_arraylist(&(sstrm->read_streams));
 		case WRITE_STREAMS :
-			return pop_from_stack(&(sstrm->write_streams));
+			return pop_back_from_arraylist(&(sstrm->write_streams));
 		case BOTH_STREAMS :
 		{
-			if(get_element_count_stack(&sstrm->read_streams) == 0 || get_element_count_stack(&sstrm->write_streams) == 0)
+			if(get_element_count_arraylist(&sstrm->read_streams) == 0 || get_element_count_arraylist(&sstrm->write_streams) == 0)
 				return 0;
-			return pop_from_stack(&(sstrm->read_streams)) && pop_from_stack(&(sstrm->write_streams));
+			return pop_back_from_arraylist(&(sstrm->read_streams)) && pop_back_from_arraylist(&(sstrm->write_streams));
 		}
 		default :
 			return 0;

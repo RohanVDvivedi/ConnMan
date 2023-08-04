@@ -2,7 +2,7 @@
 #define STACKED_STREAM_H
 
 #include<stream.h>
-#include<stack.h>
+#include<arraylist.h>
 
 /*
 	This structure is not actually a stream, It is a container of streams
@@ -13,8 +13,8 @@
 typedef struct stacked_stream stacked_stream;
 struct stacked_stream
 {
-	stack read_streams;
-	stack write_streams;
+	arraylist read_streams;
+	arraylist write_streams;
 };
 
 // below two functions only initialize and deinitialize the stacked stream

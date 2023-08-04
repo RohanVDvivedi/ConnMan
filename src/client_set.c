@@ -21,25 +21,25 @@ static void destroy_client_connection(client_set* cls, stream* strm)
 
 static int push_to_stream_queue(client_set* cls, stream* strm)
 {
-	if(is_full_queue(&(cls->active_clients_queue)))
-		expand_queue(&(cls->active_clients_queue));
+	if(is_full_arraylist(&(cls->active_clients_queue)))
+		expand_arraylist(&(cls->active_clients_queue));
 
-	return push_to_queue(&(cls->active_clients_queue), strm);
+	return push_back_to_arraylist(&(cls->active_clients_queue), strm);
 }
 
 static stream* pop_from_stream_queue(client_set* cls)
 {
 	stream* strm = NULL;
 
-	if(!is_empty_queue(&(cls->active_clients_queue)))
+	if(!is_empty_arraylist(&(cls->active_clients_queue)))
 	{
-		strm = (stream*) get_top_of_queue(&(cls->active_clients_queue));
-		pop_from_queue(&(cls->active_clients_queue));
+		strm = (stream*) get_front_of_arraylist(&(cls->active_clients_queue));
+		pop_front_from_arraylist(&(cls->active_clients_queue));
 	}
 
 	// attempt to shrink, if the capacity of the queue is more than 3 times the element count of the queue
-	if(get_capacity_queue(&(cls->active_clients_queue)) >= get_element_count_queue(&(cls->active_clients_queue)) * 3)
-		shrink_queue(&(cls->active_clients_queue));
+	if(get_capacity_arraylist(&(cls->active_clients_queue)) >= get_element_count_arraylist(&(cls->active_clients_queue)) * 3)
+		shrink_arraylist(&(cls->active_clients_queue));
 
 	return strm;
 }
@@ -63,7 +63,7 @@ client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, 
 
 	cls->curr_client_count = 0;
 
-	initialize_queue(&(cls->active_clients_queue), 0);
+	initialize_arraylist(&(cls->active_clients_queue), 0);
 
 	pthread_mutex_init(&(cls->client_set_lock), NULL);
 	
@@ -102,7 +102,7 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 
 			// we can not destroy the clients that are still in use
 
-			while(clients_to_destroy > 0 && !is_empty_queue(&(cls->active_clients_queue)))
+			while(clients_to_destroy > 0 && !is_empty_arraylist(&(cls->active_clients_queue)))
 			{
 				stream* strm = pop_from_stream_queue(cls);
 				destroy_client_connection(cls, strm);
@@ -150,7 +150,7 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 	pthread_mutex_lock(&(cls->client_set_lock));
 	
 	// wait until you are not allowed to create a client and the active client queue is empty
-	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_queue(&(cls->active_clients_queue)))
+	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_arraylist(&(cls->active_clients_queue)))
 	{
 		// if a valid timeout is passed, then perform a timed wait
 		if(timeout_in_secs > 0)
@@ -177,7 +177,7 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 	// 4. none of the above because we timed out and now we need to quit
 	if(cls->shutdown_called)
 		was_shutdown_called = 1;
-	else if(!is_empty_queue(&(cls->active_clients_queue)))
+	else if(!is_empty_arraylist(&(cls->active_clients_queue)))
 		strm = pop_from_stream_queue(cls);
 	else if(cls->curr_client_count < cls->max_client_count)
 	{
@@ -276,11 +276,11 @@ void shutdown_and_delete_client_set(client_set* cls)
 	pthread_cond_broadcast(&(cls->all_clients_in_use_at_max_clients));
 
 	// destroy all clients that are queued in the active_clients_queue
-	while(!is_empty_queue(&(cls->active_clients_queue)))
+	while(!is_empty_arraylist(&(cls->active_clients_queue)))
 	{
 		// here we do not use the "pop_from_stream_queue" inorder to avoid unnecessary calls to shrink the active_clients_queue
-		stream* strm = (stream*) get_top_of_queue(&(cls->active_clients_queue));
-		pop_from_queue(&(cls->active_clients_queue));
+		stream* strm = (stream*) get_front_of_arraylist(&(cls->active_clients_queue));
+		pop_front_from_arraylist(&(cls->active_clients_queue));
 
 		destroy_client_connection(cls, strm);
 
@@ -296,7 +296,7 @@ void shutdown_and_delete_client_set(client_set* cls)
 
 	// delete logic
 	cls->ssl_ctx = NULL;
-	deinitialize_queue(&(cls->active_clients_queue));
+	deinitialize_arraylist(&(cls->active_clients_queue));
 	pthread_mutex_destroy(&(cls->client_set_lock));
 	pthread_cond_destroy(&(cls->all_clients_in_use_at_max_clients));
 	pthread_cond_destroy(&(cls->client_count_reached_0_after_shutdown));

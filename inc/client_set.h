@@ -1,7 +1,7 @@
 #ifndef CLIENT_SET_H
 #define CLIENT_SET_H
 
-#include<queue.h>
+#include<arraylist.h>
 
 #include<client.h>
 
@@ -26,7 +26,7 @@ struct client_set
 	unsigned int curr_client_count;
 
 	// a queue of all the active client connection stream, excluding the reserved ones
-	queue active_clients_queue;
+	arraylist active_clients_queue;
 
 	// all the attributes of the client_set below the client_count_lock are thread-safed by this lock
 	pthread_mutex_t client_set_lock;

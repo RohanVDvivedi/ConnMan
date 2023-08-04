@@ -37,7 +37,7 @@ unsigned int get_stream_count_stacked_stream(stacked_stream* sstrm, int operate_
 // similarly it may also fail if the operate on is WRITE_STREAMS and the stream is not writable
 int push_to_stacked_stream(stacked_stream* sstrm, stream* strm, int operate_on);
 stream* get_top_of_stacked_stream(stacked_stream* sstrm, int operate_on);
-stream* get_nth_from_top_of_stacked_stream(stacked_stream* sstrm, unsigned int n, int operate_on);
+stream* get_from_top_of_stacked_stream(stacked_stream* sstrm, unsigned int index, int operate_on);
 int pop_from_stacked_stream(stacked_stream* sstrm, int operate_on);
 
 // below functions work just like the corresponding functions in stream

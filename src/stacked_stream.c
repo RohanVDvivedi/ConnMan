@@ -98,14 +98,14 @@ stream* get_top_of_stacked_stream(stacked_stream* sstrm, int operate_on)
 	}
 }
 
-stream* get_nth_from_top_of_stacked_stream(stacked_stream* sstrm, unsigned int n, int operate_on)
+stream* get_from_top_of_stacked_stream(stacked_stream* sstrm, unsigned int index, int operate_on)
 {
 	switch(operate_on)
 	{
 		case READ_STREAMS :
-			return (stream*) get_nth_from_top_of_stack(&(sstrm->read_streams), n);
+			return (stream*) get_from_top_of_stack(&(sstrm->read_streams), index);
 		case WRITE_STREAMS :
-			return (stream*) get_nth_from_top_of_stack(&(sstrm->write_streams), n);
+			return (stream*) get_from_top_of_stack(&(sstrm->write_streams), index);
 		default :
 			return NULL;
 	}

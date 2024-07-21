@@ -124,7 +124,7 @@ void snprintf_comm_address(dstring* res_append, comm_address* comm_addr_p)
 		}
 		case SOCK_STREAM :
 		{
-			snprintf_dstring(res_append, "udp://");
+			snprintf_dstring(res_append, "tcp://");
 			break;
 		}
 	}

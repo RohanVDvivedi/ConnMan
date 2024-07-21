@@ -130,7 +130,7 @@ void snprintf_comm_address(dstring* res_append, comm_address* comm_addr_p)
 	}
 
 	char dest[80];
-	snprintf_dstring(res_append, ":%s", inet_ntop(comm_addr_p->ADDRESS.sa_family, &(comm_addr_p->ADDRESS), dest, 80));
+	snprintf_dstring(res_append, "%s", inet_ntop(comm_addr_p->ADDRESS.sa_family, &(comm_addr_p->ADDRESS), dest, 80));
 
 	switch(comm_addr_p->ADDRESS.sa_family)
 	{

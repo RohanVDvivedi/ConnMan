@@ -75,13 +75,14 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 	return 1;
 }
 
-int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, int fd)
+int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hostname, int fd)
 {
 	SSL* ssl = SSL_new(ctx);
 	if(ssl == NULL)
 		return 0;
 
 	SSL_set_fd(ssl, fd);
+	SSL_set_tlsext_host_name(ssl, hostname);
 
 	SSL_set_connect_state(ssl);
 	int ret = SSL_connect(ssl);

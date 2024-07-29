@@ -1,5 +1,6 @@
  * check after initialize_* (cutlery calls) and malloc calls, and all get_new functions return NULL or failure but never kill the process
  * check especially for dpipe allocation failures (initialize_dpipe and resize_dpipe) in stream
+ * check for executor submit_job function, and handle its failure in ConnMan
 
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how

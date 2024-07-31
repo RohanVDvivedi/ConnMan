@@ -189,7 +189,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	if(!init_empty_dstring(&res, 0))
 	{
 		(*error) = ALLOCATION_FAILURE_IN_STREAM;
-		return 0;
+		return res;
 	}
 
 	// the limit set too low to even include until_str_size
@@ -252,7 +252,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 	if(!init_empty_dstring(&res, 0))
 	{
 		(*error) = ALLOCATION_FAILURE_IN_STREAM;
-		return 0;
+		return res;
 	}
 
 	int end_encountered = 0;

@@ -62,7 +62,7 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 	// start a cached thread pool executor
 	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
 	if(connection_executor == NULL)
-		return -1;
+		return -100;
 
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
@@ -81,7 +81,18 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
 		// here wait for 10 milliseconds to timeout job submission
-		submit_job_executor(connection_executor, stream_handler_wrapper, new_stream_handler_wrapper_input_params(conn_fd, ssl_ctx, additional_params, stream_handler), NULL, stream_handler_wrapper_on_cancellation_callback, 10 * 1000);
+		stream_handler_wrapper_input_params* handler_data = new_stream_handler_wrapper_input_params(conn_fd, ssl_ctx, additional_params, stream_handler);
+		if(handler_data == NULL)
+		{
+			close(conn_fd);
+			continue;
+		}
+		if(!submit_job_executor(connection_executor, stream_handler_wrapper, new_stream_handler_wrapper_input_params(conn_fd, ssl_ctx, additional_params, stream_handler), NULL, stream_handler_wrapper_on_cancellation_callback, 10 * 1000))
+		{
+			free(handler_data);
+			close(conn_fd);
+			continue;
+		}
 	}
 
 	shutdown_executor(connection_executor, 1);

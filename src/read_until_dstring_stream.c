@@ -75,8 +75,17 @@ static read_until_dstring_stream_context*  new_reading_until_dstring_stream_cont
 		return NULL;
 	sc->underlying_strm = underlying_strm;
 	sc->matched_length = 0;
-	initialize_dpipe(&(sc->cached_bytes), get_char_count_dstring(read_until_dstr));
-	sc->read_until_dstr = new_copy_dstring(read_until_dstr);
+	if(!initialize_dpipe(&(sc->cached_bytes), get_char_count_dstring(read_until_dstr)))
+	{
+		free(sc);
+		return NULL;
+	}
+	if(!init_copy_dstring(&(sc->read_until_dstr), read_until_dstr))
+	{
+		deinitialize_dpipe(&(sc->cached_bytes));
+		free(sc);
+		return NULL;
+	}
 	sc->read_until_dstr_spml = read_until_dstr_spml;
 	return sc;
 }

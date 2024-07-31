@@ -1,4 +1,5 @@
  * check after initialize_* (cutlery calls), return NULL or failure but never kill the process
+ * initialize_stream may fail, if initialize_dpipe calls fail, need to refactor every where
  * check especially for dpipe allocation failures (initialize_dpipe and resize_dpipe) in stream
 
 Far Future

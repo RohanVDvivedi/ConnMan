@@ -9,7 +9,12 @@
 
 size_t write_to_stream_formatted(stream* ws, int* error, const char* cstr_format, ...)
 {
-	dstring str = new_dstring(NULL, 0);
+	dstring str;
+	if(!init_empty_dstring(&str, 0))
+	{
+		(*error) = ALLOCATION_FAILURE_IN_STREAM;
+		return 0;
+	}
 
 	va_list var_args;
 	va_start(var_args, cstr_format);
@@ -180,7 +185,12 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 	const char* until_str_data = get_byte_array_dstring(until_str);
 	const cy_uint until_str_size = get_char_count_dstring(until_str);
 
-	dstring res = new_dstring(NULL, 0);
+	dstring res;
+	if(!init_empty_dstring(&res, 0))
+	{
+		(*error) = ALLOCATION_FAILURE_IN_STREAM;
+		return 0;
+	}
 
 	// the limit set too low to even include until_str_size
 	if(until_str_size > max_bytes_to_read)
@@ -238,7 +248,12 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 
 dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error)
 {
-	dstring res = new_dstring(NULL, 0);
+	dstring res;
+	if(!init_empty_dstring(&res, 0))
+	{
+		(*error) = ALLOCATION_FAILURE_IN_STREAM;
+		return 0;
+	}
 
 	int end_encountered = 0;
 

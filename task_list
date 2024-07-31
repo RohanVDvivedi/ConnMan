@@ -1,4 +1,4 @@
- * check after initialize_* (cutlery calls) and malloc calls, and all get_new functions return NULL or failure but never kill the process
+ * check after initialize_* (cutlery calls), return NULL or failure but never kill the process
  * check especially for dpipe allocation failures (initialize_dpipe and resize_dpipe) in stream
 
 Far Future

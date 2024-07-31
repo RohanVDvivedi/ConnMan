@@ -64,7 +64,7 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 
 		// shrink unread_data dpipe if it is larger than 4 times what it is required
 		if(get_capacity_dpipe(&(strm->unread_data)) > 3 * get_bytes_readable_in_dpipe(&(strm->unread_data)))
-			resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data)));
+			resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data))); // we do not care if this call fails
 	}
 	// else make a read call to the stream context
 	else if(data_size >= 128 && !strm->end_of_stream_received)
@@ -253,7 +253,7 @@ void flush_all_from_stream(stream* strm, int* error)
 	// flush all of the unflushed_data
 	flush_all_unflushed_data(strm, error);
 
-	resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data)));
+	resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data))); // we do not care if this call fails
 
 	if(*error)
 	{

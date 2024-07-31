@@ -82,6 +82,8 @@ size_t write_to_stream(stream* ws, const void* data, size_t data_size, int* erro
 // flushes all the written data using the write_to_stream_context function call on the underlying stream context
 void flush_all_from_stream(stream* ws, int* error);
 
+// to close the stream
+// you must close the stream even on an error, i.e. if it was initialized then you must close it
 void close_stream(stream* strm, int* error);
 
 void deinitialize_stream(stream* strm);

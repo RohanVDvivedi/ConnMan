@@ -75,6 +75,14 @@ static void close_stream_context(void* stream_context, int* error)
 	size_t data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
+	// we failed to allocate an intermediate buffer
+	if(data_out == NULL)
+	{
+		(*error) = ALLOCATION_FAILURE_IN_STREAM;
+		deflateEnd(&(stream_context_p->zlib_context));
+		return ;
+	}
+
 	(*error) = 0;
 
 	// loop while no error

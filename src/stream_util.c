@@ -211,8 +211,7 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 		if(!concatenate_char(&res, byte))
 		{
 			(*error) = ALLOCATION_FAILURE_IN_STREAM;
-			make_dstring_empty(&res);
-			shrink_dstring(&res);
+			deinit_dstring(&res);
 			return res;
 		}
 
@@ -234,13 +233,23 @@ dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, con
 		}
 	}
 
+	if((*error))
+	{
+		deinit_dstring(&res);
+		return res;
+	}
+
 	// if we couldn't match with until_str
 	if(match_length < until_str_size)
 	{
+		unread_dstring_from_stream(rs, &res, error);
 		if(!(*error))
-			unread_dstring_from_stream(rs, &res, error);
-		make_dstring_empty(&res);
-		shrink_dstring(&res);
+		{
+			make_dstring_empty(&res);
+			shrink_dstring(&res);
+		}
+		else
+			deinit_dstring(&res);
 	}
 
 	return res;
@@ -286,8 +295,7 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 			if(!concatenate_char(&res, byte))
 			{
 				(*error) = ALLOCATION_FAILURE_IN_STREAM;
-				make_dstring_empty(&res);
-				shrink_dstring(&res);
+				deinit_dstring(&res);
 				return res;
 			}
 		}
@@ -303,17 +311,21 @@ dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int 
 
 	if((*error))
 	{
-		make_dstring_empty(&res);
-		shrink_dstring(&res);
+		deinit_dstring(&res);
 		return res;
 	}
 
 	if(!end_encountered)
 	{
 		unread_dstring_from_stream(rs, &res, error);
-		make_dstring_empty(&res);
-		shrink_dstring(&res);
-		(*last_byte) = 257;
+		if(!(*error))
+		{
+			make_dstring_empty(&res);
+			shrink_dstring(&res);
+			(*last_byte) = 257;
+		}
+		else
+			deinit_dstring(&res);
 	}
 
 	return res;

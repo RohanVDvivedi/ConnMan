@@ -34,13 +34,14 @@ size_t skip_dstring_from_stream(stream* rs, const dstring* str_to_skip, int* err
 // on failure (if max_bytes_to_read is encountered OR the stream is closed) then an empty dstring will be returned
 // a direct failure results if the max_bytes_to_read is lesser than the size of until_str
 // in any case, no more than max_bytes_to_read bytes will be read
-// user is expected to call deinit_dstring on the returned dstring
+// user is expected to call deinit_dstring on the returned dstring, if an error is not returned, in the in-out parameter error
 // NOTE: suffix_prefix_match_lengths is the one computed by cutlery
 dstring read_until_dstring_from_stream(stream* rs, const dstring* until_str, const cy_uint* prefix_suffix_match_lengths_for_until_str, size_t max_bytes_to_read, int* error);
 
 // this function returns a dstring from stream rs, until any of an end char is encountered
 // unless max_bytes_to_read are encountered first, then an empty string is returned
 // last_byte will be set to the last byte read, and 256 for end of stream
+// user is expected to call deinit_dstring on the returned dstring, if an error is not returned, in the in-out parameter error
 dstring read_until_any_end_chars_from_stream(stream* rs, int (*is_end_char)(int is_end_of_stream, char c, const void* cntxt), const void* cntxt, int* last_byte, size_t max_bytes_to_read, int* error);
 
 // below are utility functions to directly use dstrings for writing and unreading bytes to stream

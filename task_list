@@ -1,6 +1,5 @@
  * check after initialize_* (cutlery calls), return NULL or failure but never kill the process
  * initialize_stream may fail, if initialize_dpipe calls fail, need to refactor every where
- * if stream_util returns a dstring, then deinit it in case of an error, refactor every where
 
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how

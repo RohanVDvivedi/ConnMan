@@ -43,5 +43,11 @@ int main()
 		printf("->> read <%.*s>\n", buffer_size, buffer);
 	}
 
+	close_stream(&ruds, &error);
+	deinitialize_stream(&ruds);
+
+	deinitialize_stream(&rs);
+	deinitialize_stream(&ws);
+
 	return 0;
 }

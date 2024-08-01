@@ -87,7 +87,7 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 			close(conn_fd);
 			continue;
 		}
-		if(!submit_job_executor(connection_executor, stream_handler_wrapper, new_stream_handler_wrapper_input_params(conn_fd, ssl_ctx, additional_params, stream_handler), NULL, stream_handler_wrapper_on_cancellation_callback, 10 * 1000))
+		if(!submit_job_executor(connection_executor, stream_handler_wrapper, handler_data, NULL, stream_handler_wrapper_on_cancellation_callback, 10 * 1000))
 		{
 			free(handler_data);
 			close(conn_fd);

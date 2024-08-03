@@ -49,6 +49,13 @@ int initialize_stream_for_fd(stream* strm, int fd)
 	if(stream_context == NULL)
 		return 0;
 	*stream_context = fd;
-	initialize_stream(strm, stream_context, read_from_fd, write_to_fd, close_stream_context_fd, destroy_stream_context_fd, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+
+	if(!initialize_stream(strm, stream_context, read_from_fd, write_to_fd, close_stream_context_fd, destroy_stream_context_fd, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT))
+	{
+		// since we never opened this stream_context (i.e. the fd), so we do not close it
+		destroy_stream_context_fd(stream_context);
+		return 0;
+	}
+
 	return 1;
 }

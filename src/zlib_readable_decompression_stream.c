@@ -104,7 +104,14 @@ int initialize_stream_for_zlib_decompression(stream* strm, stream* underlying_st
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, 0);
+	if(!initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, 0))
+	{
+		int error = 0;
+		close_stream_context(stream_context, &error);
+		destroy_stream_context(stream_context);
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -125,6 +132,13 @@ int initialize_stream_for_zlib_decompression2(stream* strm, stream* underlying_s
 		return 0;
 	}
 
-	initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, 0);
+	if(!initialize_stream(strm, stream_context, read_from_stream_decompressed, NULL, close_stream_context, destroy_stream_context, NULL, 0))
+	{
+		int error = 0;
+		close_stream_context(stream_context, &error);
+		destroy_stream_context(stream_context);
+		return 0;
+	}
+
 	return 1;
 }

@@ -70,7 +70,13 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 
 	SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 
-	initialize_stream(strm, ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	if(!initialize_stream(strm, ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT))
+	{
+		// you never openned the fd, so you should not close it
+		SSL_shutdown(ssl);
+		destroy_stream_context_ssl(ssl);
+		return 0;
+	}
 
 	return 1;
 }
@@ -94,7 +100,13 @@ int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hos
 
 	SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
 
-	initialize_stream(strm, ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	if(!initialize_stream(strm, ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT))
+	{
+		// you never openned the fd, so you should not close it
+		SSL_shutdown(ssl);
+		destroy_stream_context_ssl(ssl);
+		return 0;
+	}
 
 	return 1;
 }

@@ -32,6 +32,12 @@ int initialize_piped_stream(stream* strm, cy_uint max_capacity)
 	sync_pipe* stream_context = new_sync_pipe(max_capacity);
 	if(stream_context == NULL)
 		return 0;
-	initialize_stream(strm, stream_context, read_from_streamed_sync_pipe, write_to_streamed_sync_pipe, close_stream_context_sync_pipe, destroy_stream_context_sync_pipe, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT);
+	if(!initialize_stream(strm, stream_context, read_from_streamed_sync_pipe, write_to_streamed_sync_pipe, close_stream_context_sync_pipe, destroy_stream_context_sync_pipe, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT))
+	{
+		int error = 0;
+		close_stream_context_sync_pipe(stream_context, &error);
+		destroy_stream_context_sync_pipe(stream_context);
+		return 0;
+	}
 	return 1;
 }

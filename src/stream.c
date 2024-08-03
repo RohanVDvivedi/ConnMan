@@ -12,7 +12,7 @@
 // as per the assumptions, stream of ConnMan would work completely fine as long as size_t is lesser than or equal to cy_uint
 fail_build_on(sizeof(size_t) > sizeof(cy_uint))
 
-void initialize_stream(stream* strm, 
+int initialize_stream(stream* strm, 
 						void* stream_context,
 						size_t (*read_from_stream_context)(void* stream_context, void* data, size_t data_size, int* error),
 						size_t (*write_to_stream_context)(void* stream_context, const void* data, size_t data_size, int* error),
@@ -22,8 +22,13 @@ void initialize_stream(stream* strm,
 						size_t max_unflushed_bytes_count)
 {
 	strm->stream_context = stream_context;
-	initialize_dpipe(&(strm->unread_data), 0);
-	initialize_dpipe(&(strm->unflushed_data), 0);
+	if(!initialize_dpipe(&(strm->unread_data), 0))
+		return 0;
+	if(!initialize_dpipe(&(strm->unflushed_data), 0))
+	{
+		deinitialize_dpipe(&(strm->unread_data));
+		return 0;
+	}
 	strm->max_unflushed_bytes_count = max_unflushed_bytes_count;
 	strm->read_from_stream_context = read_from_stream_context;
 	strm->end_of_stream_received = 0;
@@ -32,6 +37,7 @@ void initialize_stream(stream* strm,
 	strm->destroy_stream_context = destroy_stream_context;
 	strm->post_flush_callback_stream_context = post_flush_callback_stream_context;
 	strm->last_error = 0;
+	return 0;
 }
 
 int is_readable_stream(stream* strm)

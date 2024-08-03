@@ -50,7 +50,8 @@ struct stream
 	int last_error;
 };
 
-void initialize_stream(
+// this function may fail only of the underlying dpipe-s could not be initialized
+int initialize_stream(
 						stream* strm, 
 						void* stream_context,
 						size_t (*read_from_stream_context)(void* stream_context, void* data, size_t data_size, int* error),

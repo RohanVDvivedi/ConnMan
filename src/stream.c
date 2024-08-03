@@ -37,7 +37,7 @@ int initialize_stream(stream* strm,
 	strm->destroy_stream_context = destroy_stream_context;
 	strm->post_flush_callback_stream_context = post_flush_callback_stream_context;
 	strm->last_error = 0;
-	return 0;
+	return 1;
 }
 
 int is_readable_stream(stream* strm)

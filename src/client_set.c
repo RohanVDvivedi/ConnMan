@@ -64,7 +64,11 @@ client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, 
 
 	cls->curr_client_count = 0;
 
-	initialize_arraylist(&(cls->active_clients_queue), 0);
+	if(!initialize_arraylist(&(cls->active_clients_queue), 0))
+	{
+		free(cls);
+		return NULL;
+	}
 
 	pthread_mutex_init(&(cls->client_set_lock), NULL);
 	

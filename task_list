@@ -1,4 +1,3 @@
- * check after initialize_* (cutlery calls), return NULL or failure but never kill the process, you may discard init calls for stream and dpipe from this checks
 
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how

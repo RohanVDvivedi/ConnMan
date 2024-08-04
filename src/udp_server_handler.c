@@ -25,10 +25,8 @@ int udp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 	while(jobs_left_to_be_created)
 	{
 		handler_wrapper_input_params* handler_data = new_handler_wrapper_input_params(listen_fd, additional_params, handler);
-		if(handler_data == NULL)
-			continue;
-		if(!submit_job_executor(message_executor, handler_wrapper, new_handler_wrapper_input_params(listen_fd, additional_params, handler), NULL, NULL, 10 * 1000))
-			continue;
+		if(handler_data != NULL && !submit_job_executor(message_executor, handler_wrapper, handler_data, NULL, NULL, 10 * 1000)) // if handler_data is created and the job failed to be submitted then we need to free handler_data
+			free(handler_data);
 		jobs_left_to_be_created--;
 	}
 

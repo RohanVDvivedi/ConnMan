@@ -1,4 +1,7 @@
 
+ * stream.c L109, L140 -> also attempt to resize with the exact size requirement, allowing its max size to 1 KB
+ * L212-214 -> if the buffering of the write fails, then fall back to the else case, this allows system to recover from resize_dpipe failures
+
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 2* look into building a framework for select, poll, epoll, aio and io_uring based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

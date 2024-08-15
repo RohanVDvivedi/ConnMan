@@ -1,6 +1,8 @@
 
  * stream.c L109, L140 -> also attempt to resize with the exact size requirement, allowing its max size to 1 KB
  * L212-214 -> if the buffering of the write fails, then fall back to the else case, this allows system to recover from resize_dpipe failures
+ * in read_from_stream -> first resize the unread_buffer to 1024 bytes, if it fails, then fall back to reading diurectly from the stream_context, i.e. recovering from failure to resize_dpipe
+   * if end_of_stream_received is set, then fail with early exit (bytes_read = 0), considering the unread_data is already empty
 
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how

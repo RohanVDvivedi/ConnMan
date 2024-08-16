@@ -221,8 +221,8 @@ size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* er
 		// we still have a fall back of write through to the stream_context, hence need not worry
 		if(get_bytes_writable_in_dpipe(&(strm->unflushed_data)) < data_size)
 		{
-			size_t additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
-			resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count));
+			(!resize_dpipe(&(strm->unflushed_data), min((get_bytes_readable_in_dpipe(&(strm->unflushed_data)) + data_size) * 2, strm->max_unflushed_bytes_count))) && // allocating in excess, double the required capacity
+			(!resize_dpipe(&(strm->unflushed_data), min(get_bytes_readable_in_dpipe(&(strm->unflushed_data)) + data_size, strm->max_unflushed_bytes_count)));			// allocating exact
 		}
 
 		size_t bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);

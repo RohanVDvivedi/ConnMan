@@ -195,33 +195,42 @@ size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* er
 		return 0;
 	}
 
+	// data_size == 0, nothing to write, then make this function a no-op
+	if(data_size == 0)
+		return 0;
+
 	// if the total unflushed_data_bytes count is lesser than max_unflushed_bytes_count, then just push these new data to unflushed_data pipe
 	if(data_size + get_bytes_readable_in_dpipe(&(strm->unflushed_data)) <= strm->max_unflushed_bytes_count)
 	{
+		// attempt a resize, if the unflushed_data buffer could not hold all of the new data
+		// it may fail to create adequate space because
+		// 1. the unflushed_data is already at max capacity of max_unflushed_bytes_count
+		// 2. memory allocation failure
+		// we still have a fall back of write through to the stream_context, hence need not worry
 		if(get_bytes_writable_in_dpipe(&(strm->unflushed_data)) < data_size)
 		{
 			size_t additional_space_requirement = data_size - get_bytes_writable_in_dpipe(&(strm->unflushed_data));
-			if(!resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count)))
-			{
-				// this is the case when an append to unflushed_data buffer has failed
-				(*error) = FAILED_TO_APPEND_TO_UNFLUSHED_BUFFER_IN_STREAM;
-				return 0;
-			}
+			resize_dpipe(&(strm->unflushed_data), min(get_capacity_dpipe(&(strm->unflushed_data)) + additional_space_requirement * 2, strm->max_unflushed_bytes_count));
 		}
 
 		size_t bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
 
-		return bytes_written;
+		// if the unflushed_data dpipe accepted the bytes, then we can exit with success
+		if(bytes_written != 0)
+			return bytes_written;
+
+		// On a failure to push data to the unflushed_data dpipe, we fallback to force write through below
 	}
-	else // we fallback to flush not just the unflushed_data, but also the new data that has arrived
+
+	// else, we fallback to flush not just the unflushed_data, but also the new data that has arrived
 	{
-		// flush the unflushed_data first
+		// flush all of the unflushed_data first
 		flush_all_unflushed_data(strm, error);
 
 		if(*error)
 		{
 			strm->last_error = (*error);
-			return 0; // no bytes from data written, hence we write a 0 here
+			return 0; // no bytes from data written, hence we return a 0 here
 		}
 
 		// then flush the new arriving data

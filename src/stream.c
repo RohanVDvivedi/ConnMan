@@ -151,7 +151,7 @@ void unread_from_stream(stream* strm, const void* data, size_t data_size, int* e
 		!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024) && // allocate excess of 1024 bytes if possible
 		!resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data)) + data_size))	// else try to allocate exact
 	{
-		// this is a case when there is not enough memeory in the unread_data buffer and the expansion failed
+		// this is a case when there is not enough memory in the unread_data buffer and the expansion failed
 		// so we return an error
 		(*error) = FAILED_TO_APPEND_TO_UNREAD_BUFFER_IN_STREAM;
 		return ;

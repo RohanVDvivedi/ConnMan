@@ -71,18 +71,19 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 		// shrink unread_data dpipe if it is larger than 4 times what it is required
 		if(get_capacity_dpipe(&(strm->unread_data)) > 3 * get_bytes_readable_in_dpipe(&(strm->unread_data)))
 			resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data))); // we do not care if this call fails
-	}
-	// else make a read call to the stream context
-	else if(data_size >= 128 && !strm->end_of_stream_received)
-	{
-		bytes_read = strm->read_from_stream_context(strm->stream_context, data, data_size, error);
 
-		// if it is EOF, then set the end_of_stream_received flag
-		if(bytes_read == 0 && (!(*error)))
-			strm->end_of_stream_received = 1;
+		// there can be no failure, reading data from unread_data
+		return bytes_read;
 	}
+
+	// if there was a end_of_stream_received, then we can not issue any more read calls
+	if(strm->end_of_stream_received)
+		return 0;
+
+	// if you have reached here, then the unread_data is empty and end_of_stream_received == 0
+
 	// if data_size to be read is lesser than 128 bytes then, we attempt to make a read for a kilo byte from the stream context and then cache remaining bytes
-	else if(!strm->end_of_stream_received)
+	if(data_size < 128)
 	{
 		// read a kilo byte worth of data, from the stream context and cache it
 		char data_cache_read[1024];
@@ -106,7 +107,8 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 			size_t cache_bytes_to_write_size = data_cache_read_size - bytes_read;
 
 			if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < cache_bytes_to_write_size &&
-				!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024))
+				!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size + 1024) && // allocate excess of 1024 bytes if possible
+				!resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data)) + cache_bytes_to_write_size))			// else try to allocate exact
 			{
 				// this is a case when there is not enough memeory in the unread_data buffer and the expansion failed
 				// so we return an error
@@ -116,6 +118,15 @@ size_t read_from_stream(stream* strm, void* data, size_t data_size, int* error)
 
 			write_to_dpipe(&(strm->unread_data), cache_bytes_to_write, cache_bytes_to_write_size, ALL_OR_NONE);
 		}
+	}
+	// else make a read call to the stream context
+	else
+	{
+		bytes_read = strm->read_from_stream_context(strm->stream_context, data, data_size, error);
+
+		// if it is EOF, then set the end_of_stream_received flag
+		if(bytes_read == 0 && (!(*error)))
+			strm->end_of_stream_received = 1;
 	}
 
 	// if an error occurred, then register it as the last one
@@ -137,7 +148,8 @@ void unread_from_stream(stream* strm, const void* data, size_t data_size, int* e
 	}
 
 	if(get_bytes_writable_in_dpipe(&(strm->unread_data)) < data_size &&
-		!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024))
+		!resize_dpipe(&(strm->unread_data), get_capacity_dpipe(&(strm->unread_data)) + data_size + 1024) && // allocate excess of 1024 bytes if possible
+		!resize_dpipe(&(strm->unread_data), get_bytes_readable_in_dpipe(&(strm->unread_data)) + data_size))			// else try to allocate exact
 	{
 		// this is a case when there is not enough memeory in the unread_data buffer and the expansion failed
 		// so we return an error

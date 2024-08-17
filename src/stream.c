@@ -233,10 +233,12 @@ size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* er
 		// 1. the unflushed_data is already at max capacity of max_unflushed_bytes_count
 		// 2. memory allocation failure
 		// we still have a fall back of write through to the stream_context, hence need not worry
-		if(get_bytes_writable_in_dpipe(&(strm->unflushed_data)) < data_size)
+		if((get_bytes_writable_in_dpipe(&(strm->unflushed_data)) < data_size) &&
+			!resize_dpipe(&(strm->unflushed_data), min((get_bytes_readable_in_dpipe(&(strm->unflushed_data)) + data_size) * 2, strm->max_unflushed_bytes_count)) && // allocating in excess, double the required capacity
+			!resize_dpipe(&(strm->unflushed_data), get_bytes_readable_in_dpipe(&(strm->unflushed_data)) + data_size))			// else allocating exact, which we know is <= max_unflushed_bytes_count
 		{
-			if(!resize_dpipe(&(strm->unflushed_data), min((get_bytes_readable_in_dpipe(&(strm->unflushed_data)) + data_size) * 2, strm->max_unflushed_bytes_count))) 	// allocating in excess, double the required capacity
-				resize_dpipe(&(strm->unflushed_data), min(get_bytes_readable_in_dpipe(&(strm->unflushed_data)) + data_size, strm->max_unflushed_bytes_count));			// else allocating exact
+			// if we could not make enough space in the unflushed_data dpipe, then we need to use FALLBACK
+			goto FALLBACK;
 		}
 
 		size_t bytes_written = write_to_dpipe(&(strm->unflushed_data), data, data_size, ALL_OR_NONE);
@@ -245,10 +247,11 @@ size_t write_to_stream(stream* strm, const void* data, size_t data_size, int* er
 		if(bytes_written != 0)
 			return bytes_written;
 
-		// On a failure to push data to the unflushed_data dpipe, we fallback to force write through below
+		// On a failure to push data to the unflushed_data dpipe, we fallback to force write-through below
 	}
 
 	// else, we fallback to flush not just the unflushed_data, but also the new data that has arrived
+	FALLBACK:;
 	{
 		// flush all of the unflushed_data first
 		flush_all_unflushed_data(strm, error);

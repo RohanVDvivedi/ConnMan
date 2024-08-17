@@ -1,6 +1,4 @@
 
- * in read_from_stream -> first resize the unread_buffer to 1024 bytes, if it fails, then fall back to reading directly from the stream_context, i.e. recovering from failure to resize_dpipe
-
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how
 2* look into building a framework for select, poll, epoll, aio and io_uring based non_blocking support for client or server, and how should an api look like, like storing a void* per file descriptor and etc

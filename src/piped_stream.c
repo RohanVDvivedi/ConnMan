@@ -2,14 +2,14 @@
 
 #include<sync_pipe.h>
 
-static size_t read_from_streamed_sync_pipe(void* stream_context, void* data, size_t data_size, int* error)
+static cy_uint read_from_streamed_sync_pipe(void* stream_context, void* data, cy_uint data_size, int* error)
 {
 	return read_from_sync_pipe(((sync_pipe*)stream_context), data, data_size);
 }
 
-static size_t write_to_streamed_sync_pipe(void* stream_context, const void* data, size_t data_size, int* error)
+static cy_uint write_to_streamed_sync_pipe(void* stream_context, const void* data, cy_uint data_size, int* error)
 {
-	size_t bytes_written = write_to_sync_pipe(((sync_pipe*)stream_context), data, data_size);
+	cy_uint bytes_written = write_to_sync_pipe(((sync_pipe*)stream_context), data, data_size);
 
 	if(bytes_written == 0)
 		*error = ERROR_PIPED_STREAM_CLOSED;

@@ -1,6 +1,6 @@
-#include<read_until_dstring_stream.h>
+#include<stream_to_read_until_dstring.h>
 
-#include<file_descriptor_stream.h>
+#include<stream_for_file_descriptor.h>
 
 #include<stdio.h>
 #include<stdlib.h>

@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<writable_dstring_stream.h>
+#include<stream_for_dstring.h>
 
 #include<dstring.h>
 #include<string.h>
@@ -26,7 +26,7 @@ int main()
 {
 	stream strm;
 	dstring str; init_empty_dstring(&str, 0);
-	initialize_writable_dstring_stream(&strm, &str);
+	initialize_dstring_stream(&strm, &str);
 
 	int error;
 

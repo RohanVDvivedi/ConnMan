@@ -4,6 +4,8 @@
 
 #include<stdlib.h>
 
+#include<cutlery_math.h>
+
 #define OUT_CHUNK_SIZE min(4096, min(INT_MAX, CY_UINT_MAX))
 
 static cy_uint write_to_stream_compressed(void* stream_context, const void* data, cy_uint data_size, int* error)

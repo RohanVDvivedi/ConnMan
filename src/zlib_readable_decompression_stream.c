@@ -6,10 +6,9 @@
 
 #include<cutlery_math.h>
 
-// this must be lesser than both SIZE_MAX and INT_MAX
-#define IN_CHUNK_SIZE 4096
+#define IN_CHUNK_SIZE min(MAX_UNREAD_BYTES_COUNT/2, INT_MAX)
 
-static size_t read_from_stream_decompressed(void* stream_context, void* data, size_t data_size, int* error)
+static cy_uint read_from_stream_decompressed(void* stream_context, void* data, cy_uint data_size, int* error)
 {
 	// default error is no error
 	(*error) = 0;
@@ -20,7 +19,7 @@ static size_t read_from_stream_decompressed(void* stream_context, void* data, si
 	stream_context_p->zlib_context.next_out = (Bytef *) data;
 	stream_context_p->zlib_context.avail_out = min(data_size, INT_MAX);
 
-	size_t data_in_size = IN_CHUNK_SIZE;
+	cy_uint data_in_size = IN_CHUNK_SIZE;
 	char* data_in = malloc(sizeof(char) * data_in_size);
 
 	// we failed to allocate an intermediate buffer
@@ -34,10 +33,10 @@ static size_t read_from_stream_decompressed(void* stream_context, void* data, si
 	{
 		// perform read from underlying stream
 		int uerror = 0;
-		size_t data_in_bytes_read = read_from_stream(stream_context_p->underlying_strm, data_in, data_in_size, &uerror);
+		cy_uint data_in_bytes_read = read_from_stream(stream_context_p->underlying_strm, data_in, data_in_size, &uerror);
 		if(uerror)
 		{
-			uerror = UNDERLYING_STREAM_ERROR;
+			(*error) = UNDERLYING_STREAM_ERROR;
 			break;
 		}
 
@@ -49,7 +48,7 @@ static size_t read_from_stream_decompressed(void* stream_context, void* data, si
 
 		// decompress
 		int ret = inflate(&(stream_context_p->zlib_context), flush);
-		size_t data_in_bytes_consumed = data_in_bytes_read - stream_context_p->zlib_context.avail_in;
+		cy_uint data_in_bytes_consumed = data_in_bytes_read - stream_context_p->zlib_context.avail_in;
 		if(ret == Z_STREAM_ERROR || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR)
 		{
 			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in, &uerror);
@@ -61,7 +60,7 @@ static size_t read_from_stream_decompressed(void* stream_context, void* data, si
 		{
 			unread_from_stream(stream_context_p->underlying_strm, data_in + data_in_bytes_consumed, stream_context_p->zlib_context.avail_in, &uerror);
 			if(uerror)
-				uerror = UNDERLYING_STREAM_ERROR;
+				(*error) = UNDERLYING_STREAM_ERROR;
 			break;
 		}
 

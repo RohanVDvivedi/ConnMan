@@ -4,10 +4,9 @@
 
 #include<stdlib.h>
 
-// must be lesser than SIZE_MAX and INT_MAX
-#define OUT_CHUNK_SIZE 4096
+#define OUT_CHUNK_SIZE min(4096, min(INT_MAX, CY_UINT_MAX))
 
-static size_t write_to_stream_compressed(void* stream_context, const void* data, size_t data_size, int* error)
+static cy_uint write_to_stream_compressed(void* stream_context, const void* data, cy_uint data_size, int* error)
 {
 	// default error is no error
 	(*error) = 0;
@@ -18,7 +17,7 @@ static size_t write_to_stream_compressed(void* stream_context, const void* data,
 	stream_context_p->zlib_context.next_in = (z_const Bytef *) data;
 	stream_context_p->zlib_context.avail_in = data_size;
 
-	size_t data_out_size = OUT_CHUNK_SIZE;
+	cy_uint data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
 	// we failed to allocate an intermediate buffer
@@ -44,7 +43,7 @@ static size_t write_to_stream_compressed(void* stream_context, const void* data,
 		}
 
 		// if there are any bytes output from zlib then write then to underlying stream, if no bytes produced then quit this loop
-		size_t bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
+		cy_uint bytes_to_write_to_underlying_strm = data_out_size - stream_context_p->zlib_context.avail_out;
 		if(bytes_to_write_to_underlying_strm > 0)
 		{
 			int u_error = 0;
@@ -72,7 +71,7 @@ static void close_stream_context(void* stream_context, int* error)
 	stream_context_p->zlib_context.next_in = Z_NULL;
 	stream_context_p->zlib_context.avail_in = 0;
 
-	size_t data_out_size = OUT_CHUNK_SIZE;
+	cy_uint data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
 
 	// we failed to allocate an intermediate buffer

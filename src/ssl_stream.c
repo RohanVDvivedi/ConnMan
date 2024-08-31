@@ -5,7 +5,7 @@
 
 #include<cutlery_math.h>
 
-static size_t read_from_ssl(void* ssl_sc_vp, void* data, size_t data_size, int* error)
+static cy_uint read_from_ssl(void* ssl_sc_vp, void* data, cy_uint data_size, int* error)
 {
 	SSL* ssl = ssl_sc_vp;
 
@@ -18,7 +18,7 @@ static size_t read_from_ssl(void* ssl_sc_vp, void* data, size_t data_size, int* 
 	return ret;
 }
 
-static size_t write_to_ssl(void* ssl_sc_vp, const void* data, size_t data_size, int* error)
+static cy_uint write_to_ssl(void* ssl_sc_vp, const void* data, cy_uint data_size, int* error)
 {
 	SSL* ssl = ssl_sc_vp;
 

@@ -7,6 +7,7 @@ Additionally, it provides a stream interface to work with tcp sockets, along wit
 ## Setup instructions
 **Install dependencies :**
  * [Cutlery](https://github.com/RohanVDvivedi/Cutlery)
+ * [PosixUtils](https://github.com/RohanVDvivedi/PosixUtils)
  * [BoomPar](https://github.com/RohanVDvivedi/BoomPar)
  * [openssl](https://github.com/openssl/openssl)  ($ sudo apt install libssl-dev)
  * [zlib](https://github.com/madler/zlib)      ($ sudo apt install zlib1g-dev)

@@ -1,5 +1,7 @@
 #include<client_set.h>
 
+#include<pthread_cond_utils.h>
+
 static stream* create_client_connection(client_set* cls)
 {
 	stream* strm = malloc(sizeof(stream));
@@ -72,8 +74,8 @@ client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, 
 
 	pthread_mutex_init(&(cls->client_set_lock), NULL);
 	
-	pthread_cond_init(&(cls->all_clients_in_use_at_max_clients), NULL);
-	pthread_cond_init(&(cls->client_count_reached_0_after_shutdown), NULL);
+	pthread_cond_init_with_monotonic_clock(&(cls->all_clients_in_use_at_max_clients));
+	pthread_cond_init_with_monotonic_clock(&(cls->client_count_reached_0_after_shutdown));
 
 	cls->shutdown_called = 0;
 
@@ -155,24 +157,16 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 	pthread_mutex_lock(&(cls->client_set_lock));
 	
 	// wait until you are not allowed to create a client and the active client queue is empty
-	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_arraylist(&(cls->active_clients_queue)))
+	int wait_error = 0;
+	uint64_t timeout_in_secs_LEFT = timeout_in_secs;
+	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_arraylist(&(cls->active_clients_queue)) && !wait_error)
 	{
 		// if a valid timeout is passed, then perform a timed wait
 		if(timeout_in_secs > 0)
-		{
-			struct timespec current_time;
-			clock_gettime(CLOCK_REALTIME, &current_time);
-
-			struct timespec wait_till = current_time;
-			wait_till.tv_sec += timeout_in_secs;
-
-			int timed_out = pthread_cond_timedwait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &wait_till);
-			if(timed_out)
-				break;
-		}
+			wait_error = pthread_cond_timedwait_for_seconds(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &timeout_in_secs_LEFT);
 		// else perform a conventional untimed wait
 		else
-			pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
+			wait_error = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
 	}
 
 	// upon exit from the loop, we are in any of the following 3 states

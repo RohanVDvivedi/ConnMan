@@ -89,8 +89,6 @@ install : uninstall all
 	#${MK} ${DOWNLOAD_DIR}/bin
 	#${CP} ${BIN_DIR}/${BINARY} ${DOWNLOAD_DIR}/bin
 
-PUBLIC_HEADERS_TO_UNINSTALL=$(patsubst %.h, ${DOWNLOAD_DIR}/include/%.h, ${PUBLIC_HEADERS})
-
 # removes what was installed
 uninstall : 
 	${RM} -r ${DOWNLOAD_DIR}/include/${PROJECT_NAME}

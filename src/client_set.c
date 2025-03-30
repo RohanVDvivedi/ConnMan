@@ -1,6 +1,6 @@
-#include<client_set.h>
+#include<connman/client_set.h>
 
-#include<pthread_cond_utils.h>
+#include<posixutils/pthread_cond_utils.h>
 
 static stream* create_client_connection(client_set* cls)
 {

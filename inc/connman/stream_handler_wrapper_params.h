@@ -3,7 +3,7 @@
 
 #include<stdlib.h> // malloc and free
 
-#include<ssl_stream.h>
+#include<connman/ssl_stream.h>
 
 typedef struct stream_handler_wrapper_input_params stream_handler_wrapper_input_params;
 struct stream_handler_wrapper_input_params

@@ -26,23 +26,23 @@ Additionally, it provides a stream interface to work with tcp sockets, along wit
 ## Using The library
  * add `-lconnman -lboompar -lpthread -lcutlery -lssl -lcrypto -lz` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
-   * `#include<server.h>`
-   * `#include<client.h>`
-   * `#include<client_set.h>`
-   * `#include<comm_address.h>`
-   * `#include<ssl_ctx_helper.h>`
+   * `#include<connman/server.h>`
+   * `#include<connman/client.h>`
+   * `#include<connman/client_set.h>`
+   * `#include<connman/comm_address.h>`
+   * `#include<connman/ssl_ctx_helper.h>`
       Additionally the library also provides the following stream apis, to create appropriate streams as per use.
-   * `#include<file_descriptor_stream.h>`
-   * `#include<piped_stream.h>`
-   * `#include<ssl_stream.h>`
-   * `#include<writable_dstring_stream.h>`
-   * `#include<zlib_readable_decompression_stream.h>`
-   * `#include<zlib_writable_compression_stream.h>`
-   * `#include<read_until_dstring_stream.h>`
+   * `#include<connman/file_descriptor_stream.h>`
+   * `#include<connman/piped_stream.h>`
+   * `#include<connman/ssl_stream.h>`
+   * `#include<connman/writable_dstring_stream.h>`
+   * `#include<connman/zlib_readable_decompression_stream.h>`
+   * `#include<connman/zlib_writable_compression_stream.h>`
+   * `#include<connman/read_until_dstring_stream.h>`
       Below is the list of headers that contain utility functions that can be used with the created streams.
-   * `#include<stream_util.h>`
+   * `#include<connman/stream_util.h>`
       Below header container allows you to manage multiple streams each chained with an underlying stream managed as a stack.
-   * `#include<stacked_stream.h>`
+   * `#include<connman/stacked_stream.h>`
 
 ## Instructions for uninstalling library
 

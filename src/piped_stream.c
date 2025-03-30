@@ -1,6 +1,6 @@
-#include<piped_stream.h>
+#include<connman/piped_stream.h>
 
-#include<sync_pipe.h>
+#include<boompar/sync_pipe.h>
 
 static cy_uint read_from_streamed_sync_pipe(void* stream_context, void* data, cy_uint data_size, int* error)
 {

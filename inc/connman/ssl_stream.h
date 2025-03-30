@@ -1,7 +1,7 @@
 #ifndef SSL_STREAM_H
 #define SSL_STREAM_H
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
 #include<openssl/ssl.h>
 

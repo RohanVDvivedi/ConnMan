@@ -1,9 +1,9 @@
-#include<ssl_stream.h>
+#include<connman/ssl_stream.h>
 
 #include<unistd.h>
 #include<errno.h>
 
-#include<cutlery_math.h>
+#include<cutlery/cutlery_math.h>
 
 static cy_uint read_from_ssl(void* ssl_sc_vp, void* data, cy_uint data_size, int* error)
 {

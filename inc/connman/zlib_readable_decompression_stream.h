@@ -1,7 +1,7 @@
 #ifndef ZLIB_READABLE_DECOMPRESSION_STREAM_H
 #define ZLIB_READABLE_DECOMPRESSION_STREAM_H
 
-#include<stream.h>
+#include<cutlery/stream.h>
 #include<zlib.h>
 
 // 0 indicates failute, 1 implies success

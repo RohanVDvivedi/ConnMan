@@ -1,8 +1,8 @@
 #ifndef STACKED_STREAM_H
 #define STACKED_STREAM_H
 
-#include<stream.h>
-#include<arraylist.h>
+#include<cutlery/stream.h>
+#include<cutlery/arraylist.h>
 
 /*
 	This structure is not actually a stream, It is a container of streams
@@ -51,6 +51,6 @@ void unread_from_stacked_stream(stacked_stream* sstrm, const void* data, cy_uint
 cy_uint write_to_stacked_stream(stacked_stream* sstrm, const void* data, cy_uint data_size, int* error);
 void flush_all_from_stacked_stream(stacked_stream* sstrm, int* error);
 
-#include<stacked_stream_util.h>
+#include<connman/stacked_stream_util.h>
 
 #endif

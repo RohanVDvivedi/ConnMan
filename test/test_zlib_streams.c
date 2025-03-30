@@ -1,8 +1,8 @@
-#include<zlib_readable_decompression_stream.h>
-#include<zlib_writable_compression_stream.h>
-#include<piped_stream.h>
+#include<connman/zlib_readable_decompression_stream.h>
+#include<connman/zlib_writable_compression_stream.h>
+#include<connman/piped_stream.h>
 
-#include<executor.h>
+#include<boompar/executor.h>
 
 #include<stdio.h>
 #include<string.h>

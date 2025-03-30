@@ -1,9 +1,9 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include<comm_address.h>
+#include<connman/comm_address.h>
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
 #include<openssl/ssl.h>
 

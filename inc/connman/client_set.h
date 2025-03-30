@@ -1,9 +1,9 @@
 #ifndef CLIENT_SET_H
 #define CLIENT_SET_H
 
-#include<arraylist.h>
+#include<cutlery/arraylist.h>
 
-#include<client.h>
+#include<connman/client.h>
 
 #include<pthread.h>
 

@@ -1,10 +1,10 @@
-#include<zlib_readable_decompression_stream.h>
+#include<connman/zlib_readable_decompression_stream.h>
 
-#include<zlib_stream_context.h>
+#include<connman/zlib_stream_context.h>
 
 #include<stdlib.h>
 
-#include<cutlery_math.h>
+#include<cutlery/cutlery_math.h>
 
 #define IN_CHUNK_SIZE min(MAX_UNREAD_BYTES_COUNT/2, INT_MAX)
 

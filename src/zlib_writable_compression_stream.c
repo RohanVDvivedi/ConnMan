@@ -1,10 +1,10 @@
-#include<zlib_writable_compression_stream.h>
+#include<connman/zlib_writable_compression_stream.h>
 
-#include<zlib_stream_context.h>
+#include<connman/zlib_stream_context.h>
 
 #include<stdlib.h>
 
-#include<cutlery_math.h>
+#include<cutlery/cutlery_math.h>
 
 #define OUT_CHUNK_SIZE min(4096, min(INT_MAX, CY_UINT_MAX))
 

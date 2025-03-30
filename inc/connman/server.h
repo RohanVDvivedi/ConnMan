@@ -1,9 +1,9 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include<comm_address.h>
+#include<connman/comm_address.h>
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
 #include<openssl/ssl.h>
 

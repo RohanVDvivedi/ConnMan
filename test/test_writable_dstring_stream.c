@@ -1,9 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<stream_for_dstring.h>
+#include<cutlery/stream_for_dstring.h>
 
-#include<dstring.h>
+#include<cutlery/dstring.h>
 #include<string.h>
 
 char* input[10] = {

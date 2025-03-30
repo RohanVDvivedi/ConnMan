@@ -1,6 +1,6 @@
-#include<piped_stream.h>
+#include<connman/piped_stream.h>
 
-#include<executor.h>
+#include<boompar/executor.h>
 
 #include<stdio.h>
 #include<stdlib.h>

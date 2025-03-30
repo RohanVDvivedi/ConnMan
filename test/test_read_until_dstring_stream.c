@@ -1,6 +1,6 @@
-#include<stream_to_read_until_dstring.h>
+#include<cutlery/stream_to_read_until_dstring.h>
 
-#include<stream_for_file_descriptor.h>
+#include<cutlery/stream_for_file_descriptor.h>
 
 #include<stdio.h>
 #include<stdlib.h>

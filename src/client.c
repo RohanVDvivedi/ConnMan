@@ -1,7 +1,7 @@
-#include<client.h>
+#include<connman/client.h>
 
-#include<ssl_stream.h>
-#include<stream_for_file_descriptor.h>
+#include<connman/ssl_stream.h>
+#include<cutlery/stream_for_file_descriptor.h>
 
 #include<sys/socket.h>
 #include<unistd.h>

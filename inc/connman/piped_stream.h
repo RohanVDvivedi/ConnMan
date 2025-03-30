@@ -1,7 +1,7 @@
 #ifndef PIPED_STREAM_H
 #define PIPED_STREAM_H
 
-#include<stream.h>
+#include<cutlery/stream.h>
 
 // it internally uses a sync_dpipe to store the data
 

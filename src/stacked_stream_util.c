@@ -14,3 +14,13 @@ void close_deinitialize_free_all_from_stacked_stream(stacked_stream* sstrm, int 
 		free(strm);
 	}
 }
+
+void close_deinitialize_free_all_from_WRITER_stacked_stream(stacked_stream* sstrm)
+{
+	close_deinitialize_free_all_from_stacked_stream(sstrm, WRITE_STREAMS);
+}
+
+void close_deinitialize_free_all_from_READER_stacked_stream(stacked_stream* sstrm)
+{
+	close_deinitialize_free_all_from_stacked_stream(sstrm, READ_STREAMS);
+}

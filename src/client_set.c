@@ -148,7 +148,7 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 	return reset_max_clients_success;
 }
 
-stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
+stream* reserve_client(client_set* cls, uint64_t timeout_in_secs)
 {
 	stream* strm = NULL;
 

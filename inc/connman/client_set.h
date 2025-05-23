@@ -7,9 +7,6 @@
 
 #include<pthread.h>
 
-// wait for this many microseconds until a connection is available to you
-#define TIMEOUT_FOR_RESERVATION 100*1000
-
 typedef struct client_set client_set;
 struct client_set
 {
@@ -19,6 +16,7 @@ struct client_set
 	// ssl_ctx for all client connections
 	SSL_CTX* ssl_ctx;
 	const char* hostname;
+	uint64_t socket_timeout_in_milliseconds;
 
 	// the maximum client connection count that this client_set will hold
 	unsigned int max_client_count;
@@ -44,7 +42,7 @@ struct client_set
 
 // construct a new client_set connecting to the server_addr_p, each of it will be a ssl stream if ssl_ctx is not NULL
 // This function fails with a NULL on an allocation error OR server_addr_p == NULL OR max_clients == 0
-client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, const char* hostname, unsigned int max_clients);
+client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, const char* hostname, uint64_t socket_timeout_in_milliseconds, unsigned int max_clients);
 
 // returns the max_clients count that is set on the client_set
 unsigned int get_max_clients(client_set* cls);

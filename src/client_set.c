@@ -5,7 +5,7 @@
 static stream* create_client_connection(client_set* cls)
 {
 	stream* strm = malloc(sizeof(stream));
-	if(strm != NULL && make_connection_stream(strm, &(cls->server_addr), cls->hostname, NULL, cls->ssl_ctx) == -1)
+	if(strm != NULL && make_connection_stream(strm, &(cls->server_addr), cls->hostname, NULL, cls->socket_timeout_in_milliseconds, cls->ssl_ctx) == -1)
 	{
 		free(strm);
 		strm = NULL;
@@ -46,7 +46,7 @@ static stream* pop_from_stream_queue(client_set* cls)
 	return strm;
 }
 
-client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, const char* hostname, unsigned int max_clients)
+client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, const char* hostname, uint64_t socket_timeout_in_milliseconds, unsigned int max_clients)
 {
 	// fail if server_addr_p == NULL OR max_clients = 0
 	if(server_addr_p == NULL || max_clients == 0)
@@ -59,6 +59,7 @@ client_set* new_client_set(const comm_address* server_addr_p, SSL_CTX* ssl_ctx, 
 	cls->server_addr = *server_addr_p;
 	cls->ssl_ctx = ssl_ctx;
 	cls->hostname = hostname;
+	cls->socket_timeout_in_milliseconds = socket_timeout_in_milliseconds;
 
 	if(max_clients == 0)
 		max_clients = 1;

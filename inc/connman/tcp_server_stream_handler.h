@@ -1,6 +1,8 @@
 #ifndef TCP_SERVER_STREAM_HANDLER_H
 #define TCP_SERVER_STREAM_HANDLER_H
 
+#include<stdint.h>
+
 #include<cutlery/stream.h>
 
 #include<openssl/ssl.h>

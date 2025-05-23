@@ -4,6 +4,8 @@
 
 #include<boompar/executor.h>
 
+#include<posixutils/pthread_cond_utils.h>
+
 #include<netinet/in.h>
 #include<unistd.h>
 #include<errno.h>

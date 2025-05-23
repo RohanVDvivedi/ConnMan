@@ -20,7 +20,7 @@ void* transact_with_server(void* param)
 	int error;
 
 	// acquire a client stream from the client set cls
-	stream* cli_strm = reserve_client(cls, 0);
+	stream* cli_strm = reserve_client(cls, BLOCKING);
 
 	if(cli_strm == NULL)
 	{

@@ -163,11 +163,10 @@ stream* reserve_client(client_set* cls, unsigned int timeout_in_secs)
 	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_arraylist(&(cls->active_clients_queue)) && !wait_error)
 	{
 		// if a valid timeout is passed, then perform a timed wait
-		if(timeout_in_secs > 0)
-			wait_error = pthread_cond_timedwait_for_seconds(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &timeout_in_secs_LEFT);
-		// else perform a conventional untimed wait
-		else
+		if(timeout_in_secs == BLOCKING)
 			wait_error = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
+		else
+			wait_error = pthread_cond_timedwait_for_seconds(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &timeout_in_secs_LEFT);
 	}
 
 	// upon exit from the loop, we are in any of the following 3 states

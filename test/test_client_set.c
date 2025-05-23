@@ -96,7 +96,7 @@ int main()
 
 	// enqueue all the jobs
 	for(int i = 0; i < sizeof(inputs)/sizeof(inputs[0]); i++)
-		submit_job_executor(transaction_executor, transact_with_server, inputs[i], NULL, NULL, 0);
+		submit_job_executor(transaction_executor, transact_with_server, inputs[i], NULL, NULL, BLOCKING);
 
 	// shutdown, wait for shutdown and delete the job executor
 	shutdown_executor(transaction_executor, 0);

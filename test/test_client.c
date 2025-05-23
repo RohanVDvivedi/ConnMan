@@ -16,7 +16,7 @@ int main()
 	cgp = new_comm_address_tcp_ipv6("::1", 6969);
 	//cgp = new_comm_address_udp_ipv6("::1", 6969);
 
-	int conn_fd = make_connection(&cgp, NULL);
+	int conn_fd = make_connection(&cgp, NULL, 3000); // 3 second timeout
 
 	connection_handler(conn_fd);
 

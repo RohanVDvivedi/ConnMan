@@ -82,7 +82,7 @@ int main()
 	ssl_ctx = get_ssl_ctx_for_client("./cert.pem", "./key.pem");
 
 	// create a client set
-	cls = new_client_set(&cgp, ssl_ctx, "", 2);
+	cls = new_client_set(&cgp, ssl_ctx, "", 3000, 2); // timeout of 3 seconds
 
 	// intialize parameter to all the jobs
 	char* inputs[] = {

@@ -34,7 +34,7 @@ int main()
 	ssl_lib_init();
 	ssl_ctx = get_ssl_ctx_for_server("./cert.pem", "./key.pem");
 
-	serve_using_stream_handlers(&cgp, NULL, connection_stream_handler, 10, ssl_ctx, &listen_fd);
+	serve_using_stream_handlers(&cgp, NULL, connection_stream_handler, 10, ssl_ctx, 3000, &listen_fd); // timeout of 3 seconds
 
 	if(ssl_ctx != NULL)
 		destroy_ssl_ctx(ssl_ctx);

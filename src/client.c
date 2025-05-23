@@ -48,7 +48,7 @@ int make_connection(comm_address* server_addr_p, comm_address* client_addr_p, ui
 	return fd;
 }
 
-int make_connection_stream(stream* strm, comm_address* server_addr_p, const char* hostname, comm_address* client_addr_p, uint64_t timeout_in_milliseconds, SSL_CTX* ssl_ctx)
+int make_connection_stream(stream* strm, comm_address* server_addr_p, const char* hostname, comm_address* client_addr_p, SSL_CTX* ssl_ctx, uint64_t timeout_in_milliseconds)
 {
 	int fd = make_connection(server_addr_p, client_addr_p, timeout_in_milliseconds);
 	if(fd == -1)

@@ -30,7 +30,7 @@ static void handler_wrapper_on_cancellation_callback(void* handler_wrapper_input
 	free(handler_data);
 }
 
-int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count)
+int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, uint64_t timeout_in_milliseconds)
 {
 	// phase 3
 	// listenning on the socket file discriptor 
@@ -56,6 +56,13 @@ int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 				break;
 		}
 		int conn_fd = err;
+
+		if(timeout_in_milliseconds != BLOCKING && timeout_in_milliseconds != NON_BLOCKING)
+		{
+			struct timeval tv = timespec_to_timeval(timespec_from_milliseconds(timeout_in_milliseconds));
+			setsockopt(conn_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+			setsockopt(conn_fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+		}
 
 		// serve the connection that has been accepted, submit it to executor, to assign a thread to it
 		// here wait for 10 milliseconds to timeout job submission

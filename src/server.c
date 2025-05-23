@@ -36,7 +36,7 @@ static int make_server_ready_to_listen(comm_address* server_addr_p)
 
 #define DEFAULT_MAX_THREAD_COUNT 8
 
-int serve_using_handlers(comm_address* server_addr_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, volatile int* listen_fd_p)
+int serve_using_handlers(comm_address* server_addr_p, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count, uint64_t timeout_in_milliseconds, volatile int* listen_fd_p)
 {
 	if(thread_count == 0)
 		thread_count = DEFAULT_MAX_THREAD_COUNT;
@@ -50,7 +50,7 @@ int serve_using_handlers(comm_address* server_addr_p, void* additional_params, v
 
 	int err = -1;
 	if(server_addr_p->PROTOCOL == SOCK_STREAM)			// tcp
-		err = tcp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
+		err = tcp_server_handler(*listen_fd_p, additional_params, handler, thread_count, timeout_in_milliseconds);
 	else if(server_addr_p->PROTOCOL == SOCK_DGRAM)		// udp
 		err = udp_server_handler(*listen_fd_p, additional_params, handler, thread_count);
 
@@ -58,7 +58,7 @@ int serve_using_handlers(comm_address* server_addr_p, void* additional_params, v
 	return err;
 }
 
-int serve_using_stream_handlers(comm_address* server_addr_p, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, volatile int* listen_fd_p)
+int serve_using_stream_handlers(comm_address* server_addr_p, void* additional_params, void (*stream_handler)(stream* strm, void* additional_params), unsigned int thread_count, SSL_CTX* ssl_ctx, uint64_t timeout_in_milliseconds, volatile int* listen_fd_p)
 {
 	if(thread_count == 0)
 		thread_count = DEFAULT_MAX_THREAD_COUNT;
@@ -70,7 +70,7 @@ int serve_using_stream_handlers(comm_address* server_addr_p, void* additional_pa
 	if(*listen_fd_p < 0)
 		return *listen_fd_p;
 
-	int err = tcp_server_stream_handler(*listen_fd_p, additional_params, stream_handler, thread_count, ssl_ctx);
+	int err = tcp_server_stream_handler(*listen_fd_p, additional_params, stream_handler, thread_count, ssl_ctx, timeout_in_milliseconds);
 
 	close(*listen_fd_p);
 	return err;

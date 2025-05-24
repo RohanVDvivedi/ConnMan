@@ -26,13 +26,13 @@ int main()
 {
 	signal(SIGINT, intHandler);
 
-	//cgp = new_comm_address_tcp_ipv4("127.0.0.1", 6969);
-	cgp = new_comm_address_tcp_ipv6("::1", 6969);
+	//cgp = new_comm_address_tcp_ipv4(NULL, 7331);
+	cgp = new_comm_address_tcp_ipv6(NULL, 7331);
 	serve_using_handlers(&cgp, NULL, connection_handler, 10, 3000, &listen_fd); // timeout of 3 seconds
 
-	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 6969);
-	//cgp = new_comm_address_udp_ipv6("::1", 6969);
-	//serve_using_handlers(&cgp, NULL, datagram_handler, 10, 3000, &listen_fd); // timeout of 3 seconds
+	//cgp = new_comm_address_udp_ipv4(NULL, 7331);
+	//cgp = new_comm_address_udp_ipv6(NULL, 7331);
+	//serve_using_handlers(&cgp, NULL, datagram_handler, 10, 3000, &listen_fd); // timeout ineffective
 
 	return 0;
 }

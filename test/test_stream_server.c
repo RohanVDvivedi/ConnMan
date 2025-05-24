@@ -25,8 +25,8 @@ int main()
 {
 	signal(SIGINT, intHandler);
 
-	//cgp = new_comm_address_tcp_ipv4(NULL, 6969);
-	cgp = new_comm_address_tcp_ipv6(NULL, 6969);
+	//cgp = new_comm_address_tcp_ipv4(NULL, 7331);
+	cgp = new_comm_address_tcp_ipv6(NULL, 7331);
 
 	SSL_CTX* ssl_ctx = NULL;
 

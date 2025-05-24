@@ -11,10 +11,10 @@ int main()
 {
 	comm_address cgp;
 
-	//cgp = new_comm_address_tcp_ipv4("127.0.0.1", 6969);
-	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 6969);
-	cgp = new_comm_address_tcp_ipv6("::1", 6969);
-	//cgp = new_comm_address_udp_ipv6("::1", 6969);
+	//cgp = new_comm_address_tcp_ipv4("127.0.0.1", 7331);
+	//cgp = new_comm_address_udp_ipv4("127.0.0.1", 7331);
+	cgp = new_comm_address_tcp_ipv6("::1", 7331);
+	//cgp = new_comm_address_udp_ipv6("::1", 7331);
 
 	int conn_fd = make_connection(&cgp, NULL, 3000); // 3 second timeout
 

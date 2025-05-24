@@ -148,7 +148,7 @@ int reset_max_clients(client_set* cls, unsigned int max_clients)
 	return reset_max_clients_success;
 }
 
-stream* reserve_client(client_set* cls, uint64_t timeout_in_secs)
+stream* reserve_client(client_set* cls, uint64_t timeout_in_seconds)
 {
 	stream* strm = NULL;
 
@@ -159,14 +159,14 @@ stream* reserve_client(client_set* cls, uint64_t timeout_in_secs)
 	
 	// wait until you are not allowed to create a client and the active client queue is empty
 	int wait_error = 0;
-	uint64_t timeout_in_secs_LEFT = timeout_in_secs;
+	uint64_t timeout_in_seconds_LEFT = timeout_in_seconds;
 	while(!cls->shutdown_called && cls->curr_client_count >= cls->max_client_count && is_empty_arraylist(&(cls->active_clients_queue)) && !wait_error)
 	{
 		// if a valid timeout is passed, then perform a timed wait
-		if(timeout_in_secs == BLOCKING)
+		if(timeout_in_seconds == BLOCKING)
 			wait_error = pthread_cond_wait(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock));
 		else
-			wait_error = pthread_cond_timedwait_for_seconds(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &timeout_in_secs_LEFT);
+			wait_error = pthread_cond_timedwait_for_seconds(&(cls->all_clients_in_use_at_max_clients), &(cls->client_set_lock), &timeout_in_seconds_LEFT);
 	}
 
 	// upon exit from the loop, we are in any of the following 3 states

@@ -68,7 +68,7 @@ void* transact_with_server(void* param)
 int main()
 {
 	// initialize job executor for executing transactions with the server
-	executor* transaction_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, 16, 1024, 1000000, NULL, NULL, NULL);
+	executor* transaction_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, 16, 1024, 1000000, NULL, NULL, NULL, 0);
 
 	// setup server communication address
 	comm_address cgp;

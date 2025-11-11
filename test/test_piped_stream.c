@@ -98,7 +98,7 @@ int main()
 	initialize_piped_stream(&pyp_strm, MAX_CAPACITY);
 
 	// initialize job executor for executing transactions with the server
-	executor* transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, PRODUCERS_COUNT + CONSUMERS_COUNT, 10, 0, NULL, NULL, NULL);
+	executor* transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, PRODUCERS_COUNT + CONSUMERS_COUNT, 10, 0, NULL, NULL, NULL, 0);
 
 	// submit consumer jobs
 	for(int i = 0; i < CONSUMERS_COUNT; i++)

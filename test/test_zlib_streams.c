@@ -103,7 +103,7 @@ int main()
 	initialize_stream_for_zlib_decompression(&zlib_decomp, &pyp_strm);
 
 	// initialize job executor for executing transactions with the server
-	executor* transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, 2, 10, 0, NULL, NULL, NULL);
+	executor* transaction_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, 2, 10, 0, NULL, NULL, NULL, 0);
 
 	// submit consumer job
 	submit_job_executor(transaction_executor, consumer, NULL, NULL, NULL, BLOCKING);

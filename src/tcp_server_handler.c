@@ -42,7 +42,7 @@ int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 
 	// start accepting in loop
 	struct sockaddr_in client_addr;		socklen_t client_len = sizeof(client_addr);
-	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
+	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL, 0);
 	if(connection_executor == NULL)
 		return -100;
 

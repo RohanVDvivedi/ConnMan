@@ -62,7 +62,7 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 		return err;
 
 	// start a cached thread pool executor
-	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL);
+	executor* connection_executor = new_executor(CACHED_THREAD_POOL_EXECUTOR, thread_count, thread_count * 8, DEFAULT_NO_CONNECTION_THREAD_DESTROY_TIMEOUT_IN_MICRO_SECONDS, NULL, NULL, NULL, 0);
 	if(connection_executor == NULL)
 		return -100;
 

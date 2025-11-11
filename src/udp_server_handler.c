@@ -16,7 +16,7 @@ static void* handler_wrapper(void* handler_wrapper_input_params_v_p)
 
 int udp_server_handler(int listen_fd, void* additional_params, void (*handler)(int conn_fd, void* additional_params), unsigned int thread_count)
 {
-	executor* message_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, thread_count, thread_count, 0, NULL, NULL, NULL);
+	executor* message_executor = new_executor(FIXED_THREAD_COUNT_EXECUTOR, thread_count, thread_count, 0, NULL, NULL, NULL, 0);
 	if(message_executor == NULL)
 		return -100;
 

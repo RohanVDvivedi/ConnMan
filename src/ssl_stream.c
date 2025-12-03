@@ -52,13 +52,14 @@ static void destroy_stream_context_ssl(void* ssl_sc_vp)
 	SSL_free(ssl);
 }
 
-int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
+int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, stream* underlying_strm)
 {
 	SSL* ssl = SSL_new(ctx);
 	if(ssl == NULL)
 		return 0;
 
-	SSL_set_fd(ssl, fd);
+	BIO* bio = get_new_bio_for_stream(underlying_strm);
+	SSL_set_bio(ssl, bio, bio);
 
 	SSL_set_accept_state(ssl);
 	int ret = SSL_accept(ssl);
@@ -81,13 +82,15 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 	return 1;
 }
 
-int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hostname, int fd)
+int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hostname, stream* underlying_strm)
 {
 	SSL* ssl = SSL_new(ctx);
 	if(ssl == NULL)
 		return 0;
 
-	SSL_set_fd(ssl, fd);
+	BIO* bio = get_new_bio_for_stream(underlying_strm);
+	SSL_set_bio(ssl, bio, bio);
+
 	SSL_set_tlsext_host_name(ssl, hostname);
 
 	SSL_set_connect_state(ssl);

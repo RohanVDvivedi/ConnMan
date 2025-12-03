@@ -6,9 +6,9 @@
 #include<openssl/ssl.h>
 
 // 0 indicates a failure, to SSL_accept a connection
-int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, stream* underlying_strm);
+int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd);
 
 // 0 indicates a failure, to SSL_connect a connection
-int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hostname, stream* underlying_strm);
+int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hostname, int fd);
 
 #endif

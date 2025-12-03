@@ -5,6 +5,8 @@
 
 #include<cutlery/cutlery_math.h>
 
+#include<connman/ssl_stream_bio.h>
+
 static cy_uint read_from_ssl(void* ssl_sc_vp, void* data, cy_uint data_size, int* error)
 {
 	SSL* ssl = ssl_sc_vp;
@@ -81,6 +83,36 @@ int initialize_stream_for_ssl_server(stream* strm, SSL_CTX* ctx, int fd)
 	return 1;
 }
 
+int initialize_stream_for_ssl_server_over_stream(stream* strm, SSL_CTX* ctx, stream* underlying_strm)
+{
+	SSL* ssl = SSL_new(ctx);
+	if(ssl == NULL)
+		return 0;
+
+	BIO* bio = get_new_bio_for_stream(underlying_strm);
+	SSL_set_bio(ssl, bio, bio);
+
+	SSL_set_accept_state(ssl);
+	int ret = SSL_accept(ssl);
+	if(ret <= 0)
+	{
+		SSL_free(ssl);
+		return 0;
+	}
+
+	SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
+
+	if(!initialize_stream(strm, ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT))
+	{
+		// you never openned the fd, so you should not close it
+		SSL_shutdown(ssl);
+		destroy_stream_context_ssl(ssl);
+		return 0;
+	}
+
+	return 1;
+}
+
 int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hostname, int fd)
 {
 	SSL* ssl = SSL_new(ctx);
@@ -88,6 +120,38 @@ int initialize_stream_for_ssl_client(stream* strm, SSL_CTX* ctx, const char* hos
 		return 0;
 
 	SSL_set_fd(ssl, fd);
+	SSL_set_tlsext_host_name(ssl, hostname);
+
+	SSL_set_connect_state(ssl);
+	int ret = SSL_connect(ssl);
+	if(ret <= 0)
+	{
+		SSL_free(ssl);
+		return 0;
+	}
+
+	SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
+
+	if(!initialize_stream(strm, ssl, read_from_ssl, write_to_ssl, close_stream_context_ssl, destroy_stream_context_ssl, NULL, DEFAULT_MAX_UNFLUSHED_BYTES_COUNT))
+	{
+		// you never openned the fd, so you should not close it
+		SSL_shutdown(ssl);
+		destroy_stream_context_ssl(ssl);
+		return 0;
+	}
+
+	return 1;
+}
+
+int initialize_stream_for_ssl_client_over_stream(stream* strm, SSL_CTX* ctx, const char* hostname, stream* underlying_strm)
+{
+	SSL* ssl = SSL_new(ctx);
+	if(ssl == NULL)
+		return 0;
+
+	BIO* bio = get_new_bio_for_stream(underlying_strm);
+	SSL_set_bio(ssl, bio, bio);
+
 	SSL_set_tlsext_host_name(ssl, hostname);
 
 	SSL_set_connect_state(ssl);

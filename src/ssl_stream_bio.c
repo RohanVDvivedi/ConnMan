@@ -21,7 +21,7 @@ static int stream_bio_read(BIO *b, char *buf, int len)
 	stream* strm = BIO_get_data(b);
 
 	int error = 0;
-	cy_uint bytes_read = read_from_stream(strm, buf, min(len, INT_MAX), &error);
+	cy_uint bytes_read = read_from_stream(strm, buf, min(len, CY_UINT_MAX), &error);
 
 	if(error)
 		return -1;
@@ -36,7 +36,7 @@ static int stream_bio_write(BIO *b, const char *buf, int len)
 	stream* strm = BIO_get_data(b);
 
 	int error = 0;
-	cy_uint bytes_written = write_to_stream(strm, buf, min(len, INT_MAX), &error);
+	cy_uint bytes_written = write_to_stream(strm, buf, min(len, CY_UINT_MAX), &error);
 
 	if(error)
 		return -1;

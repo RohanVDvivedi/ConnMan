@@ -60,10 +60,21 @@ static long stream_bio_ctrl(BIO *b, int cmd, long num, void *ptr)
 
 			return 1;
 		}
-		case BIO_CTRL_PENDING: // can not detect pending reads, able without a syscall
-		case BIO_CTRL_WPENDING: // can not detect pending bytes
-		case BIO_CTRL_EOF: // can not detect EOF, return false
-			return 0;
+
+		case BIO_CTRL_PENDING:
+		{
+			return min(get_bytes_readable_in_dpipe(&(strm->unread_data)), LONG_MAX);
+		}
+
+		case BIO_CTRL_WPENDING:
+		{
+			return min(get_bytes_readable_in_dpipe(&(strm->unflushed_data)), LONG_MAX);
+		}
+
+		case BIO_CTRL_EOF:
+		{
+			return strm->end_of_stream_received;
+		}
 
 		case BIO_CTRL_RESET:
 		{

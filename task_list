@@ -1,3 +1,7 @@
+picked tasks
+
+ * Make SSL stream take in another stream as input
+ * we will need Bio object creation for the stream
 
 Far Future
 1* server passes on (comm_address) its own server address and client address to its stream_handlers some how

@@ -20,7 +20,16 @@ static int stream_bio_read(BIO *b, char *buf, int len)
 
 	stream* strm = BIO_get_data(b);
 
+	// openssl reads large chunks and then goes to writes and then reads again, so how about we flush before every read ensuring that all prior writes are flushed?
+	// subsequent small writes will only trigger a flush if enough bytes have been accumulated
+	// subsequent small reads will not flush anything since there is nothing to flush post the first flush
 	int error = 0;
+	flush_all_from_stream(strm, &error);
+
+	if(error)
+		return -1;
+
+	error = 0;
 	cy_uint bytes_read = read_from_stream(strm, buf, min(len, CY_UINT_MAX), &error);
 
 	if(error)

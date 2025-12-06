@@ -28,9 +28,8 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 		if(!initialize_stream_for_ssl_server_over_stream(&ssl_strm, handler_data->ssl_ctx, &fd_strm))
 		{
 			int close_error;
-			close_stream(&fd_strm, &close_error);
+			close_stream(&fd_strm, &close_error); // no need to close fd now
 			deinitialize_stream(&fd_strm);
-			close(handler_data->fd);
 			return NULL;
 		}
 	}
@@ -47,9 +46,8 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 		close_stream(&ssl_strm, &close_error);
 		deinitialize_stream(&ssl_strm);
 	}
-	close_stream(&fd_strm, &close_error);
+	close_stream(&fd_strm, &close_error);  // no need to close fd now
 	deinitialize_stream(&fd_strm);
-	close(handler_data->fd);
 
 	free(handler_data);
 	return NULL;

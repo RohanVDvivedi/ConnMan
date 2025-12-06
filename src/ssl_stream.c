@@ -42,9 +42,12 @@ static void close_stream_context_ssl(void* ssl_sc_vp, int* error)
 	if(ret < 0)
 		*error = SSL_get_error(ssl, ret);
 
-	ret = close(fd);
-	if(ret == -1)
-		*error = errno;
+	if(fd != -1)
+	{
+		ret = close(fd);
+		if(ret == -1)
+			*error = errno;
+	}
 }
 
 static void destroy_stream_context_ssl(void* ssl_sc_vp)

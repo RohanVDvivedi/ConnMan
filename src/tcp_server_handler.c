@@ -56,6 +56,8 @@ int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 			// break the listenning loop, if the listen_fd file discriptor is closed
 			if(errno == EBADF || errno == ECONNABORTED || errno == EINVAL || errno == ENOTSOCK || errno == EPERM)
 				break;
+			else
+				continue;
 		}
 		int conn_fd = err;
 

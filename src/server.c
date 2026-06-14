@@ -63,7 +63,7 @@ int serve_using_stream_handlers(comm_address* server_addr_p, void* additional_pa
 	if(thread_count == 0)
 		thread_count = DEFAULT_MAX_THREAD_COUNT;
 
-	if(server_addr_p->PROTOCOL != SOCK_STREAM && server_addr_p->PROTOCOL != SOCK_DGRAM)
+	if(server_addr_p->PROTOCOL != SOCK_STREAM) // you can only have SOCK_STREAM here, i.e. TCP
 		return -1;
 
 	*listen_fd_p = make_server_ready_to_listen(server_addr_p);

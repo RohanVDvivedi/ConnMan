@@ -56,6 +56,11 @@ int tcp_server_handler(int listen_fd, void* additional_params, void (*handler)(i
 			// break the listenning loop, if the listen_fd file discriptor is closed
 			if(errno == EBADF || errno == ECONNABORTED || errno == EINVAL || errno == ENOTSOCK || errno == EPERM)
 				break;
+			else if(errno == ENFILE || errno == ENOBUFS || errno == ENOMEM) // resource exhaustion
+			{
+				usleep(50 * 1000);
+				continue;
+			}
 			else
 				continue;
 		}

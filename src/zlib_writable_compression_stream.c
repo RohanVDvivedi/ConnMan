@@ -17,7 +17,7 @@ static cy_uint write_to_stream_compressed(void* stream_context, const void* data
 
 	// intialize available in
 	stream_context_p->zlib_context.next_in = (z_const Bytef *) data;
-	stream_context_p->zlib_context.avail_in = data_size;
+	stream_context_p->zlib_context.avail_in = min(data_size, INT_MAX);
 
 	cy_uint data_out_size = OUT_CHUNK_SIZE;
 	char* data_out = malloc(sizeof(char) * data_out_size);
@@ -60,7 +60,7 @@ static cy_uint write_to_stream_compressed(void* stream_context, const void* data
 	free(data_out);
 
 	// return number of bytes we consumed from data
-	return data_size - stream_context_p->zlib_context.avail_in;
+	return min(data_size, INT_MAX) - stream_context_p->zlib_context.avail_in;
 }
 
 static void close_stream_context(void* stream_context, int* error)

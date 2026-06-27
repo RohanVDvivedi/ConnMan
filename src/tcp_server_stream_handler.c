@@ -19,6 +19,7 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 	if(!initialize_stream_for_fd(&fd_strm, handler_data->fd))
 	{
 		close(handler_data->fd);
+		free(handler_data);
 		return NULL;
 	}
 
@@ -30,6 +31,7 @@ static void* stream_handler_wrapper(void* stream_handler_wrapper_input_params_v_
 			int close_error;
 			close_stream(&fd_strm, &close_error); // no need to close fd now
 			deinitialize_stream(&fd_strm);
+			free(handler_data);
 			return NULL;
 		}
 	}
@@ -86,6 +88,11 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 			// break the listenning loop, if the listen_fd file discriptor is closed
 			if(errno == EBADF || errno == ECONNABORTED || errno == EINVAL || errno == ENOTSOCK || errno == EPERM)
 				break;
+			else if(errno == ENFILE || errno == ENOBUFS || errno == ENOMEM) // resource exhaustion
+			{
+				usleep(50 * 1000);
+				continue;
+			}
 			else
 				continue;
 		}

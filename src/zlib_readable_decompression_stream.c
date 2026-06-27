@@ -70,7 +70,7 @@ static cy_uint read_from_stream_decompressed(void* stream_context, void* data, c
 
 	free(data_in);
 
-	return data_size - stream_context_p->zlib_context.avail_out;
+	return min(data_size, INT_MAX) - stream_context_p->zlib_context.avail_out;
 }
 
 static void close_stream_context(void* stream_context, int* error)

@@ -14,7 +14,13 @@ static cy_uint read_from_ssl(void* ssl_sc_vp, void* data, cy_uint data_size, int
 	int ret = SSL_read(ssl, data, min(data_size, INT_MAX));
 	if(ret <= 0)
 	{
-		*error = SSL_get_error(ssl, ret);
+		int e = SSL_get_error(ssl, ret);
+		if(e == SSL_ERROR_ZERO_RETURN)
+		{
+			*error = 0;
+			return 0;
+		}
+		*error = e;
 		return 0;
 	}
 	return ret;

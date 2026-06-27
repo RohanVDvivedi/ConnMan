@@ -88,7 +88,7 @@ int tcp_server_stream_handler(int listen_fd, void* additional_params, void (*str
 			// break the listenning loop, if the listen_fd file discriptor is closed
 			if(errno == EBADF || errno == EINVAL || errno == ENOTSOCK)
 				break;
-			else if(errno == ENFILE || errno == ENOBUFS || errno == ENOMEM) // resource exhaustion
+			else if(errno == EMFILE || errno == ENFILE || errno == ENOBUFS || errno == ENOMEM) // resource exhaustion
 			{
 				usleep(50 * 1000);
 				continue;
